@@ -1,0 +1,102 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Master.master.cs" Inherits="wab2018.Master" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <title></title>
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+    <link href="Styles/Site.css" rel="stylesheet" type="text/css" />
+        <script>
+        $(function () {
+            $("body").on('click keypress', function () {
+                ResetThisSession();
+            });
+        });
+
+        var timeInSecondsAfterSessionOut = 600; // change this to change session time out (in seconds).
+        var secondTick = 0;
+
+        function ResetThisSession() {
+            secondTick = 0;
+        }
+
+        function StartThisSessionTimer() {
+            secondTick++;
+            var timeLeft = ((timeInSecondsAfterSessionOut - secondTick) / 60).toFixed(0); // in minutes
+        timeLeft = timeInSecondsAfterSessionOut - secondTick; // override, we have 30 secs only 
+
+          
+
+            if (secondTick > timeInSecondsAfterSessionOut) {
+                clearTimeout(tick);
+                window.location = "/default.aspx?logout=true";
+                return;
+            }
+            tick = setTimeout("StartThisSessionTimer()", 1000);
+        }
+
+        StartThisSessionTimer();
+</script>
+
+
+</head>
+<body class="newPage2">
+    <form id="form1" runat="server" >
+        <div class="newHeader">
+            <div id="naglowek" style="display:flex; height:100%; background: #4b6c9e; padding-left: 20px; padding-right: 20px; padding-top :30px; height: 30px ;" >
+                <div style="width:60%">
+                    <h1>
+                        <asp:Label ID="Label1" runat="server" style="font-style: italic" 
+                            Text="Sąd okręgowy" ForeColor="White"></asp:Label>&nbsp;- 
+                        <asp:Label ID="Label2" runat="server" Text="Portal biegłych" ForeColor="White"></asp:Label>
+                        </h1>
+
+                </div>
+                 
+                <div style="width:30%">
+<asp:FormView ID="FormView1" runat="server" DataSourceID="user_1">
+               
+                    <ItemTemplate>
+                        <asp:Label ID="imieLabel" runat="server" style="font-weight: 700" 
+                            Text='<%# Bind("imie") %>' Font-Bold="True" ForeColor="#FFFFCC" />
+                        &nbsp;&nbsp;
+                        <asp:Label ID="nazwiskoLabel" runat="server" style="font-weight: 700" 
+                            Text='<%# Bind("nazwisko") %>' Font-Bold="True" ForeColor="#FFFFCC" />
+                        <br />
+
+                    </ItemTemplate>
+                </asp:FormView>
+<asp:SqlDataSource ID="user_1" runat="server" 
+                    ConnectionString="<%$ ConnectionStrings:wap %>" 
+                    SelectCommand="SELECT [imie], [nazwisko] FROM [tbl_users_] WHERE ([id_] = @id_)">
+                    <SelectParameters>
+                        <asp:SessionParameter Name="id_" SessionField="user_id" Type="Int32" />
+                    </SelectParameters>
+                </asp:SqlDataSource>
+         </div>
+            </div>
+            <div id="menuGorne" style="display:flex;  padding-left: 4%; padding-right: 4%; height: 25px ;  background-color: #3a4f63;" >
+
+                       <asp:Menu ID="Menu1" runat="server"  Orientation="Horizontal" DynamicHorizontalOffset="2" ForeColor="White" Height="20px" CssClass="ax" RenderingMode="Table" Width="0%" OnMenuItemClick="Menu1_MenuItemClick" >
+                  <Items>
+                        <asp:MenuItem NavigateUrl="~/Default.aspx" Text="Logowanie"/>
+                      
+                    </Items>
+                    <StaticHoverStyle ForeColor="#CCCCCC"  />
+                    <StaticMenuItemStyle         CssClass="ax" />
+                    
+                    <StaticMenuStyle Height="20px"  CssClass="przesuniecie" />
+             </asp:Menu>
+                
+                   </div>
+         
+                 </div>
+   
+         <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+       
+        </asp:ContentPlaceHolder>
+    </form>
+</body>
+</html>
