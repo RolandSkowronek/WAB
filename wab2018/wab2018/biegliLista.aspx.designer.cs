@@ -33,13 +33,13 @@ namespace wab2018
         protected global::System.Web.UI.WebControls.DropDownList DropDownList2;
 
         /// <summary>
-        /// ASPxCheckBox2 control.
+        /// SpecjalizacjeCheckBox control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::DevExpress.Web.ASPxCheckBox ASPxCheckBox2;
+        protected global::DevExpress.Web.ASPxCheckBox SpecjalizacjeCheckBox;
 
         /// <summary>
         /// DropDownList1 control.

@@ -171,7 +171,7 @@
                     &nbsp;&nbsp;&nbsp;&nbsp;
                     </td>
                 <td class="auto-style25">
-                    <dx:ASPxCheckBox ID="ASPxCheckBox2" runat="server" Height="16px" OnCheckedChanged="ASPxCheckBox2_CheckedChanged" AutoPostBack="True" Theme="Moderno" Text="Specjalizacje:  ">
+                    <dx:ASPxCheckBox ID="SpecjalizacjeCheckBox" runat="server" Height="16px" OnCheckedChanged="ASPxCheckBox2_CheckedChanged" AutoPostBack="True" Theme="Moderno" Text="Specjalizacje:  ">
                 </dx:ASPxCheckBox>
                 </td>
                 <td style="vertical-align: middle;">
@@ -186,22 +186,12 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
            
 
                 </td>
                 <td style="vertical-align: middle;">
                <asp:LinkButton ID="LinkButton14" runat="server" CssClass="button_" OnClick="twórzZestawienie" meta:resourcekey="LinkButton14Resource1" Text="Zestawienie"></asp:LinkButton>
-                    <asp:LinkButton ID="LinkButton6" runat="server" Text="Excel" CssClass="button_" OnClick="makeExcell" meta:resourcekey="LinkButton6Resource1"></asp:LinkButton>
+                    <asp:LinkButton ID="LinkButton6" runat="server" Text="Excel" CssClass="button_" OnClick="_excell" meta:resourcekey="LinkButton6Resource1"></asp:LinkButton>
                     <asp:Button ID="Button1" runat="server" OnClick="_print" Text="Drukuj" CssClass="button_" />
                 </td>
             </tr>
@@ -216,7 +206,7 @@
 
                 <dx:GridViewDataTextColumn Caption="Tytuł" FieldName="tytul" ShowInCustomizationForm="True" VisibleIndex="2" Width="10%">
                 </dx:GridViewDataTextColumn>
-                <dx:GridViewDataDateColumn Caption="Powołanie od" FieldName="data_poczatkowa" ShowInCustomizationForm="True" VisibleIndex="4" Width="7%">
+                <dx:GridViewDataDateColumn Caption="Powołanie od" FieldName="data_poczatkowa" ShowInCustomizationForm="True" VisibleIndex="5" Width="7%">
                 </dx:GridViewDataDateColumn>
                 <dx:GridViewDataTextColumn Caption="Imie" FieldName="imie" ShowInCustomizationForm="True" VisibleIndex="4" Width="16%">
                     <PropertiesTextEdit>
@@ -225,7 +215,7 @@
                         </ValidationSettings>
                     </PropertiesTextEdit>
                 </dx:GridViewDataTextColumn>
-                <dx:GridViewDataDateColumn Caption="Powołanie do" FieldName="data_koncowa" ShowInCustomizationForm="True" VisibleIndex="5" Width="7%">
+                <dx:GridViewDataDateColumn Caption="Powołanie do" FieldName="data_koncowa" ShowInCustomizationForm="True" VisibleIndex="6" Width="7%">
                 </dx:GridViewDataDateColumn>
                 <dx:GridViewDataTextColumn Caption="Nazwisko" FieldName="nazwisko" ShowInCustomizationForm="True" VisibleIndex="3" Width="16%">
                     <PropertiesTextEdit>
@@ -235,13 +225,13 @@
                     </PropertiesTextEdit>
                 </dx:GridViewDataTextColumn>
 
-                <dx:GridViewDataCheckColumn Caption="Zawieszono" FieldName="czy_zaw" VisibleIndex="6" meta:resourcekey="GridViewDataCheckColumnResource1" ShowInCustomizationForm="True" Width="5%">
+                <dx:GridViewDataCheckColumn Caption="Zawieszono" FieldName="czy_zaw" VisibleIndex="7" meta:resourcekey="GridViewDataCheckColumnResource1" ShowInCustomizationForm="True" Width="5%">
                 </dx:GridViewDataCheckColumn>
                 <dx:GridViewDataTextColumn Caption="Specjalizacje" FieldName="specjalizacjeWidok" ShowInCustomizationForm="True" VisibleIndex="13" Width="13%" Name="Specjalizacje">
                 </dx:GridViewDataTextColumn>
                 <dx:GridViewDataTextColumn Caption="Uwagi" FieldName="uwagi" ShowInCustomizationForm="True" VisibleIndex="12" Width="13%">
                 </dx:GridViewDataTextColumn>
-                <dx:GridViewDataTextColumn Caption="Telefon" FieldName="tel1" ShowInCustomizationForm="True" VisibleIndex="7" Width="8%">
+                <dx:GridViewDataTextColumn Caption="Telefon" FieldName="tel1" ShowInCustomizationForm="True" VisibleIndex="8" Width="8%">
                 </dx:GridViewDataTextColumn>
 
                 <dx:GridViewDataTextColumn FieldName="specjalizacja_opis" Visible="False" VisibleIndex="14" Name="specjalizacja_opis">

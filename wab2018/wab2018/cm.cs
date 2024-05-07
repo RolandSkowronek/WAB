@@ -164,28 +164,7 @@ namespace wab2018
             } // end of using
         }
 
-        /*
-        public DataTable getDataTable( string Kwerenda)
-        {
-            SqlConnection conn = new SqlConnection(con_str);
-            DataSet lista = new DataSet();
-            DataTable returntable = new DataTable();
-            try
-            {
-                conn.Open();
-                SqlDataAdapter daMenu = new SqlDataAdapter();
-                daMenu.SelectCommand = new SqlCommand(Kwerenda, conn);
-                daMenu.Fill(lista);
-                conn.Close();
-                returntable = lista.Tables[0];
-            }
-            catch (Exception ec)
-            {
-                conn.Close();
-            }
-            return returntable;
-        }
-        */
+       
 
         public DataTable getDataTable(string Kwerenda, string connectionString)
         {
@@ -208,7 +187,7 @@ namespace wab2018
             return returntable;
         }
 
-        /*
+       
          public DataTable getDataTable(string kwerenda, string connStr, DataTable parameters)
          {
              log.Info("Start getDataTable");
@@ -245,7 +224,7 @@ namespace wab2018
 
              return result;
          } // end of getDataTable
-         */
+        
         //==========================================================================================================================================
         //==========================================================================================================================================
         //==========================================================================================================================================

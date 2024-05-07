@@ -1756,7 +1756,7 @@ namespace wab2018
             GridViewDataColumn dataColumn = e.Column as GridViewDataColumn;
             if (e.RowType == GridViewRowType.Data && dataColumn != null && dataColumn.FieldName == "Z")
             {
-                if (e.Text == "Niezaznaczony")
+                if (e.Text == "")
                 {
                     e.Text = "";
                 }

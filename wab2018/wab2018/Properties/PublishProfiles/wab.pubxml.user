@@ -7,7 +7,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <_PublishTargetUrl>C:\test\wab</_PublishTargetUrl>
-    <History>True|2023-10-22T13:03:58.8399389Z;True|2023-09-24T20:17:33.5590689+02:00;True|2023-09-22T11:24:48.8034047+02:00;</History>
+    <History>True|2024-05-07T17:09:54.6394107Z;True|2024-05-05T16:42:38.5048645+02:00;True|2024-04-25T20:45:29.1050609+02:00;True|2024-04-21T14:14:03.0702346+02:00;True|2024-04-21T10:36:47.1788690+02:00;True|2024-04-18T19:07:57.2521708+02:00;True|2024-04-17T20:09:56.1278768+02:00;True|2024-04-16T18:21:42.7335627+02:00;True|2024-04-07T09:35:32.0433224+02:00;True|2023-10-22T15:03:58.8399389+02:00;True|2023-09-24T20:17:33.5590689+02:00;True|2023-09-22T11:24:48.8034047+02:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -24,7 +24,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/12/2019 14:43:14</publishTime>
     </File>
     <File Include="biegliLista.aspx">
-      <publishTime>09/24/2023 20:13:23</publishTime>
+      <publishTime>05/07/2024 19:00:36</publishTime>
     </File>
     <File Include="biegliListaOLD.aspx">
       <publishTime>09/22/2023 14:05:55</publishTime>
@@ -266,6 +266,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="bin/EntityFramework.SqlServer.dll">
       <publishTime>06/17/2018 14:28:20</publishTime>
     </File>
+    <File Include="bin/EPPlus.dll">
+      <publishTime>12/11/2022 13:42:33</publishTime>
+    </File>
     <File Include="bin/es/DevExpress.Data.v17.1.resources.dll">
       <publishTime>10/22/2023 12:19:49</publishTime>
     </File>
@@ -465,19 +468,106 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/17/2018 14:31:52</publishTime>
     </File>
     <File Include="bin/Newtonsoft.Json.dll">
-      <publishTime>06/17/2018 14:31:55</publishTime>
+      <publishTime>02/18/2018 09:44:54</publishTime>
     </File>
     <File Include="bin/NPOI.dll">
-      <publishTime>09/22/2014 13:25:32</publishTime>
+      <publishTime>12/11/2022 13:42:33</publishTime>
     </File>
     <File Include="bin/NPOI.OOXML.dll">
-      <publishTime>09/22/2014 13:25:32</publishTime>
+      <publishTime>12/11/2022 13:42:33</publishTime>
     </File>
     <File Include="bin/NPOI.OpenXml4Net.dll">
       <publishTime>09/22/2014 13:25:32</publishTime>
     </File>
     <File Include="bin/NPOI.OpenXmlFormats.dll">
-      <publishTime>09/22/2014 13:25:32</publishTime>
+      <publishTime>12/11/2022 13:42:33</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Data.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:22</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.DataAccess.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:25:14</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Office.v17.1.Core.resources.dll">
+      <publishTime>11/18/2018 20:25:02</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Pdf.v17.1.Core.resources.dll">
+      <publishTime>11/18/2018 20:25:10</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.PivotGrid.v17.1.Core.resources.dll">
+      <publishTime>11/18/2018 20:24:28</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Printing.v17.1.Core.resources.dll">
+      <publishTime>11/18/2018 20:25:02</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.RichEdit.v17.1.Core.resources.dll">
+      <publishTime>11/18/2018 20:24:44</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Sparkline.v17.1.Core.resources.dll">
+      <publishTime>11/18/2018 20:25:14</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Spreadsheet.v17.1.Core.resources.dll">
+      <publishTime>11/18/2018 20:25:10</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Utils.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:22</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Web.ASPxHtmlEditor.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:58</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Web.ASPxRichEdit.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:25:16</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Web.ASPxScheduler.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:58</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Web.ASPxSpellChecker.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:58</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Web.ASPxSpreadsheet.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:58</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Web.ASPxTreeList.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:56</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Web.Resources.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:25:18</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Web.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:56</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.Xpo.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:24</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraBars.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:24</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraCharts.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:24</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraEditors.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:24</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraGauges.v17.1.Core.resources.dll">
+      <publishTime>11/18/2018 20:24:54</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraLayout.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:26</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraPrinting.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:28</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraReports.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:30</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraReports.v17.1.Web.resources.dll">
+      <publishTime>11/18/2018 20:25:00</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraScheduler.v17.1.Core.resources.dll">
+      <publishTime>11/18/2018 20:24:34</publishTime>
+    </File>
+    <File Include="bin/pl/DevExpress.XtraTreeList.v17.1.resources.dll">
+      <publishTime>11/18/2018 20:24:34</publishTime>
     </File>
     <File Include="bin/roslyn/csc.exe">
       <publishTime>04/20/2018 08:55:46</publishTime>
@@ -630,10 +720,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/20/2018 11:51:11</publishTime>
     </File>
     <File Include="bin/wab2018.dll">
-      <publishTime>10/22/2023 15:04:29</publishTime>
+      <publishTime>05/07/2024 20:07:59</publishTime>
     </File>
     <File Include="bin/wab2018.pdb">
-      <publishTime>10/22/2023 15:04:29</publishTime>
+      <publishTime>05/07/2024 20:07:59</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>06/17/2018 14:31:59</publishTime>
@@ -792,7 +882,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/22/2023 11:54:54</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>10/22/2023 15:04:31</publishTime>
+      <publishTime>05/07/2024 20:08:00</publishTime>
     </File>
     <File Include="Scripts/bootstrap.bundle.js">
       <publishTime>06/17/2018 14:28:54</publishTime>
@@ -929,6 +1019,9 @@ by editing this MSBuild file. In order to learn more about this please visit htt
     <File Include="Styles/Site.css">
       <publishTime>01/16/2020 09:25:03</publishTime>
     </File>
+    <File Include="Templates/Zestawienie.xlsx">
+      <publishTime>04/28/2024 15:23:06</publishTime>
+    </File>
     <File Include="userControls/cos.ascx">
       <publishTime>04/01/2021 21:38:26</publishTime>
     </File>
@@ -975,13 +1068,13 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/01/2021 21:38:27</publishTime>
     </File>
     <File Include="version.txt">
-      <publishTime>10/22/2023 14:57:50</publishTime>
+      <publishTime>05/07/2024 20:06:28</publishTime>
     </File>
     <File Include="WAB.edmx.diagram">
       <publishTime>07/01/2018 21:20:07</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>10/22/2023 15:03:17</publishTime>
+      <publishTime>05/05/2024 16:42:13</publishTime>
     </File>
     <File Include="Web.old.config">
       <publishTime>04/20/2018 08:56:12</publishTime>
