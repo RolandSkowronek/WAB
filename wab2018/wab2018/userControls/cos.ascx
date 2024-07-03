@@ -6,7 +6,11 @@
 
 
 
-<asp:SqlDataSource ID="ListaPowolanMediatorow" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" DeleteCommand="UPDATE tbl_skargi SET czyus =1 WHERE (ident = @ident)" InsertCommand="INSERT INTO tbl_skargi(numer, rok, dataWplywu, dataPisma, Sygnatura, wizytator, zakreslono, dataZakreslenia, uwagi, czyus, idBieglego) VALUES (@numer, @rok, @dataWplywu, @dataPisma, @Sygnatura, @wizytator, @zakreslono, @dataZakreslenia, @uwagi, 0, @idBieglego)" SelectCommand="SELECT ident, CAST(RTRIM(numer) AS bigint) AS numer, rok, dataWplywu, dataPisma, Sygnatura, wizytator, COALESCE (zakreslono, NULL, '0') AS zakreslono, dataZakreslenia, uwagi, czyus, idBieglego FROM tbl_skargi WHERE (czyus = 0) AND (idBieglego = @id_bieglego) ORDER BY rok, numer" UpdateCommand="UPDATE tbl_skargi SET numer = @numer, rok = @rok, dataWplywu = @dataWplywu, dataPisma = @dataPisma, Sygnatura = @Sygnatura, wizytator = @wizytator, zakreslono = @zakreslono, dataZakreslenia = @dataZakreslenia, uwagi = @uwagi WHERE (ident = @ident)">
+<asp:SqlDataSource ID="ListaPowolanMediatorow" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" 
+    DeleteCommand="UPDATE tbl_skargi SET czyus =1 WHERE (ident = @ident)" 
+    InsertCommand="INSERT INTO tbl_skargi(numer, rok, dataWplywu, dataPisma, Sygnatura, wizytator, zakreslono, dataZakreslenia, uwagi, czyus, RodzajZałatwienia, SkladajacySkarge, idBieglego ) VALUES (@numer, @rok, @dataWplywu, @dataPisma, @Sygnatura, @wizytator, @zakreslono, @dataZakreslenia, @uwagi, 0, @RodzajZałatwienia, @SkladajacySkarge, @idBieglego)" 
+    SelectCommand="SELECT ident, CAST(RTRIM(numer) AS bigint) AS numer, rok, dataWplywu, dataPisma, Sygnatura, wizytator, COALESCE (zakreslono, NULL, '0') AS zakreslono, dataZakreslenia, uwagi, czyus, idBieglego, RodzajZałatwienia, SkladajacySkarge FROM tbl_skargi WHERE (czyus = 0) AND (idBieglego = @id_bieglego) ORDER BY rok, numer" 
+    UpdateCommand="UPDATE tbl_skargi SET numer = @numer, rok = @rok, dataWplywu = @dataWplywu, dataPisma = @dataPisma, Sygnatura = @Sygnatura, wizytator = @wizytator, zakreslono = @zakreslono, dataZakreslenia = @dataZakreslenia, uwagi = @uwagi, RodzajZałatwienia=@RodzajZałatwienia, SkladajacySkarge = @SkladajacySkarge  WHERE (ident = @ident)">
     <DeleteParameters>
         <asp:Parameter Name="ident" />
 
@@ -22,7 +26,10 @@
         <asp:Parameter Name="zakreslono" />
         <asp:Parameter Name="dataZakreslenia" />
         <asp:Parameter Name="uwagi" />
+        <asp:Parameter Name="RodzajZałatwienia" />
+        <asp:Parameter Name="SkladajacySkarge" />
         <asp:Parameter Name="idBieglego" />
+        
     </InsertParameters>
     <SelectParameters>
         <asp:SessionParameter Name="id_bieglego" SessionField="idMediatora" Type="Int32" />
@@ -37,6 +44,8 @@
         <asp:Parameter Name="zakreslono" />
         <asp:Parameter Name="dataZakreslenia" />
         <asp:Parameter Name="uwagi" />
+        <asp:Parameter Name="RodzajZałatwienia" />
+        <asp:Parameter Name="SkladajacySkarge" />
         <asp:Parameter Name="ident" />
     </UpdateParameters>
 </asp:SqlDataSource>
@@ -55,23 +64,27 @@
         </dx:GridViewDataTextColumn>
         <dx:GridViewDataTextColumn Caption="Sygnatura" FieldName="Sygnatura" VisibleIndex="3" Width="200px">
         </dx:GridViewDataTextColumn>
-        <dx:GridViewDataTextColumn FieldName="wizytator" Name="Wizytator" VisibleIndex="9" Width="300px">
+        <dx:GridViewDataTextColumn FieldName="wizytator" Name="Wizytator" VisibleIndex="9" Width="300px" Caption="Sędzia wizytator">
         </dx:GridViewDataTextColumn>
         <dx:GridViewDataDateColumn AllowTextTruncationInAdaptiveMode="True" Caption="Data wpływu" FieldName="dataWplywu" VisibleIndex="5" Width="100px">
             <PropertiesDateEdit DisplayFormatString="yyyy-MM-dd">
             </PropertiesDateEdit>
         </dx:GridViewDataDateColumn>
-        <dx:GridViewDataDateColumn FieldName="dataPisma" Name="Data pisma" VisibleIndex="6" Width="100px">
+        <dx:GridViewDataDateColumn FieldName="dataPisma" Name="Data pisma" VisibleIndex="6" Width="100px" Caption="Data wpływu pisma">
             <PropertiesDateEdit DisplayFormatString="yyyy-MM-dd">
             </PropertiesDateEdit>
         </dx:GridViewDataDateColumn>
-        <dx:GridViewDataDateColumn FieldName="dataZakreslenia" Name="Data zakreślenia" VisibleIndex="7" Width="100px">
+        <dx:GridViewDataDateColumn FieldName="dataZakreslenia" Name="Data zakreślenia"  Caption="Data załatwienia" VisibleIndex="7" Width="100px">
             <PropertiesDateEdit DisplayFormatString="yyyy-MM-dd">
             </PropertiesDateEdit>
         </dx:GridViewDataDateColumn>
-        <dx:GridViewDataCheckColumn FieldName="zakreslono" Name="Zakreślono" VisibleIndex="8" Width="50px">
+        <dx:GridViewDataCheckColumn FieldName="zakreslono" Name="Zakreślono" Caption="Zakreślono" VisibleIndex="8" Width="50px">
         </dx:GridViewDataCheckColumn>
-        <dx:GridViewDataTextColumn Caption="Uwagi" FieldName="uwagi" VisibleIndex="10" Width="300px">
+          <dx:GridViewDataTextColumn Caption="Rodzaj załatwienia" FieldName="RodzajZałatwienia" VisibleIndex="10" Width="300px">
+  </dx:GridViewDataTextColumn>
+          <dx:GridViewDataTextColumn Caption="Skaładający skargę" FieldName="SkladajacySkarge" VisibleIndex="11" Width="300px">
+  </dx:GridViewDataTextColumn>
+        <dx:GridViewDataTextColumn Caption="Uwagi" FieldName="uwagi" VisibleIndex="12" Width="300px">
         </dx:GridViewDataTextColumn>
     </Columns>
      <SettingsEditing Mode="Inline">

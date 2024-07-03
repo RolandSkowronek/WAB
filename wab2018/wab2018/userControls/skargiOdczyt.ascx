@@ -55,13 +55,13 @@
         </dx:GridViewDataTextColumn>
         <dx:GridViewDataTextColumn Caption="Sygnatura" FieldName="Sygnatura" VisibleIndex="3">
         </dx:GridViewDataTextColumn>
-        <dx:GridViewDataTextColumn FieldName="wizytator" Name="Wizytator" VisibleIndex="9" Caption="Wizytator">
+        <dx:GridViewDataTextColumn FieldName="wizytator" Name="Wizytator" VisibleIndex="9" Caption="Sędzia wizytator">
         </dx:GridViewDataTextColumn>
         <dx:GridViewDataDateColumn AllowTextTruncationInAdaptiveMode="True" Caption="Data wpływu" FieldName="dataWplywu" VisibleIndex="5">
             <PropertiesDateEdit DisplayFormatString="yyyy-MM-dd">
             </PropertiesDateEdit>
         </dx:GridViewDataDateColumn>
-        <dx:GridViewDataDateColumn FieldName="dataPisma" Name="Data pisma" VisibleIndex="6" Caption="Data pisma">
+        <dx:GridViewDataDateColumn FieldName="dataPisma" Name="Data pisma" VisibleIndex="6" Caption="Data wpływu pisma">
             <PropertiesDateEdit DisplayFormatString="yyyy-MM-dd">
             </PropertiesDateEdit>
         </dx:GridViewDataDateColumn>

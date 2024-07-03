@@ -7,11 +7,22 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace wab2018 {
-    
-    
-    public partial class wykazSkarg {
-        
+namespace wab2018
+{
+
+
+    public partial class wykazSkarg
+    {
+
+        /// <summary>
+        /// Button1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button Button1;
+
         /// <summary>
         /// ASPxGridView1 control.
         /// </summary>
@@ -20,7 +31,7 @@ namespace wab2018 {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::DevExpress.Web.ASPxGridView ASPxGridView1;
-        
+
         /// <summary>
         /// skargiSQL control.
         /// </summary>

@@ -52,6 +52,13 @@
 
         </td>
     </tr>
+        <tr>
+        <td style="width: 15%">
+            <dx:ASPxLabel ID="ASPxLabel3" runat="server" Text="Koniec zawieszenia" CssClass="auto-style1">
+            </dx:ASPxLabel>
+        </td>
+        
+    </tr>
 </table>
 
 

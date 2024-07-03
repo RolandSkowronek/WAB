@@ -156,19 +156,25 @@ namespace wab2018
             e.NewValues["nazwisko"] = nm.controlText("txNazwisko", grid);
             e.NewValues["data_poczatkowa"] = nm.controlTextDate("txPoczatekPowolania", grid);
             e.NewValues["data_koncowa"] = nm.controlTextDate("txDataKoncaPowolania", grid);
-            bool zawieszenie = nm.controlCheckBox("zawiszeniaCbox", grid);
-
+            bool  zawieszenie = false;
+            if (HiddenField.Value=="true")
+            {
+                zawieszenie = true;
+            }
+          
             e.NewValues["czy_zaw"] = zawieszenie;
             if (zawieszenie)
             {
                 e.NewValues["d_zawieszenia"] = nm.controlTextDate("txDataPoczatkuZawieszenia", grid);
                 e.NewValues["dataKoncaZawieszenia"] = nm.controlTextDate("txDataKoncaZawieszenia", grid);
+                e.NewValues["rodzaj_zawieszenia"] = nm.controlDropDownList("powZawDropDownList", grid);
+                
             }
             else
             {
                 e.NewValues["d_zawieszenia"] = DateTime.Now;
                 e.NewValues["dataKoncaZawieszenia"] = DateTime.Now;
-
+                e.NewValues["rodzaj_zawieszenia"]="";
             }
             if (nm.controlText("txPESEL", grid) == null)
             {
@@ -329,14 +335,14 @@ namespace wab2018
                             string specjalizacja = DropDownList1.SelectedValue;
                             nazwaSpeckajlizacji = NazwaSpecjalizacji(specjalizacja);
 
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ  FROM tbl_osoby WHERE  (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ, rodzaj_zawieszenia  FROM tbl_osoby WHERE  (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
                             kwerendabazowa = kwerendabazowa + "  and (select count(*) from tbl_specjalizacje_osob where id_specjalizacji =" + specjalizacja.Trim() + " and id_osoby=tbl_osoby.ident )=1 ";
 
                             Session["kwerenda"] = kwerendabazowa;
                         }
                         else
                         {
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ  FROM tbl_osoby WHERE (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia  FROM tbl_osoby WHERE (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
                         }
 
                     }
@@ -349,7 +355,7 @@ namespace wab2018
                             string specjalizacja = DropDownList1.SelectedValue;
                             nazwaSpeckajlizacji = NazwaSpecjalizacji(specjalizacja);
 
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ  FROM tbl_osoby WHERE (czyus = 0) AND (typ >= 2) AND (data_koncowa <= GETDATE()) and typ =1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia  FROM tbl_osoby WHERE (czyus = 0) AND (typ >= 2) AND (data_koncowa <= GETDATE()) and typ =1 ";
                             kwerendabazowa = kwerendabazowa + "  and (select count(*) from tbl_specjalizacje_osob where id_specjalizacji =" + specjalizacja.Trim() + " and id_osoby=tbl_osoby.ident )=1 ";
 
                             Session["kwerenda"] = kwerendabazowa;
@@ -357,7 +363,7 @@ namespace wab2018
                         }
                         else
                         {
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ  FROM tbl_osoby WHERE (data_koncowa <= GETDATE()) and typ = 1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ ,rodzaj_zawieszenia FROM tbl_osoby WHERE (data_koncowa <= GETDATE()) and typ = 1 ";
                         }
 
                     }
@@ -369,7 +375,7 @@ namespace wab2018
                             string specjalizacja = DropDownList1.SelectedValue;
                             nazwaSpeckajlizacji = NazwaSpecjalizacji(specjalizacja);
 
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ  FROM tbl_osoby WHERE (czyus  = 0) And (typ = 1) ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia  FROM tbl_osoby WHERE (czyus  = 0) And (typ = 1) ";
                             kwerendabazowa = kwerendabazowa + "  and (select count(*) from tbl_specjalizacje_osob where id_specjalizacji =" + specjalizacja.Trim() + " and id_osoby=tbl_osoby.ident )=1 ";
 
                             Session["kwerenda"] = kwerendabazowa;
@@ -377,7 +383,7 @@ namespace wab2018
                         }
                         else
                         {
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ  FROM tbl_osoby WHERE (typ = 1) ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia  FROM tbl_osoby WHERE (typ = 1) ";
                         }
                     }
                     break;
@@ -417,7 +423,7 @@ namespace wab2018
             parametry = Cm.makeParameterTable();
             parametry.Rows.Add("@ident", ident);
             
-            DataTable specki= Cm.getDataTable("SELECT DISTINCT dbo.glo_specjalizacje.nazwa FROM dbo.tbl_specjalizacje_osob INNER JOIN dbo.glo_specjalizacje ON dbo.tbl_specjalizacje_osob.id_specjalizacji = dbo.glo_specjalizacje.id_ WHERE     (dbo.tbl_specjalizacje_osob.id_osoby = @ident)", Cm.con_str, parametry);
+            DataTable specki= Cm.getDataTable("SELECT DISTINCT glo_specjalizacje.nazwa FROM tbl_specjalizacje_osob INNER JOIN glo_specjalizacje ON tbl_specjalizacje_osob.id_specjalizacji = glo_specjalizacje.id_ WHERE     (tbl_specjalizacje_osob.id_osoby = @ident)", Cm.con_str, parametry);
 
             string SpeckiTxt = string.Empty;
 
@@ -471,8 +477,8 @@ namespace wab2018
                 doWydruku = new DoWydruku();
                 doWydruku.tytul = item[0].ToString();
                 doWydruku.nazwisko = item[1].ToString();
-                doWydruku.imie = item[3].ToString();
-                doWydruku.powolanieOd = item[2].ToString(); 
+                doWydruku.imie = item[2].ToString();
+                doWydruku.powolanieOd = item[3].ToString(); 
                 doWydruku.zawieszono = zaw;  
                 doWydruku.telefon = item[6].ToString();
                 doWydruku.uwagi = item[7].ToString();
@@ -528,10 +534,10 @@ namespace wab2018
 
                 dr[0] = item[0].ToString();//tytul
                 dr[1] = item[1].ToString();//imie
-                dr[2] = item[3].ToString();//nazwisko
+                dr[2] = item[2].ToString();//nazwisko
                 try
                 {
-                    dr[3] = item[2].ToString().Substring(0,11);//powolanie
+                    dr[3] = item[3].ToString().Substring(0,11);//powolanie
                 }
                 catch 
                 {
@@ -542,7 +548,7 @@ namespace wab2018
                 dr[4] = zaw;// item[5].ToString();
                 dr[5] = item[6].ToString();//uwagi
                 dr[6] = item[7].ToString();//uwagi
-                dr[7] = GetSpec(item[3].ToString(), item[1].ToString());
+                dr[7] = GetSpec(item[2].ToString(), item[1].ToString());
                 excelTable.Rows.Add(dr);
             }
 
@@ -847,9 +853,11 @@ namespace wab2018
                         newTable.SetWidths(tblWidth);
                         // podziel tabele
                         int iter = 0;
-
+                            
                         foreach (var TableRow in tabelaGlowna.Rows)
                         {
+                           
+
                             var cos = TableRow.GetCells();
                             //   newTable.Rows.Add(TableRow);
                             PdfPCell celka01 = (PdfPCell)cos.GetValue(0);
@@ -871,18 +879,27 @@ namespace wab2018
                             licznik++;
                             iter++;
 
-                            if (licznik == 15)
+                            if (licznik == 13)
                             {
                                 iloscStron++;
                                 licznik = 0;
+                             
+                                
                                 pdfDoc.Add(newTable);
                                 pdfDoc.NewPage();
                                 pdfDoc.Add(new Paragraph(" "));
-                                pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji + " ciąg dalszy", cl.plFont3)));
+                                pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji , cl.plFont3)));
                                 pdfDoc.Add(new Paragraph(" "));
-
-                                newTable = new PdfPTable(4);
+                               
+                                newTable = new PdfPTable(4);//aaaa
                                 newTable.SetWidths(tblWidth);
+ 
+                                newTable.Rows.Clear();
+                                newTable.AddCell(new Paragraph("Lp.", cl.plFont2));
+                                newTable.AddCell(new Paragraph("Nazwisko i imię", cl.plFont2));
+                                newTable.AddCell(new Paragraph("Adres- telefon", cl.plFont2));
+                                newTable.AddCell(new Paragraph("Zakres", cl.plFont2));
+                                pdfDoc.Add(newTable);
                                 newTable.Rows.Clear();
                             }
                         }
@@ -994,39 +1011,7 @@ namespace wab2018
 
             int iloscStron = 0;
 
-            /*
-            foreach (DataRow dRow in cl.odczytaj_specjalizacjeLista().Rows)
-            {
-                Biegli = generujTabeleBieglychDoZestawienia();
-
-                int idSpecjalizacji = int.Parse(dRow[0].ToString().Trim());
-                string nazwaSpecjalizacji = dRow[1].ToString().Trim();
-
-                foreach (DataRow bieglyZlisty in listaBieglych.Rows)
-                {
-                    int idBieglego = int.Parse(bieglyZlisty[0].ToString().Trim());
-                    int ilosc = cl.czyJestSpecjalizacjauBieglego(idBieglego, idSpecjalizacji);
-                    if (ilosc > 0)
-                    {
-                        DataRow jedenBiegly = Biegli.NewRow();
-                        jedenBiegly = wierszZBieglym(bieglyZlisty, Biegli);
-                        Biegli.Rows.Add(jedenBiegly);
-                    }
-                }// end of foreach
-
-                if (Biegli.Rows.Count > 0)
-                {
-                    float ilStr = (float)Biegli.Rows.Count / 15;
-                    iloscStron = (int)Math.Ceiling(ilStr);
-                    DataRow wyliczenie = specjalizacjeWyliczenie.NewRow();
-                    wyliczenie[0] = nazwaSpecjalizacji;
-                    wyliczenie[1] = iloscStron.ToString();
-
-                    specjalizacjeWyliczenie.Rows.Add(wyliczenie);
-                }
-            }
-
-            */// dodaj wyliczenia*/
+        
             PdfPTable tabelaGlowna = new PdfPTable(4);
             int[] tblWidth = { 8, 30, 30, 32 };
 
@@ -1130,7 +1115,7 @@ namespace wab2018
                             pdfDoc.Add(newTable);
                             pdfDoc.NewPage();
                             pdfDoc.Add(new Paragraph(" "));
-                            pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji + " ciąg dalszy", cl.plFont3)));
+                            pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji, cl.plFont3)));
                             pdfDoc.Add(new Paragraph(" "));
 
                             newTable = new PdfPTable(4);
@@ -1153,7 +1138,8 @@ namespace wab2018
             string newFilename = fileName + ".pdf";
             AddPageNumber(fileName, newFilename);
         }
-
+      
+        
         protected DataTable getDataFromGridview()
         {
             DataTable identy = new DataTable();
@@ -1242,7 +1228,8 @@ namespace wab2018
                 string kod = daneJednegoBieglego[4].ToString();
                 string miejscowosc = daneJednegoBieglego[5].ToString();
                 string tel = daneJednegoBieglego[8].ToString();
-                string adresTable = ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
+                string instytucja = daneJednegoBieglego[12].ToString();
+                string adresTable = instytucja + Environment.NewLine + ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
                 string specki = string.Empty;
                 string specjalizacjaOpis = cl.odczytaj_specjalizacje_osobyOpis(Idbieglego);
                 // tabelaGlowna.AddCell(new Paragraph(specjalizacjaOpis, cl.plFont2));
@@ -1310,8 +1297,11 @@ namespace wab2018
                 string kod = biegly["kod_poczt"].ToString();
                 string miejscowosc = biegly["miejscowosc"].ToString();
                 string tel = biegly["tel1"].ToString();
-                string adresTable = ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
+                string Instytucja = biegly["instytucja"].ToString();
+
+                string adresTable = Instytucja + Environment.NewLine + ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
                 string specki = string.Empty;
+                string opsisSpecek= cl.PobierzOpisSpecjalizacji(Idbieglego, idSpecjalizacji);
                 string specjalizacjaOpis = cl.odczytaj_specjalizacje_osobyOpis(Idbieglego);
                 // tabelaGlowna.AddCell(new Paragraph(specjalizacjaOpis, cl.plFont2));
                 foreach (DataRow specRow in listaSpecjalizacjiBieglego.Rows)
@@ -1322,7 +1312,7 @@ namespace wab2018
                 tabelaGlowna.AddCell(new Paragraph(iterator.ToString(), cl.plFont1));
                 tabelaGlowna.AddCell(new Paragraph(innerTable, cl.plFont1));
                 tabelaGlowna.AddCell(new Paragraph(adresTable, cl.plFont1));
-                tabelaGlowna.AddCell(new Paragraph(specki, cl.plFont1));
+                tabelaGlowna.AddCell(new Paragraph(opsisSpecek, cl.plFont1));
             }
 
             return tabelaGlowna;
@@ -1348,12 +1338,19 @@ namespace wab2018
 
             foreach (DataRow biegly in biegli.Rows)
             {
+                if (biegly==null)
+                {
+                    continue;
+                }
                 DataTable daneBieglego = cl.wyciagnijBieglegoZSpecjalizacja(int.Parse(biegly[0].ToString()));
                 if (daneBieglego.Rows.Count == 0)
                 {
                     continue;
                 }
-
+                if (daneBieglego == null)
+                {
+                    continue;
+                }
                 iterator++;
                 string Idbieglego = daneBieglego.Rows[0][0].ToString();
                 //tbl_osoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc,   tbl_osoby.data_koncowa,  tbl_osoby.tytul,
@@ -1362,6 +1359,7 @@ namespace wab2018
                 string tytul = daneBieglego.Rows[0][7].ToString();
                 string telefon = daneBieglego.Rows[0][8].ToString();
                 string email = daneBieglego.Rows[0][9].ToString();
+                string Instytucja = daneBieglego.Rows[0][12].ToString();
                 string dataKonca = string.Empty;
                 try
                 {
@@ -1371,15 +1369,16 @@ namespace wab2018
                 { }
 
                 string innerTable = imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca;
+                string instytucja = daneBieglego.Rows[0][3].ToString();
                 string ulica = daneBieglego.Rows[0][3].ToString();
                 string kod = daneBieglego.Rows[0][4].ToString();
                 string miejscowosc = daneBieglego.Rows[0][5].ToString();
                 string tel = daneBieglego.Rows[0][8].ToString();
                 string specjalizacjaOPisSpecjalizacji = daneBieglego.Rows[0][10].ToString();
 
-                string adresTable = ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
+                string adresTable = Instytucja + Environment.NewLine + ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
                 string opisSpecjalizacji = cl.odczytaj_specjalizacje_osobyOpis(Idbieglego, specjalizacje.Trim());
-
+                
                 tabelaGlowna.AddCell(new Paragraph(iterator.ToString(), cl.plFont1));
                 tabelaGlowna.AddCell(new Paragraph(innerTable, cl.plFont1));
                 tabelaGlowna.AddCell(new Paragraph(adresTable, cl.plFont1));
@@ -1483,9 +1482,6 @@ namespace wab2018
 
         public class tabele
         {
-
-         //   private common cm = new common();
-          //  private dataReaders dr = new dataReaders();
 
             public TableCell HeaderCell_(string text, int columns, int rows)
             {
@@ -2832,6 +2828,8 @@ namespace wab2018
                 return builder.ToString();
             }
         }
+
+       
     }
 
     public class DoWydruku

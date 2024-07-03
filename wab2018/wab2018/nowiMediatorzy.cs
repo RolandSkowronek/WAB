@@ -14,7 +14,16 @@ namespace wab2018
     {
         public cm _cm = new cm();
 
+        
 
+            public string controlPanel(string control, ASPxGridView grid)
+        {
+            ASPxPageControl pageControl = grid.FindEditFormTemplateControl("ASPxPageControl1") as ASPxPageControl;
+            Panel Panel1 = pageControl.FindControl(control) as Panel;
+            string pvalue = Panel1.Attributes["class"];
+            var cosik = Panel1.Style;
+            return pvalue;
+        }
         public bool controlCheckBox(string control, ASPxGridView grid)
         {
             ASPxPageControl pageControl = grid.FindEditFormTemplateControl("ASPxPageControl1") as ASPxPageControl;
@@ -33,6 +42,28 @@ namespace wab2018
                 return false;
             }
             return txt.Checked;
+        }
+        public string controlDropDownList(string control, ASPxGridView grid)
+        {
+            ASPxPageControl pageControl = grid.FindEditFormTemplateControl("ASPxPageControl1") as ASPxPageControl;
+            try
+            {
+                DropDownList dropList= pageControl.FindControl(control) as DropDownList;
+                if (dropList.SelectedIndex>-1)
+                
+                {
+                    var aaa= dropList.SelectedValue;
+                    return dropList.SelectedValue;
+                }
+
+            }
+            catch (Exception)
+            {
+
+               
+            }
+            
+            return "zawieszono";
         }
         public string controlText(string control, ASPxGridView grid)
         {

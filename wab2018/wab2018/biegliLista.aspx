@@ -26,46 +26,48 @@
             //alert('aa');
             var x1 = document.getElementById("panelZawieszen");
 
-              if (x1.style.display == "none") {
-                
 
-                  x1.style.display = "block";
+            if (x1.style.display == "none") {
+
+                x1.style.display = "block";
+                document.getElementById('<%= HiddenField.ClientID%>').value = "true";
             }
             else {
-                x1.style.display="none";
+                x1.style.display = "none";
+                document.getElementById('<%= HiddenField.ClientID%>').value = "false";
+
 
             }
-       
-      
+
+
+        }
+
+        function ClearSelection() {
+            TreeList.SetFocusedNodeKey("");
+            UpdateControls(null, "");
+        }
+        function UpdateSelection() {
+            var employeeName = "";
+            var focusedNodeKey = TreeList.GetFocusedNodeKey();
+            if (focusedNodeKey != "")
+                employeeName = TreeList.cpEmployeeNames[focusedNodeKey];
+            UpdateControls(focusedNodeKey, employeeName);
+        }
+        function UpdateControls(key, text) {
+            DropDownEdit.SetText(text);
+            DropDownEdit.SetKeyValue(key);
+            DropDownEdit.HideDropDown();
+            UpdateButtons();
+        }
+        function UpdateButtons() {
+            clearButton.SetEnabled(DropDownEdit.GetText() != "");
+            selectButton.SetEnabled(TreeList.GetFocusedNodeKey() != "");
+        }
+        function OnDropDown() {
+            TreeList.SetFocusedNodeKey(DropDownEdit.GetKeyValue());
+            TreeList.MakeNodeVisible(TreeList.GetFocusedNodeKey());
         }
     </script>
-       <script type="text/javascript">
-           function ClearSelection() {
-               TreeList.SetFocusedNodeKey("");
-               UpdateControls(null, "");
-           }
-           function UpdateSelection() {
-               var employeeName = "";
-               var focusedNodeKey = TreeList.GetFocusedNodeKey();
-               if (focusedNodeKey != "")
-                   employeeName = TreeList.cpEmployeeNames[focusedNodeKey];
-               UpdateControls(focusedNodeKey, employeeName);
-           }
-           function UpdateControls(key, text) {
-               DropDownEdit.SetText(text);
-               DropDownEdit.SetKeyValue(key);
-               DropDownEdit.HideDropDown();
-               UpdateButtons();
-           }
-           function UpdateButtons() {
-               clearButton.SetEnabled(DropDownEdit.GetText() != "");
-               selectButton.SetEnabled(TreeList.GetFocusedNodeKey() != "");
-           }
-           function OnDropDown() {
-               TreeList.SetFocusedNodeKey(DropDownEdit.GetKeyValue());
-               TreeList.MakeNodeVisible(TreeList.GetFocusedNodeKey());
-           }
-       </script>
     <style type="text/css">
         .auto-style3 {
             height: 21px;
@@ -163,7 +165,7 @@
         <table style="width: 100%;">
             <tr>
                 <td class="przesuniecie">
-                    <asp:DropDownList ID="DropDownList2" runat="server" AutoPostBack="True" OnSelectedIndexChanged="ChangeList" Height="40px" Width="200px">
+                    <asp:DropDownList ID="DropDownList2" runat="server" AutoPostBack="True" Height="40px" Width="200px" OnSelectedIndexChanged="ChangeList" >
                         <asp:ListItem Value="2">Czynni</asp:ListItem>
                         <asp:ListItem Value="1">Wszyscy</asp:ListItem>
                         <asp:ListItem Value="3">Archiwalni</asp:ListItem>
@@ -177,16 +179,10 @@
                 <td style="vertical-align: middle;">
                     &nbsp;
                     &nbsp;
-                    <asp:DropDownList ID="DropDownList1" runat="server" AutoPostBack="True" DataSourceID="daneSpecjalizacji" DataTextField="nazwa" DataValueField="id_" Enabled="False" Height="40px" OnSelectedIndexChanged="poSpecjalizacji" ViewStateMode="Enabled" Width="300px">
+                    <asp:DropDownList ID="DropDownList1" runat="server" AutoPostBack="True" Theme="Moderno"  DataSourceID="daneSpecjalizacji" DataTextField="nazwa" DataValueField="id_" Enabled="False" Height="40px" OnSelectedIndexChanged="poSpecjalizacji" ViewStateMode="Enabled" Width="300px">
                     </asp:DropDownList>
 
-
-
-
-
-
-
-           
+          
 
                 </td>
                 <td style="vertical-align: middle;">
@@ -206,17 +202,15 @@
 
                 <dx:GridViewDataTextColumn Caption="Tytuł" FieldName="tytul" ShowInCustomizationForm="True" VisibleIndex="2" Width="10%">
                 </dx:GridViewDataTextColumn>
-                <dx:GridViewDataDateColumn Caption="Powołanie od" FieldName="data_poczatkowa" ShowInCustomizationForm="True" VisibleIndex="5" Width="7%">
-                </dx:GridViewDataDateColumn>
-                <dx:GridViewDataTextColumn Caption="Imie" FieldName="imie" ShowInCustomizationForm="True" VisibleIndex="4" Width="16%">
+                
+                <dx:GridViewDataTextColumn Caption="Imie" FieldName="imie" ShowInCustomizationForm="True" VisibleIndex="4" Width="15%">
                     <PropertiesTextEdit>
                         <ValidationSettings CausesValidation="True" Display="Dynamic">
                             <RequiredField ErrorText="Pole musi być wypełnione" IsRequired="True" />
                         </ValidationSettings>
                     </PropertiesTextEdit>
                 </dx:GridViewDataTextColumn>
-                <dx:GridViewDataDateColumn Caption="Powołanie do" FieldName="data_koncowa" ShowInCustomizationForm="True" VisibleIndex="6" Width="7%">
-                </dx:GridViewDataDateColumn>
+            
                 <dx:GridViewDataTextColumn Caption="Nazwisko" FieldName="nazwisko" ShowInCustomizationForm="True" VisibleIndex="3" Width="16%">
                     <PropertiesTextEdit>
                         <ValidationSettings>
@@ -224,15 +218,21 @@
                         </ValidationSettings>
                     </PropertiesTextEdit>
                 </dx:GridViewDataTextColumn>
-
-                <dx:GridViewDataCheckColumn Caption="Zawieszono" FieldName="czy_zaw" VisibleIndex="7" meta:resourcekey="GridViewDataCheckColumnResource1" ShowInCustomizationForm="True" Width="5%">
-                </dx:GridViewDataCheckColumn>
-                <dx:GridViewDataTextColumn Caption="Specjalizacje" FieldName="specjalizacjeWidok" ShowInCustomizationForm="True" VisibleIndex="13" Width="13%" Name="Specjalizacje">
+                <dx:GridViewDataDateColumn Caption="Powołanie od" FieldName="data_poczatkowa" ShowInCustomizationForm="True" VisibleIndex="5" Width="6%">
+</dx:GridViewDataDateColumn>
+                    <dx:GridViewDataDateColumn Caption="Powołanie do" FieldName="data_koncowa" ShowInCustomizationForm="True" VisibleIndex="6" Width="6%">
+    </dx:GridViewDataDateColumn>
+               
+                <dx:GridViewDataTextColumn Caption="Rodzaj zawieszenia" FieldName="rodzaj_zawieszenia" ShowInCustomizationForm="True" VisibleIndex="8" Width="8%" Name="rodzaj_zawieszenia">
+</dx:GridViewDataTextColumn>
+                <dx:GridViewDataTextColumn Caption="Telefon" FieldName="tel1" ShowInCustomizationForm="True" VisibleIndex="9" Width="8%">
+</dx:GridViewDataTextColumn>
+                
+                <dx:GridViewDataTextColumn Caption="Specjalizacje" FieldName="specjalizacjeWidok" ShowInCustomizationForm="True" PropertiesTextEdit-EncodeHtml="false" VisibleIndex="13" Width="13%" Name="Specjalizacje">
                 </dx:GridViewDataTextColumn>
-                <dx:GridViewDataTextColumn Caption="Uwagi" FieldName="uwagi" ShowInCustomizationForm="True" VisibleIndex="12" Width="13%">
+                <dx:GridViewDataTextColumn Caption="Uwagi" FieldName="uwagi" ShowInCustomizationForm="True" VisibleIndex="12" Width="12%">
                 </dx:GridViewDataTextColumn>
-                <dx:GridViewDataTextColumn Caption="Telefon" FieldName="tel1" ShowInCustomizationForm="True" VisibleIndex="8" Width="8%">
-                </dx:GridViewDataTextColumn>
+                
 
                 <dx:GridViewDataTextColumn FieldName="specjalizacja_opis" Visible="False" VisibleIndex="14" Name="specjalizacja_opis">
                     <CellStyle Wrap="True">
@@ -349,8 +349,8 @@ alert(&quot;open&quot;);
                                                     <td class="col_20"></td>
                                                 </tr>
                                             </table>
-                                            
-                                            <div id="panelZawieszen" style='<%# (Convert.ToInt16(Eval("czy_zaw")) == 0) ?  "display:none;":"display:block;" %>'>
+
+                                            <div id="panelZawieszen" style='<%# (Convert.ToInt16(Eval("czy_zaw")) == 0) ?  "display:none;": "display:block;" %>'>
                                                 <table class="auto-style24">
                                                     <tr>
                                                         <td class="auto-style21">Data zawieszenia od:
@@ -368,6 +368,24 @@ alert(&quot;open&quot;);
                                                         </td>
                                                         <td class="col_20"></td>
                                                     </tr>
+                                                    <tr>
+                                                        <td class="auto-style21">Rodzaj Zawieszenia
+                                                        </td>
+                                                        <td style="width: 50%">
+
+                                                            <div id="powZaw" style="display: block">
+
+                                                                <asp:DropDownList Theme="Moderno"  CssClass="dxeEditArea_Moderno dxeEditAreaSys" style="border:thick" Height="40px" Width="200px" ID="powZawDropDownList" runat="server">
+                                                                    <asp:ListItem>zawieszono</asp:ListItem>
+                                                                    <asp:ListItem>wstrzymano</asp:ListItem>
+                                                                    <asp:ListItem>przerwa w opiniowaniu</asp:ListItem>
+                                                                </asp:DropDownList>
+                                                            </div>
+
+
+                                                        </td>
+                                                    </tr>
+
                                                 </table>
                                             </div>
                                         </dx:ContentControl>
@@ -679,7 +697,8 @@ alert(&quot;open&quot;);
                                     <ContentCollection>
                                         <dx:ContentControl runat="server">
 
-                                            <asp:SqlDataSource ID="specjalizacjeOsob1" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" SelectCommand="SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY View_SpecjalizacjeIOsoby.id_ ASC) AS Row, View_SpecjalizacjeIOsoby.Expr1 as stab, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_ as idSpecjalizacji, View_SpecjalizacjeIOsoby.ident as idOsoby FROM View_SpecjalizacjeIOsoby INNER JOIN glo_specjalizacje ON View_SpecjalizacjeIOsoby.id_ = glo_specjalizacje.id_ WHERE (View_SpecjalizacjeIOsoby.ident = @ident) AND (glo_specjalizacje.grupa < 1000) ORDER BY View_SpecjalizacjeIOsoby.nazwa" UpdateCommand="UPDATE tbl_specjalizacje_osob SET id_osoby = 0 WHERE (id_osoby = 0)">
+                                            <asp:SqlDataSource ID="specjalizacjeOsob1" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" SelectCommand="SELECT DISTINCT ROW_NUMBER() OVER(ORDER BY View_SpecjalizacjeIOsoby.id_ ASC) AS Row, View_SpecjalizacjeIOsoby.Expr1 as stab, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_ as idSpecjalizacji, View_SpecjalizacjeIOsoby.ident as idOsoby FROM View_SpecjalizacjeIOsoby INNER JOIN glo_specjalizacje ON View_SpecjalizacjeIOsoby.id_ = glo_specjalizacje.id_ WHERE (View_SpecjalizacjeIOsoby.ident = @ident) AND (glo_specjalizacje.grupa < 1000) ORDER BY View_SpecjalizacjeIOsoby.nazwa" 
+                                                UpdateCommand="UPDATE tbl_specjalizacje_osob SET id_osoby = 0 WHERE (id_osoby = 0)">
                                                 <SelectParameters>
 
                                                     <asp:SessionParameter Name="ident" SessionField="id_osoby" />
@@ -791,7 +810,11 @@ alert(&quot;open&quot;);
         </dx:ASPxGridView>
 
         <br />
-        <asp:SqlDataSource ID="mediatorzy" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" SelectCommand="SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '&lt;table&gt;', ''), '&lt;br&gt;', ''), '&lt;br/&gt;', '') AS bezTabeli ,'' as jednaSpecjalizacja FROM tbl_osoby WHERE (czyus = 0) AND (typ &lt; 2) AND (data_koncowa &gt;= GETDATE())" DeleteCommand="UPDATE tbl_osoby SET czyus = 1, d_usuniecia = GETDATE(), id_usuwajacego = @id_usuwajacego WHERE (ident = @ident)" UpdateCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel = @pesel, tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, ostatniaAktualizacja = GETDATE(), instytucja = @instytucja WHERE (ident = @ident)" InsertCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel =CAST ( (SELECT CASE WHEN COALESCE (@pesel , '') = '' THEN 0 ELSE @pesel END AS IsNullOrEmpty) as bigint), tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, instytucja = @instytucja WHERE (ident = @ident)">
+        <asp:SqlDataSource ID="mediatorzy" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" 
+            SelectCommand="SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '&lt;table&gt;', ''), '&lt;br&gt;', ''), '&lt;br/&gt;', '') AS bezTabeli ,'' as jednaSpecjalizacja, rodzaj_zawieszenia FROM tbl_osoby WHERE (czyus = 0) AND (typ &lt; 2) AND (data_koncowa &gt;= GETDATE())" 
+            DeleteCommand="UPDATE tbl_osoby SET czyus = 1, d_usuniecia = GETDATE(), id_usuwajacego = @id_usuwajacego WHERE (ident = @ident)" 
+            UpdateCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel = @pesel, tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, ostatniaAktualizacja = GETDATE(), instytucja = @instytucja,rodzaj_zawieszenia=@rodzaj_zawieszenia WHERE (ident = @ident)" 
+            InsertCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel =CAST ( (SELECT CASE WHEN COALESCE (@pesel , '') = '' THEN 0 ELSE @pesel END AS IsNullOrEmpty) as bigint), tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, instytucja = @instytucja, rodzaj_zawieszenia=@rodzaj_zawieszenia  WHERE (ident = @ident)">
             <DeleteParameters>
                 <asp:SessionParameter Name="id_usuwajacego" SessionField="id_usuwajacego" />
                 <asp:SessionParameter Name="ident" SessionField="ident" />
@@ -820,6 +843,7 @@ alert(&quot;open&quot;);
                 <asp:Parameter Name="specjalizacja_opis" />
                 <asp:Parameter Name="dataKoncaZawieszenia" />
                 <asp:Parameter Name="instytucja" />
+                <asp:Parameter Name="rodzaj_zawieszenia" />
                 <asp:SessionParameter Name="ident" SessionField="id_osoby" />
             </InsertParameters>
 
@@ -846,6 +870,7 @@ alert(&quot;open&quot;);
                 <asp:Parameter Name="specjalizacja_opis" />
                 <asp:Parameter Name="dataKoncaZawieszenia" />
                 <asp:Parameter Name="instytucja" />
+                <asp:Parameter Name="rodzaj_zawieszenia" />
                 <asp:Parameter Name="ident" />
             </UpdateParameters>
         </asp:SqlDataSource>
@@ -853,7 +878,13 @@ alert(&quot;open&quot;);
         <dx:ASPxGridViewExporter ID="ASPxGridViewExporter1" runat="server" OnRenderBrick="ASPxGridViewExporter1_RenderBrick">
         </dx:ASPxGridViewExporter>
 
-        <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" SelectCommand="SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa, tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1, tbl_osoby.tel2, tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis, tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_, View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM tbl_osoby RIGHT OUTER JOIN View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ &lt; 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)"></asp:SqlDataSource>
+        <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" 
+            SelectCommand="SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa, tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1, tbl_osoby.tel2, tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis, tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_, View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM tbl_osoby RIGHT OUTER JOIN View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ &lt; 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)"></asp:SqlDataSource>
+
+        
+        <br />
+
+        <asp:HiddenField ID="HiddenField" runat="server" />
 
         <br />
 

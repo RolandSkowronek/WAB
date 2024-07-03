@@ -7,7 +7,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
   <PropertyGroup>
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <_PublishTargetUrl>C:\test\wab</_PublishTargetUrl>
-    <History>True|2024-05-07T17:09:54.6394107Z;True|2024-05-05T16:42:38.5048645+02:00;True|2024-04-25T20:45:29.1050609+02:00;True|2024-04-21T14:14:03.0702346+02:00;True|2024-04-21T10:36:47.1788690+02:00;True|2024-04-18T19:07:57.2521708+02:00;True|2024-04-17T20:09:56.1278768+02:00;True|2024-04-16T18:21:42.7335627+02:00;True|2024-04-07T09:35:32.0433224+02:00;True|2023-10-22T15:03:58.8399389+02:00;True|2023-09-24T20:17:33.5590689+02:00;True|2023-09-22T11:24:48.8034047+02:00;</History>
+    <History>True|2024-06-13T20:08:08.4047422Z;True|2024-06-10T19:16:53.2251579+02:00;True|2024-06-03T21:54:48.7732506+02:00;True|2024-06-02T17:43:11.2262139+02:00;True|2024-06-02T17:22:01.9087015+02:00;True|2024-06-02T15:36:52.3117010+02:00;True|2024-05-28T20:02:02.2113952+02:00;True|2024-05-27T20:48:21.2910391+02:00;True|2024-05-27T20:44:55.0642632+02:00;True|2024-05-26T15:08:49.4150528+02:00;True|2024-05-07T19:09:54.6394107+02:00;True|2024-05-05T16:42:38.5048645+02:00;True|2024-04-25T20:45:29.1050609+02:00;True|2024-04-21T14:14:03.0702346+02:00;True|2024-04-21T10:36:47.1788690+02:00;True|2024-04-18T19:07:57.2521708+02:00;True|2024-04-17T20:09:56.1278768+02:00;True|2024-04-16T18:21:42.7335627+02:00;True|2024-04-07T09:35:32.0433224+02:00;True|2023-10-22T15:03:58.8399389+02:00;True|2023-09-24T20:17:33.5590689+02:00;True|2023-09-22T11:24:48.8034047+02:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -24,7 +24,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/12/2019 14:43:14</publishTime>
     </File>
     <File Include="biegliLista.aspx">
-      <publishTime>05/07/2024 19:00:36</publishTime>
+      <publishTime>06/02/2024 17:42:42</publishTime>
     </File>
     <File Include="biegliListaOLD.aspx">
       <publishTime>09/22/2023 14:05:55</publishTime>
@@ -720,10 +720,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/20/2018 11:51:11</publishTime>
     </File>
     <File Include="bin/wab2018.dll">
-      <publishTime>05/07/2024 20:07:59</publishTime>
+      <publishTime>06/13/2024 22:06:50</publishTime>
     </File>
     <File Include="bin/wab2018.pdb">
-      <publishTime>05/07/2024 20:07:59</publishTime>
+      <publishTime>06/13/2024 22:06:50</publishTime>
     </File>
     <File Include="bin/WebGrease.dll">
       <publishTime>06/17/2018 14:31:59</publishTime>
@@ -882,7 +882,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>10/22/2023 11:54:54</publishTime>
     </File>
     <File Include="PrecompiledApp.config">
-      <publishTime>05/07/2024 20:08:00</publishTime>
+      <publishTime>06/13/2024 22:06:57</publishTime>
     </File>
     <File Include="Scripts/bootstrap.bundle.js">
       <publishTime>06/17/2018 14:28:54</publishTime>
@@ -1023,7 +1023,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>04/28/2024 15:23:06</publishTime>
     </File>
     <File Include="userControls/cos.ascx">
-      <publishTime>04/01/2021 21:38:26</publishTime>
+      <publishTime>05/27/2024 20:48:14</publishTime>
     </File>
     <File Include="userControls/daneStatystyczne.ascx">
       <publishTime>05/06/2020 10:07:58</publishTime>
@@ -1041,7 +1041,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>07/11/2018 04:01:10</publishTime>
     </File>
     <File Include="userControls/skargiOdczyt.ascx">
-      <publishTime>04/01/2021 21:38:27</publishTime>
+      <publishTime>05/19/2024 11:30:33</publishTime>
     </File>
     <File Include="userControls/specjalizacje.ascx">
       <publishTime>04/01/2021 21:38:27</publishTime>
@@ -1065,10 +1065,10 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>09/12/2019 14:47:26</publishTime>
     </File>
     <File Include="userControls/zawieszkiOdczyt.ascx">
-      <publishTime>04/01/2021 21:38:27</publishTime>
+      <publishTime>05/30/2024 19:19:06</publishTime>
     </File>
     <File Include="version.txt">
-      <publishTime>05/07/2024 20:06:28</publishTime>
+      <publishTime>06/13/2024 22:06:29</publishTime>
     </File>
     <File Include="WAB.edmx.diagram">
       <publishTime>07/01/2018 21:20:07</publishTime>
@@ -1089,7 +1089,7 @@ by editing this MSBuild file. In order to learn more about this please visit htt
       <publishTime>06/22/2018 10:10:00</publishTime>
     </File>
     <File Include="wykazSkarg.aspx">
-      <publishTime>04/01/2021 21:36:30</publishTime>
+      <publishTime>06/02/2024 18:34:38</publishTime>
     </File>
     <File Include="zawieszenia.ascx">
       <publishTime>04/01/2021 21:38:25</publishTime>

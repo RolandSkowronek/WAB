@@ -309,6 +309,31 @@ namespace wab2018
             }
             return result;
         }// end of dodaj_specjalizacje
+        public string PobierzOpisSpecjalizacji(string UserId, string IdSpecjalizacji)
+        {
+            string result = string.Empty;
+            SqlCommand sqlCmd;
+            SqlConnection conn = new SqlConnection(con_str);
+            using (sqlCmd = new SqlCommand())
+            {
+                sqlCmd = new SqlCommand("SELECT distinct [opis]  FROM [wab].[dbo].[tbl_specjalizacje_osob] where id_osoby=@idOsoby and id_specjalizacji=@idSpecjalizacji", conn);
+                try
+                {
+                    conn.Open();
+                    sqlCmd.Parameters.AddWithValue("@idOsoby", UserId);
+                    sqlCmd.Parameters.AddWithValue("@idSpecjalizacji", IdSpecjalizacji);
+
+                    result = sqlCmd.ExecuteScalar().ToString();
+                    conn.Close();
+                }
+                catch (Exception ex)
+                {
+                    conn.Close();
+                    return ex.Message;
+                }
+            }
+            return result;
+        }// end of dodaj_specjalizacje
 
         public string odczytaj_specjalizacje_osobyOpis(string id,string nazwa)
         {
@@ -370,27 +395,7 @@ namespace wab2018
             { }
             return "lista";
         }// end of dodaj_specjalizacje
-
-        public DataTable odczytaj_specjalizacje_osoby_lista(string id, string sesja)
-        {
-            SqlConnection conn = new SqlConnection(con_str);
-            DataSet lista = new DataSet();
-            try
-            {
-                conn.Open();
-                SqlDataAdapter daMenu = new SqlDataAdapter();
-                daMenu.SelectCommand = new SqlCommand("SELECT     id_specjalizacji FROM         tbl_specjalizacje_osob WHERE     (id_osoby = @id_) ORDER BY id_", conn);
-                daMenu.SelectCommand.Parameters.AddWithValue("@id_", id);
-                daMenu.Fill(lista);
-                // zapis
-
-                conn.Close();
-            }
-            catch (Exception ec)
-            { }
-            return lista.Tables[0];
-        }// end of dodaj_specjalizacje
-
+      
         public DataTable odczytaj_specjalizacje_tymczasowe_osoby_lista(string id, string sesja)
         {
             SqlConnection conn = new SqlConnection(con_str);
@@ -440,45 +445,7 @@ namespace wab2018
             { }
             return dT;
         }// end of wyciagnijBieglychZSpecjalizacja
-
-        public DataTable wyciagnijBieglychZSpecjalizacja(string idSpecjalizacji, DataTable daneBieglych)
-        {
-            DataTable dT = new DataTable();
-            SqlConnection conn = new SqlConnection(con_str);
-            string querryExtention = " dbo.tbl_osoby.ident =0 ";
-            string kwerenda = string.Empty;
-            foreach (DataRow dRow in daneBieglych.Rows)
-            {
-                int ident = 0;
-                try
-                {
-                    ident = int.Parse(dRow[0].ToString());
-                    querryExtention = querryExtention + "  or  dbo.tbl_osoby.ident= " + ident.ToString() + " ";
-                }
-                catch
-                {
-                }
-            }
-            kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1 FROM  dbo.tbl_specjalizacje_osob LEFT OUTER JOIN                          dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE   " + querryExtention;
-            try
-            {
-                DataSet lista = new DataSet();
-                conn.Open();
-                SqlDataAdapter daMenu = new SqlDataAdapter();
-                daMenu.SelectCommand = new SqlCommand(kwerenda, conn);
-                //  daMenu.SelectCommand.Parameters.AddWithValue("@ident", ident);
-                daMenu.Fill(lista);
-                // zapis
-
-                dT = lista.Tables[0];
-                conn.Close();
-            }
-            catch (Exception ec)
-            { }
-
-            return dT;
-        }// end of wyciagnijBieglychZSpecjalizacja
-
+      
         public DataTable wyciagnijBieglegoZSpecjalizacja(int idBieglego)
         {
             DataTable dT = new DataTable();
@@ -486,7 +453,7 @@ namespace wab2018
             string querryExtention = " dbo.tbl_osoby.ident =" + idBieglego.ToString();
             string kwerenda = string.Empty;
 
-            kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1, dbo.tbl_osoby.email ,dbo.tbl_osoby.specjalizacja_opis FROM  dbo.tbl_specjalizacje_osob LEFT OUTER JOIN dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE   " + querryExtention;
+            kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1, dbo.tbl_osoby.email ,dbo.tbl_osoby.specjalizacja_opis  ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.instytucja FROM  dbo.tbl_specjalizacje_osob LEFT OUTER JOIN dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE   " + querryExtention;
             try
             {
                 DataSet lista = new DataSet();
@@ -500,12 +467,12 @@ namespace wab2018
                 dT = lista.Tables[0];
                 conn.Close();
             }
-            catch (Exception ec)
+            catch 
             { }
 
             return dT;
         }// end of wyciagnijBieglychZSpecjalizacja
-
+        /*
         public DataTable wyciagnijMediatorowZSpecjalizacja(string idSpecjalizacji, bool archiwum)
         {
             DataTable dT = new DataTable();
@@ -514,11 +481,11 @@ namespace wab2018
             string kwerenda = string.Empty;
             if (archiwum)
             {
-                kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1 FROM  dbo.tbl_specjalizacje_osob LEFT OUTER JOIN                          dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE    (dbo.tbl_osoby.typ=2) and (dbo.tbl_osoby.czyus=0) and   dbo.tbl_osoby.data_koncowa<getdate() and  (dbo.tbl_specjalizacje_osob.id_specjalizacji = @idSpecjalizacji)";
+                kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1 FROM  dbo.tbl_specjalizacje_osob ,dbo.tbl_osoby.instytucja  LEFT OUTER JOIN                          dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE    (dbo.tbl_osoby.typ=2) and (dbo.tbl_osoby.czyus=0) and   dbo.tbl_osoby.data_koncowa<getdate() and  (dbo.tbl_specjalizacje_osob.id_specjalizacji = @idSpecjalizacji)";
             }
             else
             {
-                kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1 FROM  dbo.tbl_specjalizacje_osob LEFT OUTER JOIN                          dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE  (dbo.tbl_osoby.typ=2) and  (dbo.tbl_osoby.czyus=0) and   dbo.tbl_osoby.data_koncowa>getdate() and  (dbo.tbl_specjalizacje_osob.id_specjalizacji = @idSpecjalizacji)";
+                kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1 FROM  dbo.tbl_specjalizacje_osob ,dbo.tbl_osoby.instytucja  LEFT OUTER JOIN                          dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE  (dbo.tbl_osoby.typ=2) and  (dbo.tbl_osoby.czyus=0) and   dbo.tbl_osoby.data_koncowa>getdate() and  (dbo.tbl_specjalizacje_osob.id_specjalizacji = @idSpecjalizacji)";
             }
             try
             {
@@ -556,7 +523,7 @@ namespace wab2018
             { }
             return dT;
         }// end of dodaj_specjalizacje
-
+        */
         public DataTable odczytaj_specjalizacje_osoby2(string id)
         {
             DataTable dT = new DataTable();
@@ -583,72 +550,7 @@ namespace wab2018
             return int.Parse(Common.runQuerryWithResult("SELECT count(*) FROM View_pozycje_specjalizacji where   (id_osoby = " + idBieglego.ToString() + ") and id_specjalizacji =" + idSpecjalizacji.ToString(), Common.con_str));
         }
 
-        //SELECT count(*) FROM View_pozycje_specjalizacji where   (id_osoby = 10050) and id_specjalizacji =8
-        
-        public DataTable odczytaj_najnowsze_powolanie(string id)
-        {
-            DataTable dT = new DataTable();
-            SqlConnection conn = new SqlConnection(con_str);
-            DataSet lista = new DataSet();
-            try
-            {
-                conn.Open();
-                SqlDataAdapter daMenu = new SqlDataAdapter();
-                daMenu.SelectCommand = new SqlCommand("SELECT max ( [ident]) ,[dataPoczZaw],[dataKoncaZaw] FROM [tbl_Zawieszenia]   where idBieglego=@id  group by ident, [dataPoczZaw] ,[dataKoncaZaw]", conn);
-                daMenu.SelectCommand.Parameters.AddWithValue("@id", id);
-                daMenu.Fill(lista);
-                // zapis
-                dT = lista.Tables[0];
-                conn.Close();
-            }
-            catch (Exception ec)
-            { }
-            return dT;
-        }// end of dodaj_specjalizacje
-
-        public string zmien_zawieszenie(string id, DateTime poczatek, DateTime koniec)
-        {
-            string result = string.Empty;
-            var conn = new SqlConnection(con_str);
-            SqlCommand sqlCmd;
-            using (sqlCmd = new SqlCommand())
-            {
-                sqlCmd = new SqlCommand("DELETE FROM            tbl_Zawieszenia where idbieglego=@id_", conn);
-                try
-                {
-                    conn.Open();
-                    sqlCmd.Parameters.AddWithValue("@id_", id);
-                    sqlCmd.ExecuteScalar();
-                    conn.Close();
-                }
-                catch (Exception ex)
-                {
-                    conn.Close();
-                    return ex.Message;
-                }
-            }
-
-            using (sqlCmd = new SqlCommand())
-            {
-                sqlCmd = new SqlCommand("insert into tbl_Zawieszenia  ( idBieglego, dataPoczZaw, dataKoncaZaw) values  (@idBieglego, @dataPoczZaw, @dataKoncaZaw)", conn);
-                try
-                {
-                    conn.Open();
-                    sqlCmd.Parameters.AddWithValue("@idBieglego", id);
-                    sqlCmd.Parameters.AddWithValue("@dataPoczZaw", poczatek);
-                    sqlCmd.Parameters.AddWithValue("@dataKoncaZaw", koniec);
-                    sqlCmd.ExecuteScalar();
-                    conn.Close();
-                }
-                catch (Exception ex)
-                {
-                    conn.Close();
-                    return ex.Message;
-                }
-            }
-            return "0";
-        }// end of zmien_zawieszenie
-
+       
         public string PobierzDane(string klucz)
         {
             log.Info("Start funkcji PobierzDane");
@@ -657,26 +559,7 @@ namespace wab2018
             parameters.Rows.Add("@klucz", klucz);
             return Common.runQuerryWithResult("SELECT        distinct  wartosc FROM            tbl_konfiguracja where klucz = @klucz", con_str, parameters);
         }
-
-        public void zmien_zawieszenie(string id)
-        {
-            var conn = new SqlConnection(con_str);
-            SqlCommand sqlCmd;
-            using (sqlCmd = new SqlCommand())
-            {
-                sqlCmd = new SqlCommand("DELETE FROM tbl_Zawieszenia where idbieglego=@id_", conn);
-                try
-                {
-                    conn.Open();
-                    sqlCmd.Parameters.AddWithValue("@id_", id);
-                    sqlCmd.ExecuteScalar();
-                    conn.Close();
-                }
-                catch (Exception ex)
-                { }
-            }
-        }// end of zmien_zawieszenie
-
+     
         public string modyfikuj_osobe(string id_, int id_modyfikatora, string imie, string nazwisko, string ulica, string kod_poczt, string miejscowosc, DateTime data_poczatkowa, DateTime data_koncowa, string tytul, string pesel, string email, string uwagi, int czy_zaw, string adr_kor, string kod_kor, string miejsc_kor, string tel1, string tel2, DateTime dataPoczatkuZawieszenia, DateTime dataKoncaZawieszenia, string specjalizacja_opis, int typ)
         {
             var conn = new SqlConnection(con_str);
@@ -805,7 +688,7 @@ namespace wab2018
 
         public string update_specjalizacjiWidoku(string id_)
         {
-            //ZZZZZZZZZZZZZZZZZZZZZZZZZZ
+           
 
             SqlConnection conn = new SqlConnection(con_str);
 
