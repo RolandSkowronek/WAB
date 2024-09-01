@@ -28,6 +28,9 @@ using System.Web.Services.Description;
 using System.Web.UI.WebControls;
 using OfficeOpenXml.Style;
 using System.Text;
+using NPOI.SS.Formula;
+using DevExpress.Utils.OAuth;
+using OfficeOpenXml.Table;
 
 
 
@@ -168,13 +171,15 @@ namespace wab2018
                 e.NewValues["d_zawieszenia"] = nm.controlTextDate("txDataPoczatkuZawieszenia", grid);
                 e.NewValues["dataKoncaZawieszenia"] = nm.controlTextDate("txDataKoncaZawieszenia", grid);
                 e.NewValues["rodzaj_zawieszenia"] = nm.controlDropDownList("powZawDropDownList", grid);
-                
+                e.NewValues["Informacje_o_wstrzymaniu"] = nm.controlText("txInformacjeowstrzymaniu", grid);
+
             }
             else
             {
                 e.NewValues["d_zawieszenia"] = DateTime.Now;
                 e.NewValues["dataKoncaZawieszenia"] = DateTime.Now;
-                e.NewValues["rodzaj_zawieszenia"]="";
+                e.NewValues["rodzaj_zawieszenia "]="";
+                e.NewValues["Informacje_o_wstrzymaniu"] = "";
             }
             if (nm.controlText("txPESEL", grid) == null)
             {
@@ -335,14 +340,14 @@ namespace wab2018
                             string specjalizacja = DropDownList1.SelectedValue;
                             nazwaSpeckajlizacji = NazwaSpecjalizacji(specjalizacja);
 
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ, rodzaj_zawieszenia  FROM tbl_osoby WHERE  (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ, rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE  (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
                             kwerendabazowa = kwerendabazowa + "  and (select count(*) from tbl_specjalizacje_osob where id_specjalizacji =" + specjalizacja.Trim() + " and id_osoby=tbl_osoby.ident )=1 ";
 
                             Session["kwerenda"] = kwerendabazowa;
                         }
                         else
                         {
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia  FROM tbl_osoby WHERE (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
                         }
 
                     }
@@ -355,7 +360,7 @@ namespace wab2018
                             string specjalizacja = DropDownList1.SelectedValue;
                             nazwaSpeckajlizacji = NazwaSpecjalizacji(specjalizacja);
 
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia  FROM tbl_osoby WHERE (czyus = 0) AND (typ >= 2) AND (data_koncowa <= GETDATE()) and typ =1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (czyus = 0) AND (typ >= 2) AND (data_koncowa <= GETDATE()) and typ =1 ";
                             kwerendabazowa = kwerendabazowa + "  and (select count(*) from tbl_specjalizacje_osob where id_specjalizacji =" + specjalizacja.Trim() + " and id_osoby=tbl_osoby.ident )=1 ";
 
                             Session["kwerenda"] = kwerendabazowa;
@@ -363,7 +368,7 @@ namespace wab2018
                         }
                         else
                         {
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ ,rodzaj_zawieszenia FROM tbl_osoby WHERE (data_koncowa <= GETDATE()) and typ = 1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu FROM tbl_osoby WHERE (data_koncowa <= GETDATE()) and typ = 1 ";
                         }
 
                     }
@@ -375,7 +380,7 @@ namespace wab2018
                             string specjalizacja = DropDownList1.SelectedValue;
                             nazwaSpeckajlizacji = NazwaSpecjalizacji(specjalizacja);
 
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia  FROM tbl_osoby WHERE (czyus  = 0) And (typ = 1) ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (czyus  = 0) And (typ = 1) ";
                             kwerendabazowa = kwerendabazowa + "  and (select count(*) from tbl_specjalizacje_osob where id_specjalizacji =" + specjalizacja.Trim() + " and id_osoby=tbl_osoby.ident )=1 ";
 
                             Session["kwerenda"] = kwerendabazowa;
@@ -383,7 +388,7 @@ namespace wab2018
                         }
                         else
                         {
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia  FROM tbl_osoby WHERE (typ = 1) ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (typ = 1) ";
                         }
                     }
                     break;
@@ -413,13 +418,20 @@ namespace wab2018
             ustawKwerendeOdczytu();
         }
 
-
-        private string GetSpec(string imie, string nazwisko)
+        private string getId(string imie, string nazwisko)
         {
             DataTable parametry = Cm.makeParameterTable();
             parametry.Rows.Add("@imie", imie);
             parametry.Rows.Add("@nazwisko", nazwisko);
-          var ident = Cm.runQuerryWithResult("SELECT ident   FROM [tbl_osoby] where imie=@imie and nazwisko=@nazwisko", Cm.con_str, parametry);
+            string ident = Cm.runQuerryWithResult("SELECT ident   FROM [tbl_osoby] where imie=@imie and nazwisko=@nazwisko", Cm.con_str, parametry);
+
+            return ident;
+
+        }
+        private string GetSpec(string ident)
+        {
+            DataTable parametry = Cm.makeParameterTable();
+            
             parametry = Cm.makeParameterTable();
             parametry.Rows.Add("@ident", ident);
             
@@ -438,12 +450,27 @@ namespace wab2018
             }
             return SpeckiTxt;
         }
+        private string getSpecjalnosc(string ident)
+        {
+            DataTable parametry = Cm.makeParameterTable();
+
+            parametry = Cm.makeParameterTable();
+            parametry.Rows.Add("@ident", ident);
+            string SpeckiTxt = string.Empty;
+            SpeckiTxt = Cm.runQuerryWithResult("SELECT DISTINCT specjalizacja_opis FROM tbl_osoby where ident=@ident", Cm.con_str, parametry);
+            return SpeckiTxt;
+        }
 
         protected void _print(object sender, EventArgs e)
 
         {
+            IList<DoWydruku> TaListaDoDalszejObrobki =  ListaDoDalszejObrobki();
+            robRaportDoWydruku(TaListaDoDalszejObrobki);
 
-
+         
+        }
+        private IList<DoWydruku> ListaDoDalszejObrobki()
+        {
             DataTable dt = new DataTable();
             foreach (GridViewColumn column in grid.VisibleColumns)
             {
@@ -466,31 +493,34 @@ namespace wab2018
                 dt.Rows.Add(row);
             }
             IList<DoWydruku> doWydrukuLista = new List<DoWydruku>();
-            
+
             DoWydruku doWydruku = new DoWydruku();
             foreach (DataRow item in dt.Rows)
             {
-                
+
                 var zaw = item[5].ToString();
                 if (zaw == "0") { zaw = ""; } else { zaw = "zawieszono"; };
-              
+                string Ident = getId(item[2].ToString(), item[1].ToString());
                 doWydruku = new DoWydruku();
                 doWydruku.tytul = item[0].ToString();
                 doWydruku.nazwisko = item[1].ToString();
                 doWydruku.imie = item[2].ToString();
-                doWydruku.powolanieOd = item[3].ToString(); 
-                doWydruku.zawieszono = zaw;  
+                doWydruku.powolanieOd = item[3].ToString();
+                doWydruku.powolanieDo = item[4].ToString();
+                doWydruku.zawieszono = zaw;
                 doWydruku.telefon = item[6].ToString();
                 doWydruku.uwagi = item[7].ToString();
-                doWydruku.spejalizacje = GetSpec(item[3].ToString(), item[1].ToString());
+                doWydruku.Kadencja = item[4].ToString();
+                doWydruku.spejalizacje = GetSpec(Ident);
+                string cos = getSpecjalnosc(Ident);
+                doWydruku.spejalnosc = getSpecjalnosc(Ident);
                 doWydrukuLista.Add(doWydruku);
+                
             }
 
-            robRaportDoWydruku(doWydrukuLista);
+            return doWydrukuLista;
 
-         
         }
-
         protected void _excell(object sender, EventArgs e)
 
         {
@@ -531,7 +561,7 @@ namespace wab2018
                 DataRow dr = excelTable.NewRow();
                 var zaw = item[5].ToString();
                 if (zaw == "0") { zaw = ""; } else { zaw = "zawieszono"; };
-
+                string Ident = getId(item[2].ToString(), item[1].ToString());
                 dr[0] = item[0].ToString();//tytul
                 dr[1] = item[1].ToString();//imie
                 dr[2] = item[2].ToString();//nazwisko
@@ -548,7 +578,7 @@ namespace wab2018
                 dr[4] = zaw;// item[5].ToString();
                 dr[5] = item[6].ToString();//uwagi
                 dr[6] = item[7].ToString();//uwagi
-                dr[7] = GetSpec(item[2].ToString(), item[1].ToString());
+                dr[7] = GetSpec(Ident);
                 excelTable.Rows.Add(dr);
             }
 
@@ -585,7 +615,7 @@ namespace wab2018
                     this.Response.WriteFile(fNewFile.FullName);
                     this.Response.End();
                 }
-                catch (Exception ex)
+                catch 
                 {
 
                 }
@@ -682,6 +712,104 @@ namespace wab2018
                 robRaportWszystkichSpecjalizacjiNowy(getDataFromGridview());
             }
         }
+        private PdfPTable NaglowekZestawienia()
+        {
+
+            PdfPTable fitst = new PdfPTable(1);
+            fitst.DefaultCell.Border = Rectangle.NO_BORDER;
+            PdfPCell cell = new PdfPCell(new Paragraph(" ", cl.plFontBIG));
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.Border = Rectangle.NO_BORDER;
+            cell.FixedHeight = 100;
+            fitst.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("LISTA", cl.plFontBIG));
+
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+
+            cell.Border = Rectangle.NO_BORDER;
+            fitst.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("BIEGŁYCH SĄDOWYCH", cl.plFontBIG));
+
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.Border = Rectangle.NO_BORDER;
+            cell.FixedHeight = 100;
+            fitst.AddCell(cell);
+
+            cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.Border = Rectangle.NO_BORDER;
+            cell.FixedHeight = 100;
+            fitst.AddCell(cell);
+
+            cell = new PdfPCell(new Paragraph("SĄDU OKRĘGOWEGO", cl.plFontBIG));
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.FixedHeight = 100;
+            cell.Border = Rectangle.NO_BORDER;
+            fitst.AddCell(cell);
+            string napisDodatkowy = "";
+            switch (DropDownList2.SelectedIndex)
+            {
+
+                case 0: { napisDodatkowy = "Wszystcy biegli"; } break;
+                case 1: { napisDodatkowy = "Biegli czynni"; } break;
+                case 2: { napisDodatkowy = "Biegli nie czynni"; } break;
+
+            }
+
+            cell = new PdfPCell(new Paragraph(napisDodatkowy, cl.plFont1));
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.FixedHeight = 100;
+            cell.Border = Rectangle.NO_BORDER;
+            fitst.AddCell(cell);
+
+            return fitst;
+
+
+
+        }
+
+
+        private PdfPTable tabelaWyliczenia(DataTable IlosciBieglychPoSpecjalizacji)
+        {
+
+            int strona = 1;
+            PdfPTable tabelaWyliczenia = new PdfPTable(3);
+            int[] tblWidthX = { 10, 70, 20 };
+
+            PdfPCell cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
+            cell.FixedHeight = 100;
+            cell.Border = Rectangle.NO_BORDER;
+            tabelaWyliczenia.AddCell(cell);
+            tabelaWyliczenia.AddCell(cell);
+            tabelaWyliczenia.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("L.p.", cl.plFontBIG));
+            cell.Border = Rectangle.NO_BORDER;
+            tabelaWyliczenia.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("Nazwa specjalizacji", cl.plFontBIG));
+            cell.Border = Rectangle.NO_BORDER;
+            tabelaWyliczenia.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("Strona", cl.plFontBIG));
+            cell.Border = Rectangle.NO_BORDER;
+            tabelaWyliczenia.AddCell(cell);
+            int iterator = 1;
+            foreach (DataRow dRwyliczenie in IlosciBieglychPoSpecjalizacji.Rows)
+            {
+                cell = new PdfPCell(new Paragraph(iterator.ToString(), cl.plFont2));
+                cell.Border = Rectangle.NO_BORDER;
+                tabelaWyliczenia.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(dRwyliczenie["NazwaSpecjalizacji"].ToString().Trim(), cl.plFont2));
+                cell.Border = Rectangle.NO_BORDER;
+                tabelaWyliczenia.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(strona.ToString(), cl.plFont2));
+                cell.Border = Rectangle.NO_BORDER;
+                tabelaWyliczenia.AddCell(cell);
+                strona = strona + int.Parse(dRwyliczenie["iloscStron"].ToString().Trim());
+                iterator++;
+            }
+
+            return tabelaWyliczenia;
+
+        }
 
         private void robRaportWszystkichSpecjalizacjiNowy(DataTable dataTable)
         {
@@ -737,90 +865,14 @@ namespace wab2018
             pdfDoc.AddTitle("zestawienie_Specjalizacji");
             pdfDoc.AddCreationDate();
 
-            PdfPTable fitst = new PdfPTable(1);
-            fitst.DefaultCell.Border = Rectangle.NO_BORDER;
-            PdfPCell cell = new PdfPCell(new Paragraph(" ", cl.plFontBIG));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.Border = Rectangle.NO_BORDER;
-            cell.FixedHeight = 100;
-            fitst.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("LISTA", cl.plFontBIG));
+            // koniec naglowka
 
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-
-            cell.Border = Rectangle.NO_BORDER;
-            fitst.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("BIEGŁYCH SĄDOWYCH", cl.plFontBIG));
-
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.Border = Rectangle.NO_BORDER;
-            cell.FixedHeight = 100;
-            fitst.AddCell(cell);
-
-            cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.Border = Rectangle.NO_BORDER;
-            cell.FixedHeight = 100;
-            fitst.AddCell(cell);
-
-            cell = new PdfPCell(new Paragraph("SĄDU OKRĘGOWEGO", cl.plFontBIG));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.FixedHeight = 100;
-            cell.Border = Rectangle.NO_BORDER;
-            fitst.AddCell(cell);
-            string napisDodatkowy = "";
-            switch (DropDownList2.SelectedIndex)
-            {
-
-                case 0: { napisDodatkowy = "Wszystcy biegli"; } break;
-                case 1: { napisDodatkowy = "Biegli czynni"; } break;
-                case 2: { napisDodatkowy = "Biegli nie czynni"; } break;
-
-            }
-
-            cell = new PdfPCell(new Paragraph(napisDodatkowy, cl.plFont1));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.FixedHeight = 100;
-            cell.Border = Rectangle.NO_BORDER;
-            fitst.AddCell(cell);
-            pdfDoc.Add(fitst);
+            pdfDoc.Add(NaglowekZestawienia());
             pdfDoc.NewPage();
 
             //podliczenie
-            int strona = 1;
-            PdfPTable tabelaWyliczenia = new PdfPTable(3);
-            int[] tblWidthX = { 10, 70, 20 };
-            cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
-            cell.FixedHeight = 100;
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            tabelaWyliczenia.AddCell(cell);
-            tabelaWyliczenia.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("L.p.", cl.plFontBIG));
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("Nazwa specjalizacji", cl.plFontBIG));
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("Strona", cl.plFontBIG));
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            int iterator = 1;
-            foreach (DataRow dRwyliczenie in IlosciBieglychPoSpecjalizacji.Rows)
-            {
-                cell = new PdfPCell(new Paragraph(iterator.ToString(), cl.plFont2));
-                cell.Border = Rectangle.NO_BORDER;
-                tabelaWyliczenia.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(dRwyliczenie["NazwaSpecjalizacji"].ToString().Trim(), cl.plFont2));
-                cell.Border = Rectangle.NO_BORDER;
-                tabelaWyliczenia.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(strona.ToString(), cl.plFont2));
-                cell.Border = Rectangle.NO_BORDER;
-                tabelaWyliczenia.AddCell(cell);
-                strona = strona + int.Parse(dRwyliczenie["iloscStron"].ToString().Trim());
-                iterator++;
-            }
-            pdfDoc.Add(tabelaWyliczenia);
+           
+            pdfDoc.Add(tabelaWyliczenia(IlosciBieglychPoSpecjalizacji));
             pdfDoc.NewPage();
             //end of  po specjalizacjach
             // koniec podliczenia
@@ -951,7 +1003,7 @@ namespace wab2018
 
             pdfDoc.AddTitle("zestawienie_Specjalizacji");
             pdfDoc.AddCreationDate();
-
+            /*
             PdfPTable fitst = new PdfPTable(1);
             fitst.DefaultCell.Border = Rectangle.NO_BORDER;
             PdfPCell cell = new PdfPCell(new Paragraph(" ", cl.plFontBIG));
@@ -1003,8 +1055,9 @@ namespace wab2018
 
             pdfDoc.Add(fitst);
             pdfDoc.NewPage();
-
+            */
             //podliczenie
+            /*
             DataTable specjalizacjeWyliczenie = new DataTable();
             specjalizacjeWyliczenie.Columns.Add("nr", typeof(string));
             specjalizacjeWyliczenie.Columns.Add("str", typeof(string));
@@ -1059,23 +1112,24 @@ namespace wab2018
                 iterator++;
             }
             pdfDoc.Add(tabelaWyliczenia);
+            */
             pdfDoc.NewPage();
-          
-              //==============================================================
 
+            //==============================================================
+            int iloscStron = 0;
             if (listaBieglych.Rows.Count > 0)
-            {
+            {/*
                 DataRow wyliczenie = specjalizacjeWyliczenie.NewRow();
                 wyliczenie[0] = nazwaSpecjalizacji;
                 wyliczenie[1] = iloscStron.ToString();
 
-                specjalizacjeWyliczenie.Rows.Add(wyliczenie);
-                tabelaGlowna = new PdfPTable(4);
+                specjalizacjeWyliczenie.Rows.Add(wyliczenie);*/
+                PdfPTable tabelaGlowna = new PdfPTable(4);
                 tabelaGlowna = generujCzescRaportuOne(listaBieglych, nazwaSpecjalizacji);
                 pdfDoc.Add(new Paragraph(" "));
                 pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji, cl.plFont3)));
                 pdfDoc.Add(new Paragraph(" "));
-
+                int[] tblWidth = { 8, 30, 30, 32 };
                 if (tabelaGlowna.Rows.Count > 15)
                 {
                     //   int counter = 0;
@@ -1158,7 +1212,7 @@ namespace wab2018
             return identy;
         }
 
-      
+      /*
         protected DataRow wierszZBieglym(DataRow biegliRow, DataTable Biegli)
         {
             DataRow bieglyZatwierdzony = Biegli.NewRow();
@@ -1246,7 +1300,7 @@ namespace wab2018
 
             return tabelaGlowna;
         }
-
+        */
         protected PdfPTable generujCzescRaportuNew(DataTable biegli, string idSpecjalizacji)
         {
 
@@ -1291,8 +1345,8 @@ namespace wab2018
                 }
                 catch
                 { }
-
-                string innerTable = imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca;
+                string InformacjeOwstrzymaniu = getInformacjeOwstrzymaniu(Idbieglego);
+                string innerTable = imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca + Environment.NewLine + InformacjeOwstrzymaniu;
                 string ulica = biegly["ulica"].ToString();
                 string kod = biegly["kod_poczt"].ToString();
                 string miejscowosc = biegly["miejscowosc"].ToString();
@@ -1318,6 +1372,10 @@ namespace wab2018
             return tabelaGlowna;
         }
 
+        private string getInformacjeOwstrzymaniu(string idbieglego)
+        {
+             return   cl.wyciagnijInformacjeOWsrzymaniuBieglego(idbieglego);
+        }
 
         protected PdfPTable generujCzescRaportuOne(DataTable biegli, string specjalizacje)
         {
@@ -1360,6 +1418,7 @@ namespace wab2018
                 string telefon = daneBieglego.Rows[0][8].ToString();
                 string email = daneBieglego.Rows[0][9].ToString();
                 string Instytucja = daneBieglego.Rows[0][12].ToString();
+                string informacjaOwstrzymaniu = daneBieglego.Rows[0][13].ToString();
                 string dataKonca = string.Empty;
                 try
                 {
@@ -1368,7 +1427,7 @@ namespace wab2018
                 catch
                 { }
 
-                string innerTable = imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca;
+                string innerTable = imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca + Environment.NewLine;
                 string instytucja = daneBieglego.Rows[0][3].ToString();
                 string ulica = daneBieglego.Rows[0][3].ToString();
                 string kod = daneBieglego.Rows[0][4].ToString();
@@ -1380,6 +1439,7 @@ namespace wab2018
                 string opisSpecjalizacji = cl.odczytaj_specjalizacje_osobyOpis(Idbieglego, specjalizacje.Trim());
                 
                 tabelaGlowna.AddCell(new Paragraph(iterator.ToString(), cl.plFont1));
+                
                 tabelaGlowna.AddCell(new Paragraph(innerTable, cl.plFont1));
                 tabelaGlowna.AddCell(new Paragraph(adresTable, cl.plFont1));
                 tabelaGlowna.AddCell(new Paragraph(specjalizacje.ToUpper() +" "+ opisSpecjalizacji+" ; "+ specjalizacjaOPisSpecjalizacji, cl.plFont1));
@@ -1444,22 +1504,17 @@ namespace wab2018
             ustawKwerendeOdczytu();
         }
 
-       
-
         protected void grid_HtmlDataCellPrepared(object sender, ASPxGridViewTableDataCellEventArgs e)
         {
             
             if (e.DataColumn.FieldName != "typ")
                 return;
-          
 
         }
 
         protected void grid_HtmlRowPrepared(object sender, ASPxGridViewTableRowEventArgs e)
         {
             if (e.RowType != GridViewRowType.Data) return;
-
-
          
             try
             {
@@ -1476,9 +1531,6 @@ namespace wab2018
             
             
         }
-
-
-      
 
         public class tabele
         {
@@ -1502,7 +1554,7 @@ namespace wab2018
                 HeaderGridRow.VerticalAlign = VerticalAlign.Top;
                 return HeaderGridRow;
             }
-
+            /*
             public DataTable makeSumRow(DataTable table, int ilKolumn)
             {
                 DataTable wyjsciowa = new DataTable();
@@ -1738,7 +1790,8 @@ namespace wab2018
                     
                 } // end of try
             }
-
+            */
+            /*
             public DataTable tabellaLiczbowa(DataTable tabelaWejsciowa)
             {
                 if (tabelaWejsciowa == null)
@@ -1786,7 +1839,7 @@ namespace wab2018
                                     dana = dana.Replace(".", ",");
                                     liczba = double.Parse(dana);
                                 }
-                                catch (Exception ex)
+                                catch 
                                 {
                                     
                                 }
@@ -1804,12 +1857,12 @@ namespace wab2018
 
                 return tabelaRobocza;
             }
-
+            
             public void makeSumRow(DataTable table, GridViewRowEventArgs e, string tenplik)
             {
                 makeSumRow(table, e);
             }
-
+            
             public void makeSumRow(DataTable table, GridViewRowEventArgs e)
             {
                 makeSumRow(table, e, 1, "Ogółem");
@@ -2125,6 +2178,7 @@ namespace wab2018
                 HeaderCell.Text = text;
                 return HeaderCell;
             }
+*/
             public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno)
             {
                 return tworzArkuszwExcle(Arkusz, daneDoArkusza, iloscKolumn, przesunięcieX, przesuniecieY, lp, suma, stanowisko, funkcja, nazwiskoiImeieOsobno, false);
@@ -2162,7 +2216,7 @@ namespace wab2018
                                 Arkusz.Cells[wiersz, przesunięcieX + dodatek + i+1].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
                                 Arkusz.Cells[wiersz, i + przesunięcieX + dodatek+1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
                             }
-                            catch (Exception ex)
+                            catch
                             {
                                 
                             }
@@ -2174,14 +2228,14 @@ namespace wab2018
 
                   
                 }
-                catch (Exception ex)
+                catch 
                 {
                     
                 }
 
                 return Arkusz;
             }
-
+/*
             public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno, bool obramowanieOststniej, bool pustaKolumnaZaNazwiskiem)
             {
                 if (daneDoArkusza == null)
@@ -2543,7 +2597,7 @@ namespace wab2018
 
                 return Arkusz;
             }
-
+            
              public ExcelWorksheet tworznaglowki(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscwierszy, int przesunięcieX, int przesuniecieY, string tekstNadTabela)
             {
                 komorkaExcela(Arkusz, 1, 2, tekstNadTabela, false, 0, 0);
@@ -2566,7 +2620,8 @@ namespace wab2018
             {
                 komorkaExcela(Arkusz, wiersz, kolumna, tekst, zlaczenie, rowSpan, colSpan, false, false);
             }
-
+*/
+/*
             public void komorkaExcela(ExcelWorksheet Arkusz, int wiersz, int kolumna, string tekst, bool zlaczenie, int rowSpan, int colSpan, bool wycentrowanie, bool wyszarzenie)
             {
                 if (zlaczenie)
@@ -2602,8 +2657,8 @@ namespace wab2018
                     //cm.log.Error("komorkaExcela merge " + ex.Message);
                 }
 
-            }
-
+            }*/
+            /*
             public DataTable naglowek(string plik, int numerArkusza)
             {
                 if (string.IsNullOrEmpty(plik.Trim()))
@@ -2706,7 +2761,7 @@ namespace wab2018
 
                 return dT_01;
             }
-
+            */
             protected IList<int> okreslKomorke(int wierszPoczatkowy, int kolumnaPoczatkowa, int iloscWierszy, int iloscKolumn, ExcelWorksheet worksheet)
             {
                 IList<int> wyniki = new List<int>();
@@ -2768,7 +2823,7 @@ namespace wab2018
                 wyniki.Add(colSpan);
                 return wyniki;
             }
-
+            /*
             public DataTable SchematTabelinaglowkowej()
             {
                 DataTable tabelaNaglowkowa = new DataTable();
@@ -2827,9 +2882,171 @@ namespace wab2018
                 builder.AppendLine("</td>");
                 return builder.ToString();
             }
+            */
         }
 
-       
+        protected void twórzZestawienieBIP(object sender, EventArgs e)
+        {
+
+            // do likwidacji
+            IList<DoWydruku> TaListaDoDalszejObrobki = ListaDoDalszejObrobki();
+            iTextSharp.text.Document pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 0f);
+
+
+            string path = Server.MapPath(@"~//pdf"); //Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments );
+            string fileName = path + "//Zestawienie_Specjalizacji_BIP_" + DateTime.Now.ToString().Replace(":", "-") + ".pdf";
+            PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fileName, FileMode.Create));
+
+            pdfDoc.SetPageSize(iTextSharp.text.PageSize.A4.Rotate());
+            pdfDoc.Open();
+
+            pdfDoc.AddTitle("zestawienie_Specjalizacji");
+            pdfDoc.AddCreationDate();
+
+            PdfPTable table = new PdfPTable(1);
+            
+            PdfPCell headerCell = new PdfPCell(new Phrase("Lista biegłych na dzień " + DateTime.Now.ToShortDateString(), cl.plFont3));
+
+            headerCell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            headerCell.Border = Rectangle.NO_BORDER;
+            
+            table.AddCell(headerCell);
+            pdfDoc.Add(table);
+            table = new PdfPTable(7);
+
+            table.AddCell(new PdfPCell(new Phrase("Specjalność", cl.plFont2)));
+            table.AddCell(new PdfPCell(new Phrase("Specjalizacje", cl.plFont2)));
+            table.AddCell(new PdfPCell(new Phrase("Nazwisko", cl.plFont2)));
+            table.AddCell(new PdfPCell(new Phrase("Imię", cl.plFont2)));
+            table.AddCell(new PdfPCell(new Phrase("Tytuł", cl.plFont2)));
+            table.AddCell(new PdfPCell(new Phrase("Kadencja", cl.plFont2)));
+            table.AddCell(new PdfPCell(new Phrase("Uwagi", cl.plFont2)));
+
+            pdfDoc.Add(table);
+
+            foreach (var item in TaListaDoDalszejObrobki)
+            {
+                table = new PdfPTable(7);
+                table.AddCell(new PdfPCell(new Phrase(item.spejalnosc.ToString(), cl.plFont2)));
+                table.AddCell(new PdfPCell(new Phrase(item.spejalizacje.ToString(), cl.plFont2)));
+                table.AddCell(new PdfPCell(new Phrase(item.nazwisko.ToString(), cl.plFont2)));
+                
+                table.AddCell(new PdfPCell(new Phrase(item.imie.ToString(), cl.plFont2)));
+                table.AddCell(new PdfPCell(new Phrase(item.tytul.ToString(), cl.plFont2)));
+                string data = item.powolanieDo.ToString();
+                try
+                {
+                    data = data.Substring(0, 10);
+                }
+                catch
+                {
+                }
+
+                table.AddCell(new PdfPCell(new Phrase(data, cl.plFont2)));
+                table.AddCell(new PdfPCell(new Phrase(item.uwagi.ToString(), cl.plFont2)));
+             
+
+
+                pdfDoc.Add(table);
+            }
+
+            pdfDoc.Close();
+
+
+
+            WebClient client = new WebClient();
+            Byte[] buffer = client.DownloadData(fileName);
+            if (buffer != null)
+            {
+                Response.ContentType = "application/pdf";
+                Response.AddHeader("content-lenght", buffer.Length.ToString());
+                Response.BinaryWrite(buffer);
+            }
+
+            ProcessStartInfo startInfo = new ProcessStartInfo(fileName);
+            Process.Start(startInfo);
+
+
+        }
+
+        protected void tworzZestawienieBIPexcel(object sender, EventArgs e)
+        {
+
+            IList<DoWydruku> TaListaDoDalszejObrobki = ListaDoDalszejObrobki();
+
+            DataTable excelTableBIP = new DataTable();
+            excelTableBIP.Columns.Add("specjalność", typeof(string));
+            excelTableBIP.Columns.Add("specjalizacje", typeof(string));
+            excelTableBIP.Columns.Add("nazwisko", typeof(string));
+            excelTableBIP.Columns.Add("imie", typeof(string));
+            excelTableBIP.Columns.Add("tytuł", typeof(string));
+            excelTableBIP.Columns.Add("kadencka", typeof(string));
+            excelTableBIP.Columns.Add("uwagi", typeof(string));
+
+            foreach (var item in TaListaDoDalszejObrobki)
+            {
+                DataRow dr = excelTableBIP.NewRow();
+                
+               // string Ident = getId(item.imie, item.nazwisko.ToString());
+                dr[0] = item.spejalnosc.ToString();//spejalnosc
+                dr[1] = item.spejalizacje.ToString();//spejalizacje
+                dr[2] = item.nazwisko.ToString();//nazwisko
+                dr[3] = item.imie.ToString();//imie
+                dr[4] = item.tytul.ToString();//tytul
+
+                try
+                {
+                    dr[5] = item.powolanieDo.ToString().Substring(0, 11);//powolanie
+                }
+                catch
+                {
+                    dr[53] = "";
+
+                }
+
+              
+                dr[6] = item.uwagi.ToString();//uwagi
+             
+                excelTableBIP.Rows.Add(dr);
+            }
+
+
+            string tenPlikNazwa = "ZestawienieBIP";
+            string path = Server.MapPath("Templates") + "\\" + tenPlikNazwa + ".xlsx";
+            FileInfo existingFile = new FileInfo(path);
+            if (!existingFile.Exists)
+            {
+                return;
+            }
+            string download = Server.MapPath("Templates") + @"\" + tenPlikNazwa + "";
+
+            FileInfo fNewFile = new FileInfo(download + "_.xlsx");
+
+            using (ExcelPackage MyExcel = new ExcelPackage(existingFile))
+            {
+                ExcelWorksheet MyWorksheet1 = MyExcel.Workbook.Worksheets[1];
+
+
+
+                MyWorksheet1 = tb.tworzArkuszwExcle(MyExcel.Workbook.Worksheets[1], excelTableBIP, 8, 0, 2, true, true, false, false, false);
+
+                try
+                {
+                    MyExcel.SaveAs(fNewFile);
+
+                    this.Response.Clear();
+                    this.Response.ContentType = "application/vnd.ms-excel";
+                    this.Response.AddHeader("Content-Disposition", "attachment;filename=" + fNewFile.Name);
+                    this.Response.WriteFile(fNewFile.FullName);
+                    this.Response.End();
+                }
+                catch
+                {
+
+                }
+            }//end of using
+
+        }
     }
 
     public class DoWydruku
@@ -2839,7 +3056,7 @@ namespace wab2018
         public string nazwisko { get; set; }
         public string imie { get; set; }
         public string powolanieOd { get; set; }
-
+        public string powolanieDo { get; set; }
         public string zawieszono { get; set; }
 
         public string telefon { get; set; }
@@ -2847,5 +3064,7 @@ namespace wab2018
         public string uwagi { get; set; }
         public string spejalizacje { get; set; }
 
+        public string spejalnosc { get; set; }
+        public string Kadencja { get; set; }
     }
 }

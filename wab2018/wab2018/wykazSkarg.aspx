@@ -55,7 +55,7 @@
                    </dx:GridViewCommandColumn>
                    <dx:GridViewDataDateColumn Caption="Dat zakreślenia" FieldName="dataZakreslenia" VisibleIndex="10" Width="7%">
                    </dx:GridViewDataDateColumn>
-                   <dx:GridViewDataTextColumn Caption="Rodzaj załatwienia" FieldName="RodzajZałatwienia" ShowInCustomizationForm="True" VisibleIndex="11" Width="9%">
+                   <dx:GridViewDataTextColumn Caption="Rodzaj załatwienia" FieldName="RodzajZalatwienia" ShowInCustomizationForm="True" VisibleIndex="11" Width="9%">
                        <Settings AutoFilterCondition="Contains" />
                    </dx:GridViewDataTextColumn>
                    <dx:GridViewDataTextColumn Caption="Składajacy skargę" FieldName="SkladajacySkarge" ShowInCustomizationForm="True" VisibleIndex="12" Width="10%">
@@ -72,7 +72,7 @@
 
 
            <asp:SqlDataSource ID="skargiSQL" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" 
-            SelectCommand="SELECT CAST(RTRIM(tbl_skargi.numer) AS bigint) AS numer, tbl_skargi.rok, tbl_skargi.dataWplywu, tbl_skargi.dataPisma, tbl_skargi.Sygnatura, tbl_osoby.imie + ' ' + RTRIM(tbl_osoby.nazwisko) AS Biegly, tbl_skargi.wizytator,  tbl_skargi.RodzajZałatwienia, tbl_skargi.zakreslono AS zakreslono, tbl_osoby.ident, tbl_skargi.uwagi, tbl_skargi.ident AS idSkargi, tbl_skargi.dataZakreslenia, tbl_skargi.RodzajZałatwienia,   tbl_skargi.SkladajacySkarge FROM tbl_skargi LEFT OUTER JOIN tbl_osoby ON tbl_skargi.idBieglego = tbl_osoby.ident WHERE (tbl_skargi.czyUs = 0) ORDER BY tbl_skargi.rok, numer" UpdateCommand="UPDATE tbl_skargi SET numer = @numer, rok = @rok, dataWplywu = @dataWplywu, dataPisma = @dataPisma, Sygnatura = @Sygnatura, wizytator = @wizytator, zakreslono = @zakreslono, dataZakreslenia = @dataZakreslenia, uwagi = @uwagi WHERE (ident = @idSkargi)" 
+            SelectCommand="SELECT CAST(RTRIM(tbl_skargi.numer) AS bigint) AS numer, tbl_skargi.rok, tbl_skargi.dataWplywu, tbl_skargi.dataPisma, tbl_skargi.Sygnatura, tbl_osoby.imie + ' ' + RTRIM(tbl_osoby.nazwisko) AS Biegly, tbl_skargi.wizytator,  tbl_skargi.RodzajZalatwienia, tbl_skargi.zakreslono AS zakreslono, tbl_osoby.ident, tbl_skargi.uwagi, tbl_skargi.ident AS idSkargi, tbl_skargi.dataZakreslenia, tbl_skargi.RodzajZalatwienia,   tbl_skargi.SkladajacySkarge FROM tbl_skargi LEFT OUTER JOIN tbl_osoby ON tbl_skargi.idBieglego = tbl_osoby.ident WHERE (tbl_skargi.czyUs = 0) ORDER BY tbl_skargi.rok, numer" UpdateCommand="UPDATE tbl_skargi SET numer = @numer, rok = @rok, dataWplywu = @dataWplywu, dataPisma = @dataPisma, Sygnatura = @Sygnatura, wizytator = @wizytator, zakreslono = @zakreslono, dataZakreslenia = @dataZakreslenia, uwagi = @uwagi WHERE (ident = @idSkargi)" 
             
             ProviderName="<%$ ConnectionStrings:wap.ProviderName %>">
             <DeleteParameters>

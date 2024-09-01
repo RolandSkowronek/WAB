@@ -316,7 +316,7 @@ namespace wab2018
             SqlConnection conn = new SqlConnection(con_str);
             using (sqlCmd = new SqlCommand())
             {
-                sqlCmd = new SqlCommand("SELECT distinct [opis]  FROM [wab].[dbo].[tbl_specjalizacje_osob] where id_osoby=@idOsoby and id_specjalizacji=@idSpecjalizacji", conn);
+                sqlCmd = new SqlCommand("SELECT distinct [opis]  FROM [tbl_specjalizacje_osob] where id_osoby=@idOsoby and id_specjalizacji=@idSpecjalizacji", conn);
                 try
                 {
                     conn.Open();
@@ -391,7 +391,7 @@ namespace wab2018
                 { }
                 conn.Close();
             }
-            catch (Exception ec)
+            catch 
             { }
             return "lista";
         }// end of dodaj_specjalizacje
@@ -411,7 +411,7 @@ namespace wab2018
 
                 conn.Close();
             }
-            catch (Exception ec)
+            catch 
             { }
             return lista.Tables[0];
         }// end of dodaj_specjalizacje
@@ -441,11 +441,27 @@ namespace wab2018
                 dT = lista.Tables[0];
                 conn.Close();
             }
-            catch (Exception ec)
+            catch 
             { }
             return dT;
         }// end of wyciagnijBieglychZSpecjalizacja
       
+        public string wyciagnijInformacjeOWsrzymaniuBieglego(string idBieglego)
+        {
+           
+           string info=string.Empty;
+            
+            string kwerenda = string.Empty;
+
+            kwerenda = "SELECT DISTINCT [Informacje_o_wstrzymaniu] FROM  [tbl_osoby] WHERE  [ident]=@ident " ;
+            DataTable parameters = Common.makeParameterTable();
+            parameters.Rows.Add("@ident", idBieglego);
+            info =  Common.runQuerryWithResult(kwerenda, con_str, parameters);
+      
+
+            return info;
+        }// end of wyciagnijInformacjeOWsrzymaniuBieglego
+
         public DataTable wyciagnijBieglegoZSpecjalizacja(int idBieglego)
         {
             DataTable dT = new DataTable();
@@ -453,7 +469,7 @@ namespace wab2018
             string querryExtention = " dbo.tbl_osoby.ident =" + idBieglego.ToString();
             string kwerenda = string.Empty;
 
-            kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1, dbo.tbl_osoby.email ,dbo.tbl_osoby.specjalizacja_opis  ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.instytucja FROM  dbo.tbl_specjalizacje_osob LEFT OUTER JOIN dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE   " + querryExtention;
+            kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1, dbo.tbl_osoby.email ,dbo.tbl_osoby.specjalizacja_opis  ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.Informacje_o_wstrzymaniu FROM  dbo.tbl_specjalizacje_osob LEFT OUTER JOIN dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE   " + querryExtention;
             try
             {
                 DataSet lista = new DataSet();
@@ -467,7 +483,7 @@ namespace wab2018
                 dT = lista.Tables[0];
                 conn.Close();
             }
-            catch 
+            catch
             { }
 
             return dT;
@@ -704,7 +720,7 @@ namespace wab2018
                 daMenu.Fill(specjalizacje);
                 conn.Close();
             }
-            catch (Exception ec)
+            catch 
             {
             }
 
@@ -1157,7 +1173,7 @@ namespace wab2018
                         sqlCmd.ExecuteScalar();
                         conn.Close();
                     }
-                    catch (Exception ex)
+                    catch
                     {
                         conn.Close();
                     }
@@ -1306,7 +1322,7 @@ namespace wab2018
             }
             return result;
         }// end of czy zawieszony
-
+        /*
         public bool modyfikujPowolanie(int idBieglego, int idPowolania, DateTime poczatek, DateTime koniec, int UserId)
         {
             var conn = new SqlConnection(con_str);
@@ -1388,7 +1404,7 @@ namespace wab2018
 
                     conn.Close();
                 }
-                catch (Exception ex)
+                catch 
                 {
                     return 0;
                 }
@@ -1414,14 +1430,15 @@ namespace wab2018
                     result = odp;
                     conn.Close();
                 }
-                catch (Exception ex)
+                catch 
                 {
                     return "";
                 }
             }
             return result;
         }// end of data zawieszenia
-
+        */
+        /*
         public string data_Konca_zawieszenia(int id)
         {
             var conn = new SqlConnection(con_str);
@@ -1447,7 +1464,7 @@ namespace wab2018
             }
             return result;
         }// end of data zawieszenia
-
+        */
         public DataSet loguj(string user_, string haslo)
         {
             SqlConnection conn = new SqlConnection(con_str);
@@ -1470,7 +1487,7 @@ namespace wab2018
             }
             return dsLogin;
         } // end of loguj
-
+        /*
         public DataTable tabelaStatystycznaNew(string querry)
         {
             SqlConnection conn = new SqlConnection(con_str);
@@ -1492,8 +1509,8 @@ namespace wab2018
                 return null;
             }
             return dT;
-        } // end of loguj
-
+        } // 
+        */
         public DataTable tabelaStatystyczna(string querry, string idBieglego)
         {
             SqlConnection conn = new SqlConnection(con_str);
@@ -1510,7 +1527,7 @@ namespace wab2018
                 conn.Close();
                 dT = dsLogin.Tables[0];
             }
-            catch (Exception ec)
+            catch 
             {
                 return null;
             }
@@ -1566,7 +1583,7 @@ namespace wab2018
             }
             return result;
         } // end of loguj
-
+        /*
         public DataTable statystykiBiegłego(int id_)
         {
             DataTable result = null;
@@ -1588,7 +1605,7 @@ namespace wab2018
             }
             return result;
         } // end of staystykiBiegłego
-
+        */
         public int podajIdOsobyPoNumerzeSkargi(int idSkargi)
         {
             log.Info("Start funkcji podajIdOsobyPoNumerzeSkargi");
@@ -1620,7 +1637,7 @@ namespace wab2018
 
             return string.Empty;
         }
-
+        /*
         public DataTable Specjalizacje()
         {
             DataTable result = null;
@@ -1662,6 +1679,6 @@ namespace wab2018
             {
             }
             return result;
-        } // end of Specjalizacje
+        } // end of Specjalizacje*/
     }
 }

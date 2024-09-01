@@ -189,6 +189,7 @@
                <asp:LinkButton ID="LinkButton14" runat="server" CssClass="button_" OnClick="twórzZestawienie" meta:resourcekey="LinkButton14Resource1" Text="Zestawienie"></asp:LinkButton>
                     <asp:LinkButton ID="LinkButton6" runat="server" Text="Excel" CssClass="button_" OnClick="_excell" meta:resourcekey="LinkButton6Resource1"></asp:LinkButton>
                     <asp:Button ID="Button1" runat="server" OnClick="_print" Text="Drukuj" CssClass="button_" />
+               <asp:LinkButton ID="LinkButton15" runat="server" CssClass="button_" OnClick="tworzZestawienieBIPexcel" meta:resourcekey="LinkButton14Resource1" Text="Zestawienie BIP" Width="124px"></asp:LinkButton>
                 </td>
             </tr>
         </table>
@@ -225,7 +226,9 @@
                
                 <dx:GridViewDataTextColumn Caption="Rodzaj zawieszenia" FieldName="rodzaj_zawieszenia" ShowInCustomizationForm="True" VisibleIndex="8" Width="8%" Name="rodzaj_zawieszenia">
 </dx:GridViewDataTextColumn>
-                <dx:GridViewDataTextColumn Caption="Telefon" FieldName="tel1" ShowInCustomizationForm="True" VisibleIndex="9" Width="8%">
+                                <dx:GridViewDataTextColumn Caption="Informacje o wstrzymaniu" FieldName="Informacje_o_wstrzymaniu" ShowInCustomizationForm="True" VisibleIndex="9" Width="8%" Name="rodzaj_zawieszenia">
+</dx:GridViewDataTextColumn>
+                <dx:GridViewDataTextColumn Caption="Telefon" FieldName="tel1" ShowInCustomizationForm="True" VisibleIndex="10" Width="8%">
 </dx:GridViewDataTextColumn>
                 
                 <dx:GridViewDataTextColumn Caption="Specjalizacje" FieldName="specjalizacjeWidok" ShowInCustomizationForm="True" PropertiesTextEdit-EncodeHtml="false" VisibleIndex="13" Width="13%" Name="Specjalizacje">
@@ -376,10 +379,24 @@ alert(&quot;open&quot;);
                                                             <div id="powZaw" style="display: block">
 
                                                                 <asp:DropDownList Theme="Moderno"  CssClass="dxeEditArea_Moderno dxeEditAreaSys" style="border:thick" Height="40px" Width="200px" ID="powZawDropDownList" runat="server">
-                                                                    <asp:ListItem>zawieszono</asp:ListItem>
+                                                                   
                                                                     <asp:ListItem>wstrzymano</asp:ListItem>
                                                                     <asp:ListItem>przerwa w opiniowaniu</asp:ListItem>
+                                                                     <asp:ListItem>zawieszono</asp:ListItem>
                                                                 </asp:DropDownList>
+                                                            </div>
+
+
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="auto-style21">Informacje o wstrzymaniu
+                                                        </td>
+                                                        <td style="width: 50%">
+
+                                                            <div id="Informacje_o_wstrzymaniu" style="display: block">
+
+                                                               <dx:ASPxTextBox ID="txInformacjeowstrzymaniu" runat="server" Width="150px" Theme="Moderno" Text='<%# Eval("Informacje_o_wstrzymaniu")%>' > </dx:ASPxTextBox>
                                                             </div>
 
 
@@ -811,10 +828,10 @@ alert(&quot;open&quot;);
 
         <br />
         <asp:SqlDataSource ID="mediatorzy" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" 
-            SelectCommand="SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '&lt;table&gt;', ''), '&lt;br&gt;', ''), '&lt;br/&gt;', '') AS bezTabeli ,'' as jednaSpecjalizacja, rodzaj_zawieszenia FROM tbl_osoby WHERE (czyus = 0) AND (typ &lt; 2) AND (data_koncowa &gt;= GETDATE())" 
+            SelectCommand="SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '&lt;table&gt;', ''), '&lt;br&gt;', ''), '&lt;br/&gt;', '') AS bezTabeli ,'' as jednaSpecjalizacja, rodzaj_zawieszenia, Informacje_o_wstrzymaniu FROM tbl_osoby WHERE (czyus = 0) AND (typ &lt; 2) AND (data_koncowa &gt;= GETDATE())" 
             DeleteCommand="UPDATE tbl_osoby SET czyus = 1, d_usuniecia = GETDATE(), id_usuwajacego = @id_usuwajacego WHERE (ident = @ident)" 
-            UpdateCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel = @pesel, tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, ostatniaAktualizacja = GETDATE(), instytucja = @instytucja,rodzaj_zawieszenia=@rodzaj_zawieszenia WHERE (ident = @ident)" 
-            InsertCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel =CAST ( (SELECT CASE WHEN COALESCE (@pesel , '') = '' THEN 0 ELSE @pesel END AS IsNullOrEmpty) as bigint), tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, instytucja = @instytucja, rodzaj_zawieszenia=@rodzaj_zawieszenia  WHERE (ident = @ident)">
+            UpdateCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel = @pesel, tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, ostatniaAktualizacja = GETDATE(), instytucja = @instytucja,rodzaj_zawieszenia=@rodzaj_zawieszenia, Informacje_o_wstrzymaniu=@Informacje_o_wstrzymaniu WHERE (ident = @ident)" 
+            InsertCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel =CAST ( (SELECT CASE WHEN COALESCE (@pesel , '') = '' THEN 0 ELSE @pesel END AS IsNullOrEmpty) as bigint), tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, instytucja = @instytucja, rodzaj_zawieszenia=@rodzaj_zawieszenia, Informacje_o_wstrzymaniu=@Informacje_o_wstrzymaniu  WHERE (ident = @ident)">
             <DeleteParameters>
                 <asp:SessionParameter Name="id_usuwajacego" SessionField="id_usuwajacego" />
                 <asp:SessionParameter Name="ident" SessionField="ident" />
@@ -844,6 +861,8 @@ alert(&quot;open&quot;);
                 <asp:Parameter Name="dataKoncaZawieszenia" />
                 <asp:Parameter Name="instytucja" />
                 <asp:Parameter Name="rodzaj_zawieszenia" />
+                <asp:Parameter Name="Informacje_o_wstrzymaniu" />
+                
                 <asp:SessionParameter Name="ident" SessionField="id_osoby" />
             </InsertParameters>
 
@@ -871,6 +890,7 @@ alert(&quot;open&quot;);
                 <asp:Parameter Name="dataKoncaZawieszenia" />
                 <asp:Parameter Name="instytucja" />
                 <asp:Parameter Name="rodzaj_zawieszenia" />
+                <asp:Parameter Name="Informacje_o_wstrzymaniu" />
                 <asp:Parameter Name="ident" />
             </UpdateParameters>
         </asp:SqlDataSource>

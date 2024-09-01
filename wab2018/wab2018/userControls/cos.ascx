@@ -8,9 +8,9 @@
 
 <asp:SqlDataSource ID="ListaPowolanMediatorow" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" 
     DeleteCommand="UPDATE tbl_skargi SET czyus =1 WHERE (ident = @ident)" 
-    InsertCommand="INSERT INTO tbl_skargi(numer, rok, dataWplywu, dataPisma, Sygnatura, wizytator, zakreslono, dataZakreslenia, uwagi, czyus, RodzajZałatwienia, SkladajacySkarge, idBieglego ) VALUES (@numer, @rok, @dataWplywu, @dataPisma, @Sygnatura, @wizytator, @zakreslono, @dataZakreslenia, @uwagi, 0, @RodzajZałatwienia, @SkladajacySkarge, @idBieglego)" 
-    SelectCommand="SELECT ident, CAST(RTRIM(numer) AS bigint) AS numer, rok, dataWplywu, dataPisma, Sygnatura, wizytator, COALESCE (zakreslono, NULL, '0') AS zakreslono, dataZakreslenia, uwagi, czyus, idBieglego, RodzajZałatwienia, SkladajacySkarge FROM tbl_skargi WHERE (czyus = 0) AND (idBieglego = @id_bieglego) ORDER BY rok, numer" 
-    UpdateCommand="UPDATE tbl_skargi SET numer = @numer, rok = @rok, dataWplywu = @dataWplywu, dataPisma = @dataPisma, Sygnatura = @Sygnatura, wizytator = @wizytator, zakreslono = @zakreslono, dataZakreslenia = @dataZakreslenia, uwagi = @uwagi, RodzajZałatwienia=@RodzajZałatwienia, SkladajacySkarge = @SkladajacySkarge  WHERE (ident = @ident)">
+    InsertCommand="INSERT INTO tbl_skargi(numer, rok, dataWplywu, dataPisma, Sygnatura, wizytator, zakreslono, dataZakreslenia, uwagi, czyus, RodzajZalatwienia, SkladajacySkarge, idBieglego, informacjeozawieszeniu) VALUES (@numer, @rok, @dataWplywu, @dataPisma, @Sygnatura, @wizytator, @zakreslono, @dataZakreslenia, @uwagi, 0, @RodzajZalatwienia, @SkladajacySkarge, @idBieglego, @informacjeozawieszeniu)" 
+    SelectCommand="SELECT ident, CAST(RTRIM(numer) AS bigint) AS numer, rok, dataWplywu, dataPisma, Sygnatura, wizytator, COALESCE (zakreslono, NULL, '0') AS zakreslono, dataZakreslenia, uwagi, czyus, idBieglego, RodzajZalatwienia, SkladajacySkarge,informacjeozawieszeniu FROM tbl_skargi WHERE (czyus = 0) AND (idBieglego = @id_bieglego) ORDER BY rok, numer" 
+    UpdateCommand="UPDATE tbl_skargi SET numer = @numer, rok = @rok, dataWplywu = @dataWplywu, dataPisma = @dataPisma, Sygnatura = @Sygnatura, wizytator = @wizytator, zakreslono = @zakreslono, dataZakreslenia = @dataZakreslenia, uwagi = @uwagi, RodzajZalatwienia=@RodzajZalatwienia, SkladajacySkarge = @SkladajacySkarge , informacjeozawieszeniu=@informacjeozawieszeniu WHERE (ident = @ident)">
     <DeleteParameters>
         <asp:Parameter Name="ident" />
 
@@ -26,7 +26,8 @@
         <asp:Parameter Name="zakreslono" />
         <asp:Parameter Name="dataZakreslenia" />
         <asp:Parameter Name="uwagi" />
-        <asp:Parameter Name="RodzajZałatwienia" />
+        <asp:Parameter Name="RodzajZalatwienia" />
+        <asp:Parameter Name="informacjeozawieszeniu" />
         <asp:Parameter Name="SkladajacySkarge" />
         <asp:Parameter Name="idBieglego" />
         
@@ -44,7 +45,8 @@
         <asp:Parameter Name="zakreslono" />
         <asp:Parameter Name="dataZakreslenia" />
         <asp:Parameter Name="uwagi" />
-        <asp:Parameter Name="RodzajZałatwienia" />
+        <asp:Parameter Name="RodzajZalatwienia" />
+        <asp:Parameter Name="informacjeozawieszeniu" />
         <asp:Parameter Name="SkladajacySkarge" />
         <asp:Parameter Name="ident" />
     </UpdateParameters>
@@ -80,11 +82,14 @@
         </dx:GridViewDataDateColumn>
         <dx:GridViewDataCheckColumn FieldName="zakreslono" Name="Zakreślono" Caption="Zakreślono" VisibleIndex="8" Width="50px">
         </dx:GridViewDataCheckColumn>
-          <dx:GridViewDataTextColumn Caption="Rodzaj załatwienia" FieldName="RodzajZałatwienia" VisibleIndex="10" Width="300px">
+          <dx:GridViewDataTextColumn Caption="Rodzaj załatwienia" FieldName="RodzajZalatwienia" VisibleIndex="10" Width="300px">
   </dx:GridViewDataTextColumn>
           <dx:GridViewDataTextColumn Caption="Skaładający skargę" FieldName="SkladajacySkarge" VisibleIndex="11" Width="300px">
   </dx:GridViewDataTextColumn>
-        <dx:GridViewDataTextColumn Caption="Uwagi" FieldName="uwagi" VisibleIndex="12" Width="300px">
+                <dx:GridViewDataTextColumn Caption="Informacje o zawieszeniu" FieldName="informacjeozawieszeniu" VisibleIndex="12" Width="300px">
+</dx:GridViewDataTextColumn>
+         
+        <dx:GridViewDataTextColumn Caption="Uwagi" FieldName="uwagi" VisibleIndex="13" Width="300px">
         </dx:GridViewDataTextColumn>
     </Columns>
      <SettingsEditing Mode="Inline">

@@ -243,7 +243,7 @@ namespace wab2018
                     int idOsoby = int.Parse((string)Session["id_osoby"]);
                     nm.usunTworzonaOsobe(idOsoby);
                 }
-                catch (Exception ex)
+                catch 
                 {
                     
                 }

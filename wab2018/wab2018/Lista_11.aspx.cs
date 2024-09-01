@@ -68,7 +68,7 @@ namespace wab2018
                     Panel11.Visible = true;
                 }
             }
-            catch (Exception ex)
+            catch 
             {
 
 
@@ -112,7 +112,7 @@ namespace wab2018
 
         protected void ustaw_baze()
         {
-            int bit = 0;
+           
             string kwerenda = string.Empty;
 
 
@@ -232,7 +232,7 @@ namespace wab2018
                     Panel2.Visible = false;
                 }
             }
-            catch (Exception ex)
+            catch 
             {
                 popup.ShowOnPageLoad = false;
             }
@@ -365,7 +365,7 @@ namespace wab2018
                     zapamietajDaneBieglego();
                     GridView25.DataBind();
                 }
-                catch (Exception ex)
+                catch 
                 { }
 
             }
@@ -656,6 +656,7 @@ namespace wab2018
             // zapis
             int err = 0;
             int er2 = 0;
+
             try
             {
                 czyZaw = DropDownList4.SelectedValue.ToString();
@@ -672,7 +673,7 @@ namespace wab2018
                 {
                     dat_1 = ASPxDateEdit3.Date;
                 }
-                catch (Exception ex)
+                catch 
                 {
                     //  dat_1= poczPowolania.Date;
                 }
@@ -681,7 +682,7 @@ namespace wab2018
                 {
                     dat_2 = DateTime.Parse(powolanieDo.Trim());
                 }
-                catch (Exception ex)
+                catch 
                 {
                     dat_2 = ASPxDateEdit4.Date;
                 }
@@ -901,11 +902,8 @@ namespace wab2018
                 ASPxGridView7.DataBind();
 
             }
-            catch (Exception ex)
-            {
-
-
-            }
+            catch 
+            {}
 
             ASPxGridView7.DataBind();
 
@@ -989,10 +987,8 @@ namespace wab2018
                 Panel11.Visible = true;
                 ASPxGridView7.DataBind();
             }
-            catch (Exception ex)
+            catch 
             {
-
-
             }
 
 
@@ -1001,7 +997,6 @@ namespace wab2018
 
         protected void ASPxPageControl1_ActiveTabChanged(object source, TabControlEventArgs e)
         {
-
         }
 
         protected void pokazDateZ(object sender, EventArgs e)
@@ -1558,9 +1553,8 @@ namespace wab2018
                 {
                     dataKonca = DateTime.Parse(biegly[6].ToString()).ToShortDateString();
                 }
-                catch (Exception ex)
+                catch 
                 {
-
 
                 }
 

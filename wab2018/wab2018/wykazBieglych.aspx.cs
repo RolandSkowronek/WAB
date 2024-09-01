@@ -96,10 +96,8 @@ namespace wab2018
                     Panel11.Visible = true;
                 }
             }
-            catch (Exception ex)
+            catch 
             {
-
-
             }
             SqlDataSkargi2.DataBind();
             ListaSkarg.DataBind();
@@ -119,9 +117,8 @@ namespace wab2018
          //           DevExpress.Data.Filtering.CriteriaOperator.Parse("nazwisko=" + nazwisko.Trim()).ToString()
                      
                 }
-                catch (Exception)
+                catch
                 {
-
                 }
                 if (idBieglego > 0)
                 {
@@ -411,7 +408,7 @@ namespace wab2018
                 {
                     dat_1 = ASPxDateEdit3.Date;
                 }
-                catch (Exception ex)
+                catch 
                 {
                     //  dat_1= poczPowolania.Date;
                 }
@@ -420,7 +417,7 @@ namespace wab2018
                 {
                     dat_2 = DateTime.Parse(powolanieDo.Trim());
                 }
-                catch (Exception ex)
+                catch 
                 {
                     dat_2 = ASPxDateEdit4.Date;
                 }
@@ -745,7 +742,7 @@ namespace wab2018
                     Panel2.Visible = false;
                 }
             }
-            catch (Exception ex)
+            catch 
             {
                 popup.ShowOnPageLoad = false;
             }
@@ -887,11 +884,10 @@ namespace wab2018
                         koniecZawieszeniaData.Visible = false;
                     }
 
-
                     zapamietajDaneBieglego();
                     GridView25.DataBind();
                 }
-                catch (Exception ex)
+                catch 
                 { }
 
             }
@@ -952,15 +948,13 @@ namespace wab2018
             }
             otworzPopup(employeeId, 1);
 
-
-
         }
 
-        protected void popup_WindowCallback(object source, DevExpress.Web.PopupWindowCallbackArgs e)
+       protected void popup_WindowCallback(object source, DevExpress.Web.PopupWindowCallbackArgs e)
         {
 
         }
-
+      
         protected void popup_Unload(object sender, EventArgs e)
         {
             listaBieglych.DataBind();
@@ -1712,10 +1706,8 @@ namespace wab2018
                 {
                     dataKonca = DateTime.Parse(biegly[6].ToString()).ToShortDateString();
                 }
-                catch (Exception ex)
+                catch 
                 {
-
-
                 }
 
                 string innerTable = imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca;
@@ -1738,9 +1730,7 @@ namespace wab2018
                 tabelaGlowna.AddCell(new Paragraph(specki, cl.plFont1));
             }
 
-
             return tabelaGlowna;
-
         }
 
         protected void ASPxGridViewExporter1_RenderBrick(object sender, ASPxGridViewExportRenderingEventArgs e)
@@ -1758,9 +1748,6 @@ namespace wab2018
                 }
             }
         }
-
-    
-
         static private void internationalPDF()
         {
             try
