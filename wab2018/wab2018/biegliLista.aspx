@@ -23,11 +23,11 @@
     </style>
     <script>
         function onClickHandler() {
-            //alert('aa');
+           
             var x1 = document.getElementById("panelZawieszen");
 
-
-            if (x1.style.display == "none") {
+            
+            if ((x1.style.display == "none") || (x1.style.display == "")) {
 
                 x1.style.display = "block";
                 document.getElementById('<%= HiddenField.ClientID%>').value = "true";
@@ -38,6 +38,7 @@
 
 
             }
+           
 
 
         }
@@ -189,7 +190,7 @@
                <asp:LinkButton ID="LinkButton14" runat="server" CssClass="button_" OnClick="twórzZestawienie" meta:resourcekey="LinkButton14Resource1" Text="Zestawienie"></asp:LinkButton>
                     <asp:LinkButton ID="LinkButton6" runat="server" Text="Excel" CssClass="button_" OnClick="_excell" meta:resourcekey="LinkButton6Resource1"></asp:LinkButton>
                     <asp:Button ID="Button1" runat="server" OnClick="_print" Text="Drukuj" CssClass="button_" />
-               <asp:LinkButton ID="LinkButton15" runat="server" CssClass="button_" OnClick="tworzZestawienieBIPexcel" meta:resourcekey="LinkButton14Resource1" Text="Zestawienie BIP" Width="124px"></asp:LinkButton>
+               <asp:LinkButton ID="LinkButton15" runat="server" CssClass="button_" OnClick="twórzZestawienieBIP" meta:resourcekey="LinkButton14Resource1" Text="Zestawienie BIP" Width="124px"></asp:LinkButton>
                 </td>
             </tr>
         </table>
@@ -226,7 +227,7 @@
                
                 <dx:GridViewDataTextColumn Caption="Rodzaj zawieszenia" FieldName="rodzaj_zawieszenia" ShowInCustomizationForm="True" VisibleIndex="8" Width="8%" Name="rodzaj_zawieszenia">
 </dx:GridViewDataTextColumn>
-                                <dx:GridViewDataTextColumn Caption="Informacje o wstrzymaniu" FieldName="Informacje_o_wstrzymaniu" ShowInCustomizationForm="True" VisibleIndex="9" Width="8%" Name="rodzaj_zawieszenia">
+                                <dx:GridViewDataTextColumn Caption="Informacje inna" FieldName="Informacje_o_wstrzymaniu" ShowInCustomizationForm="True" VisibleIndex="9" Width="8%" Name="rodzaj_zawieszenia">
 </dx:GridViewDataTextColumn>
                 <dx:GridViewDataTextColumn Caption="Telefon" FieldName="tel1" ShowInCustomizationForm="True" VisibleIndex="10" Width="8%">
 </dx:GridViewDataTextColumn>
@@ -344,19 +345,37 @@ alert(&quot;open&quot;);
                                                     </td>
                                                     <td class="col_20"></td>
                                                 </tr>
+
+   <tr>
+                                                    <td class="auto-style21">Informacja inna
+                                                    </td>
+                                                    <td style="width: 50%">
+
+                                                        <div id="Informacje_o_wstrzymaniu" style="display: block">
+
+                                                            <dx:ASPxTextBox ID="txInformacjeowstrzymaniu" runat="server" Width="150px" Theme="Moderno" Text='<%# Eval("Informacje_o_wstrzymaniu")%>'></dx:ASPxTextBox>
+                                                        </div>
+
+
+                                                    </td>
+                                                </tr>
                                                 <tr>
-                                                    <td class="auto-style21">Zawieszenia</td>
+                                                    <td class="auto-style21">Wstrzymano</td>
                                                     <td class="auto-style23">
                                                         <asp:CheckBox ID="zawiszeniaCbox" runat="server" onchange="onClickHandler()" Checked='<%# Convert.ToBoolean   (Eval("czy_zaw")) %>' />
                                                     </td>
                                                     <td class="col_20"></td>
                                                 </tr>
-                                            </table>
+                                             
 
-                                            <div id="panelZawieszen" style='<%# (Convert.ToInt16(Eval("czy_zaw")) == 0) ?  "display:none;": "display:block;" %>'>
+
+                                            </table>
+                                          
+<div id="panelZawieszen" style='<%# (Convert.ToInt16(Eval("czy_zaw")) == 0) ?  "display:none;": "display:block;" %>'>
+                                            
                                                 <table class="auto-style24">
                                                     <tr>
-                                                        <td class="auto-style21">Data zawieszenia od:
+                                                        <td class="auto-style21">Data wstrzymania od:
                                                         </td>
                                                         <td class="auto-style23">
                                                             <dx:ASPxDateEdit ID="txDataPoczatkuZawieszenia" runat="server" Theme="Moderno" Value='<%# (Convert.ToDateTime(Eval("d_zawieszenia")).Year == 1900) ?  Eval("now"): Eval("d_zawieszenia") %>' Width="150px"></dx:ASPxDateEdit>
@@ -364,7 +383,7 @@ alert(&quot;open&quot;);
                                                         <td class="col_20"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="auto-style21">Data zawieszenia do:
+                                                        <td class="auto-style21">Data wstrzymania do:
                                                         </td>
                                                         <td class="auto-style23">
                                                             <dx:ASPxDateEdit ID="txDataKoncaZawieszenia" runat="server" Theme="Moderno" Value='<%# (Convert.ToDateTime(Eval("dataKoncaZawieszenia")).Year == 1900) ?  Eval("now"): Eval("dataKoncaZawieszenia") %>' Width="150px"></dx:ASPxDateEdit>
@@ -372,36 +391,24 @@ alert(&quot;open&quot;);
                                                         <td class="col_20"></td>
                                                     </tr>
                                                     <tr>
-                                                        <td class="auto-style21">Rodzaj Zawieszenia
+                                                        <td class="auto-style21">Rodzaj wstrzymania
                                                         </td>
                                                         <td style="width: 50%">
 
                                                             <div id="powZaw" style="display: block">
 
-                                                                <asp:DropDownList Theme="Moderno"  CssClass="dxeEditArea_Moderno dxeEditAreaSys" style="border:thick" Height="40px" Width="200px" ID="powZawDropDownList" runat="server">
-                                                                   
+                                                                <asp:DropDownList Theme="Moderno" CssClass="dxeEditArea_Moderno dxeEditAreaSys" Style="border: thick" Height="40px" Width="200px" ID="powZawDropDownList" runat="server">
+
                                                                     <asp:ListItem>wstrzymano</asp:ListItem>
                                                                     <asp:ListItem>przerwa w opiniowaniu</asp:ListItem>
-                                                                     <asp:ListItem>zawieszono</asp:ListItem>
+                                                                    <asp:ListItem>zawieszono</asp:ListItem>
                                                                 </asp:DropDownList>
                                                             </div>
 
 
                                                         </td>
                                                     </tr>
-                                                    <tr>
-                                                        <td class="auto-style21">Informacje o wstrzymaniu
-                                                        </td>
-                                                        <td style="width: 50%">
 
-                                                            <div id="Informacje_o_wstrzymaniu" style="display: block">
-
-                                                               <dx:ASPxTextBox ID="txInformacjeowstrzymaniu" runat="server" Width="150px" Theme="Moderno" Text='<%# Eval("Informacje_o_wstrzymaniu")%>' > </dx:ASPxTextBox>
-                                                            </div>
-
-
-                                                        </td>
-                                                    </tr>
 
                                                 </table>
                                             </div>
@@ -498,7 +505,10 @@ alert(&quot;open&quot;);
                                 <dx:TabPage Text="Uwagi" Visible="true">
                                     <ContentCollection>
                                         <dx:ContentControl runat="server">
-                                            <dx:ASPxMemo ID="txUwagi" runat="server" Height="200px" Width="99%" Text='<%# Eval("uwagi")%>'></dx:ASPxMemo>
+                                            <p>Uwagi</p>
+                                            <dx:ASPxMemo ID="txUwagi" runat="server" Height="100px" Width="99%" Text='<%# Eval("uwagi")%>'></dx:ASPxMemo>
+                                            <p>Uwagi BIP</p>
+                                             <dx:ASPxMemo ID="txUwagiBIP" runat="server" Height="100px" Width="99%" Text='<%# Eval("uwagiBIP")%>'></dx:ASPxMemo>
                                         </dx:ContentControl>
                                     </ContentCollection>
                                 </dx:TabPage>
@@ -828,10 +838,10 @@ alert(&quot;open&quot;);
 
         <br />
         <asp:SqlDataSource ID="mediatorzy" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" 
-            SelectCommand="SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '&lt;table&gt;', ''), '&lt;br&gt;', ''), '&lt;br/&gt;', '') AS bezTabeli ,'' as jednaSpecjalizacja, rodzaj_zawieszenia, Informacje_o_wstrzymaniu FROM tbl_osoby WHERE (czyus = 0) AND (typ &lt; 2) AND (data_koncowa &gt;= GETDATE())" 
+            SelectCommand="SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, uwagiBIP,  specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '&lt;table&gt;', ''), '&lt;br&gt;', ''), '&lt;br/&gt;', '') AS bezTabeli ,'' as jednaSpecjalizacja, rodzaj_zawieszenia, Informacje_o_wstrzymaniu FROM tbl_osoby WHERE (czyus = 0) AND (typ &lt; 2) AND (data_koncowa &gt;= GETDATE())" 
             DeleteCommand="UPDATE tbl_osoby SET czyus = 1, d_usuniecia = GETDATE(), id_usuwajacego = @id_usuwajacego WHERE (ident = @ident)" 
-            UpdateCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel = @pesel, tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, ostatniaAktualizacja = GETDATE(), instytucja = @instytucja,rodzaj_zawieszenia=@rodzaj_zawieszenia, Informacje_o_wstrzymaniu=@Informacje_o_wstrzymaniu WHERE (ident = @ident)" 
-            InsertCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel =CAST ( (SELECT CASE WHEN COALESCE (@pesel , '') = '' THEN 0 ELSE @pesel END AS IsNullOrEmpty) as bigint), tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, instytucja = @instytucja, rodzaj_zawieszenia=@rodzaj_zawieszenia, Informacje_o_wstrzymaniu=@Informacje_o_wstrzymaniu  WHERE (ident = @ident)">
+            UpdateCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel = @pesel, tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, uwagiBIP=@uwagiBIP,  d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, ostatniaAktualizacja = GETDATE(), instytucja = @instytucja,rodzaj_zawieszenia=@rodzaj_zawieszenia, Informacje_o_wstrzymaniu=@Informacje_o_wstrzymaniu WHERE (ident = @ident)" 
+            InsertCommand="UPDATE tbl_osoby SET imie = @imie, nazwisko = @nazwisko, ulica = @ulica, kod_poczt = @kod_poczt, miejscowosc = @miejscowosc, data_poczatkowa = @data_poczatkowa, data_koncowa = @data_koncowa, pesel =CAST ( (SELECT CASE WHEN COALESCE (@pesel , '') = '' THEN 0 ELSE @pesel END AS IsNullOrEmpty) as bigint), tytul = @tytul, czy_zaw = @czy_zaw, tel1 = @tel1, tel2 = @tel2, email = @email, adr_kores = @adr_kores, kod_poczt_kor = @kod_poczt_kor, miejscowosc_kor = @miejscowosc_kor, uwagi = @uwagi, uwagiBIP =@uwagiBIP,  d_zawieszenia = @d_zawieszenia, specjalizacjeWidok = @specjalizacjeWidok, specjalizacja_opis = @specjalizacja_opis, dataKoncaZawieszenia = @dataKoncaZawieszenia, instytucja = @instytucja, rodzaj_zawieszenia=@rodzaj_zawieszenia, Informacje_o_wstrzymaniu=@Informacje_o_wstrzymaniu  WHERE (ident = @ident)">
             <DeleteParameters>
                 <asp:SessionParameter Name="id_usuwajacego" SessionField="id_usuwajacego" />
                 <asp:SessionParameter Name="ident" SessionField="ident" />
@@ -855,6 +865,7 @@ alert(&quot;open&quot;);
                 <asp:Parameter Name="kod_poczt_kor" />
                 <asp:Parameter Name="miejscowosc_kor" />
                 <asp:Parameter Name="uwagi" />
+                <asp:Parameter Name="uwagiBIP" />
                 <asp:Parameter Name="d_zawieszenia" />
                 <asp:Parameter Name="specjalizacjeWidok" />
                 <asp:Parameter Name="specjalizacja_opis" />
@@ -884,6 +895,7 @@ alert(&quot;open&quot;);
                 <asp:Parameter Name="kod_poczt_kor" />
                 <asp:Parameter Name="miejscowosc_kor" />
                 <asp:Parameter Name="uwagi" />
+                <asp:Parameter Name="uwagiBIP" />
                 <asp:Parameter Name="d_zawieszenia" />
                 <asp:Parameter Name="specjalizacjeWidok" />
                 <asp:Parameter Name="specjalizacja_opis" />
@@ -899,7 +911,7 @@ alert(&quot;open&quot;);
         </dx:ASPxGridViewExporter>
 
         <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" 
-            SelectCommand="SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa, tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1, tbl_osoby.tel2, tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis, tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_, View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM tbl_osoby RIGHT OUTER JOIN View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ &lt; 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)"></asp:SqlDataSource>
+            SelectCommand="SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa, tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1, tbl_osoby.tel2, tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, uwagiBIP,  tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis, tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_, View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM tbl_osoby RIGHT OUTER JOIN View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ &lt; 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)"></asp:SqlDataSource>
 
         
         <br />

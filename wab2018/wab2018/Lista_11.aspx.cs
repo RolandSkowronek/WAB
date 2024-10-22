@@ -1694,6 +1694,7 @@ namespace wab2018
                 biegly["zawieszenie"] = DropDownList4.SelectedValue.ToString().Trim();
                 biegly["dataZawieszenia"] = zawieszenieData.Text;
                 biegly["uwagi"] = TxUwagi.Text;
+                
                 biegly["opis"] = txspecjalizacja_opis.Text.Trim();
                 daneBieglego.Rows.Clear();
                 daneBieglego.Rows.Add(biegly);

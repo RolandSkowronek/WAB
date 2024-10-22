@@ -31,6 +31,8 @@ using System.Text;
 using NPOI.SS.Formula;
 using DevExpress.Utils.OAuth;
 using OfficeOpenXml.Table;
+using DevExpress.XtraReports.Parameters;
+
 
 
 
@@ -204,6 +206,7 @@ namespace wab2018
             e.NewValues["miejscowosc_kor"] = nm.controlText("txMiejscowoscKorespondencyjny", grid);
             // uwagi i specjalizacje
             e.NewValues["uwagi"] = nm.controlTextMemo("txUwagi", grid);
+            e.NewValues["uwagiBIP"] = nm.controlTextMemo("txUwagiBIP", grid);
             e.NewValues["specjalizacja_opis"] = nm.controlTextMemo("txSpecjalizacjeOpis", grid);
             e.NewValues["instytucja"] = nm.controlText("txInstytucja", grid);
         }
@@ -284,6 +287,7 @@ namespace wab2018
                 e.NewValues["miejscowosc_kor"] = nm.controlText("txMiejscowoscKorespondencyjny", grid);
                 // uwagi i specjalizacje
                 e.NewValues["uwagi"] = nm.controlTextMemo("txUwagi", grid);
+                e.NewValues["uwagiBIP"] = nm.controlTextMemo("txUwagiBIP", grid);
                 e.NewValues["specjalizacja_opis"] = nm.controlTextMemo("txSpecjalizacjeOpis", grid);
                 e.NewValues["instytucja"] = nm.controlText("txInstytucja", grid);
             }
@@ -340,14 +344,14 @@ namespace wab2018
                             string specjalizacja = DropDownList1.SelectedValue;
                             nazwaSpeckajlizacji = NazwaSpecjalizacji(specjalizacja);
 
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ, rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE  (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, uwagiBIP,  specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ, rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE  (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
                             kwerendabazowa = kwerendabazowa + "  and (select count(*) from tbl_specjalizacje_osob where id_specjalizacji =" + specjalizacja.Trim() + " and id_osoby=tbl_osoby.ident )=1 ";
 
                             Session["kwerenda"] = kwerendabazowa;
                         }
                         else
                         {
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, uwagiBIP,  specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (data_koncowa >= GETDATE()) and (czyus = 0) and typ = 1 ";
                         }
 
                     }
@@ -360,7 +364,7 @@ namespace wab2018
                             string specjalizacja = DropDownList1.SelectedValue;
                             nazwaSpeckajlizacji = NazwaSpecjalizacji(specjalizacja);
 
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (czyus = 0) AND (typ >= 2) AND (data_koncowa <= GETDATE()) and typ =1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, uwagiBIP,  specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (czyus = 0) AND (typ >= 2) AND (data_koncowa <= GETDATE()) and typ =1 ";
                             kwerendabazowa = kwerendabazowa + "  and (select count(*) from tbl_specjalizacje_osob where id_specjalizacji =" + specjalizacja.Trim() + " and id_osoby=tbl_osoby.ident )=1 ";
 
                             Session["kwerenda"] = kwerendabazowa;
@@ -368,7 +372,7 @@ namespace wab2018
                         }
                         else
                         {
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu FROM tbl_osoby WHERE (data_koncowa <= GETDATE()) and typ = 1 ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, uwagiBIP,  specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu FROM tbl_osoby WHERE (data_koncowa <= GETDATE()) and typ = 1 ";
                         }
 
                     }
@@ -380,7 +384,7 @@ namespace wab2018
                             string specjalizacja = DropDownList1.SelectedValue;
                             nazwaSpeckajlizacji = NazwaSpecjalizacji(specjalizacja);
 
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (czyus  = 0) And (typ = 1) ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, uwagiBIP,  specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (czyus  = 0) And (typ = 1) ";
                             kwerendabazowa = kwerendabazowa + "  and (select count(*) from tbl_specjalizacje_osob where id_specjalizacji =" + specjalizacja.Trim() + " and id_osoby=tbl_osoby.ident )=1 ";
 
                             Session["kwerenda"] = kwerendabazowa;
@@ -388,7 +392,7 @@ namespace wab2018
                         }
                         else
                         {
-                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (typ = 1) ";
+                            kwerendabazowa = "SELECT ulica, kod_poczt, miejscowosc, COALESCE (czy_zaw, 0) AS czy_zaw, tel2, email, COALESCE (d_zawieszenia, '1900-01-01') AS d_zawieszenia, COALESCE (dataKoncaZawieszenia, '1900-01-01') AS dataKoncaZawieszenia, GETDATE() AS now, tytul, uwagi, uwagiBIP,  specjalizacja_opis, dbo.specjalizacjeLista(ident) AS specjalizacjeWidok, miejscowosc_kor, kod_poczt_kor, adr_kores, imie, ident, data_poczatkowa, data_koncowa, pesel, tel1, typ, nazwisko, instytucja, REPLACE(REPLACE(REPLACE(specjalizacjeWidok, '<table>', ''), '<br>', ''), '<br/>', '') AS bezTabeli, '" + nazwaSpeckajlizacji + "' as jednaSpecjalizacja, czyus, typ,rodzaj_zawieszenia, Informacje_o_wstrzymaniu  FROM tbl_osoby WHERE (typ = 1) ";
                         }
                     }
                     break;
@@ -418,17 +422,47 @@ namespace wab2018
             ustawKwerendeOdczytu();
         }
 
-        private string getId(string imie, string nazwisko)
+        private int getId(string imie, string nazwisko)
         {
             DataTable parametry = Cm.makeParameterTable();
             parametry.Rows.Add("@imie", imie);
             parametry.Rows.Add("@nazwisko", nazwisko);
             string ident = Cm.runQuerryWithResult("SELECT ident   FROM [tbl_osoby] where imie=@imie and nazwisko=@nazwisko", Cm.con_str, parametry);
-
-            return ident;
+            int identInt = 0;
+            try
+            {
+                identInt = int.Parse(ident);
+            }
+            catch  {}
+            return identInt;
 
         }
-        private string GetSpec(string ident)
+
+        private string GetOpisSpecjalizacji(int ident)
+        {
+            DataTable parametry = Cm.makeParameterTable();
+
+            parametry = Cm.makeParameterTable();
+            parametry.Rows.Add("@ident", ident);
+
+            DataTable specki = Cm.getDataTable("SELECT opis FROM tbl_specjalizacje_osob WHERE id_osoby = @ident", Cm.con_str, parametry);
+
+            string SpeckiTxt = string.Empty;
+
+            if (specki.Rows.Count > 0)
+            {
+                foreach (DataRow row in specki.Rows)
+                {
+
+
+                    SpeckiTxt += row[0].ToString() + Environment.NewLine;
+                }
+            }
+            return SpeckiTxt;
+
+        }
+
+        private string GetSpec(int ident)
         {
             DataTable parametry = Cm.makeParameterTable();
             
@@ -450,25 +484,7 @@ namespace wab2018
             }
             return SpeckiTxt;
         }
-        private string getSpecjalnosc(string ident)
-        {
-            DataTable parametry = Cm.makeParameterTable();
-
-            parametry = Cm.makeParameterTable();
-            parametry.Rows.Add("@ident", ident);
-            string SpeckiTxt = string.Empty;
-            SpeckiTxt = Cm.runQuerryWithResult("SELECT DISTINCT specjalizacja_opis FROM tbl_osoby where ident=@ident", Cm.con_str, parametry);
-            return SpeckiTxt;
-        }
-
-        protected void _print(object sender, EventArgs e)
-
-        {
-            IList<DoWydruku> TaListaDoDalszejObrobki =  ListaDoDalszejObrobki();
-            robRaportDoWydruku(TaListaDoDalszejObrobki);
-
-         
-        }
+ 
         private IList<DoWydruku> ListaDoDalszejObrobki()
         {
             DataTable dt = new DataTable();
@@ -498,22 +514,56 @@ namespace wab2018
             foreach (DataRow item in dt.Rows)
             {
 
-                var zaw = item[5].ToString();
-                if (zaw == "0") { zaw = ""; } else { zaw = "zawieszono"; };
-                string Ident = getId(item[2].ToString(), item[1].ToString());
+                string zaw = string.Empty ;
+               
+                int Ident = getId(item[2].ToString(), item[1].ToString());
+                if (Ident==0)
+                {
+                    break;
+                }
                 doWydruku = new DoWydruku();
+                doWydruku.ident = Ident;
                 doWydruku.tytul = item[0].ToString();
                 doWydruku.nazwisko = item[1].ToString();
                 doWydruku.imie = item[2].ToString();
                 doWydruku.powolanieOd = item[3].ToString();
                 doWydruku.powolanieDo = item[4].ToString();
-                doWydruku.zawieszono = zaw;
+                
                 doWydruku.telefon = item[6].ToString();
-                doWydruku.uwagi = item[7].ToString();
+                doWydruku.uwagi = item[8].ToString();
                 doWydruku.Kadencja = item[4].ToString();
-                doWydruku.spejalizacje = GetSpec(Ident);
-                string cos = getSpecjalnosc(Ident);
-                doWydruku.spejalnosc = getSpecjalnosc(Ident);
+                doWydruku.spejalizacje = GetOpisSpecjalizacji(Ident);
+                doWydruku.spejalnosc = GetSpec(Ident);
+                DataTable zawieszenia = DaneZawieszen(Ident);
+                string PoczatekZawieszeni =string.Empty;
+                string KoniecZawieszenia = string.Empty;    
+                int iloscWierszy = 0;
+                try
+                {
+                    iloscWierszy = zawieszenia.Rows.Count;
+                    if (iloscWierszy > 0)
+                    {
+                        var czyZaw =(bool) zawieszenia.Rows[0][0];
+                        if (czyZaw) 
+                        {
+                            zaw = "zawieszono";
+                            PoczatekZawieszeni = zawieszenia.Rows[0][1].ToString();
+                            KoniecZawieszenia = zawieszenia.Rows[0][2].ToString();
+
+                        }
+                    
+                    }
+                }
+                catch (Exception)
+                {
+
+                  //  throw;
+                }
+                doWydruku.zawieszono = zaw;
+                doWydruku.PoczatekZawieszeni = PoczatekZawieszeni;// GetPoczatekZawieszenia(Ident);
+                doWydruku.KoniecZawieszenia = KoniecZawieszenia;//GetKoniecZawieszenia(Ident);
+                doWydruku.uwagiBIP = GetUwagiBIP(Ident);
+
                 doWydrukuLista.Add(doWydruku);
                 
             }
@@ -521,6 +571,62 @@ namespace wab2018
             return doWydrukuLista;
 
         }
+
+        private string GetUwagiBIP(int ident)
+        {
+            DataTable parametry = Cm.makeParameterTable();
+
+            parametry = Cm.makeParameterTable();
+            parametry.Rows.Add("@ident", ident);
+
+            string uwagiBip = Cm.runQuerryWithResult("SELECT uwagiBIP FROM tbl_osoby WHERE ident = @ident", Cm.con_str, parametry);
+
+            
+            return uwagiBip;
+        }
+
+        private DataTable DaneZawieszen(int ident)
+        {
+            
+                DataTable parametry = Cm.makeParameterTable();
+
+                parametry = Cm.makeParameterTable();
+                parametry.Rows.Add("@ident", ident);
+
+                DataTable zawieszenia = Cm.getDataTable("SELECT czy_zaw, d_zawieszenia, dataKoncaZawieszenia  FROM tbl_osoby WHERE ident = @ident", Cm.con_str, parametry);
+
+                
+                return zawieszenia;
+
+            
+
+
+        }
+        private string GetPoczatekZawieszenia(int ident)
+        {
+            DataTable parametry = Cm.makeParameterTable();
+
+            parametry = Cm.makeParameterTable();
+            parametry.Rows.Add("@ident", ident);
+
+            string uwagiBip = Cm.runQuerryWithResult("SELECT d_zawieszenia FROM tbl_osoby WHERE ident = @ident", Cm.con_str, parametry);
+
+
+            return uwagiBip;
+        }
+        private string GetKoniecZawieszenia(int ident)
+        {
+            DataTable parametry = Cm.makeParameterTable();
+
+            parametry = Cm.makeParameterTable();
+            parametry.Rows.Add("@ident", ident);
+
+            string uwagiBip = Cm.runQuerryWithResult("SELECT dataKoncaZawieszenia FROM tbl_osoby WHERE ident = @ident", Cm.con_str, parametry);
+
+
+            return uwagiBip;
+        }
+
         protected void _excell(object sender, EventArgs e)
 
         {
@@ -561,7 +667,7 @@ namespace wab2018
                 DataRow dr = excelTable.NewRow();
                 var zaw = item[5].ToString();
                 if (zaw == "0") { zaw = ""; } else { zaw = "zawieszono"; };
-                string Ident = getId(item[2].ToString(), item[1].ToString());
+                int Ident = getId(item[2].ToString(), item[1].ToString());
                 dr[0] = item[0].ToString();//tytul
                 dr[1] = item[1].ToString();//imie
                 dr[2] = item[2].ToString();//nazwisko
@@ -813,9 +919,9 @@ namespace wab2018
 
         private void robRaportWszystkichSpecjalizacjiNowy(DataTable dataTable)
         {
-
-            string kwerenda = "SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa, tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, typ , tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1 , tbl_osoby.tel2, tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis,                   tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_ as identyfikatorSpecjalizacji,                   View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM     tbl_osoby RIGHT OUTER JOIN                   View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ < 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)";
-            DataTable daneBieglych = Cm.getDataTable(kwerenda, Cm.con_str);
+            
+            string kwerenda = "SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa, tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, typ , tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1 , tbl_osoby.tel2, tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, uwagiBIP,  tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis,                   tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_ as identyfikatorSpecjalizacji,                   View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM     tbl_osoby RIGHT OUTER JOIN                   View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ < 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)";
+            DataTable daneBieglych = Cm.getDataTable(kwerenda, Cm.con_str,Cm.makeParameterTable());
             foreach (DataRow wiersz in daneBieglych.Rows)
             {
                 string ident = wiersz["ident"].ToString().Trim();
@@ -1212,95 +1318,7 @@ namespace wab2018
             return identy;
         }
 
-      /*
-        protected DataRow wierszZBieglym(DataRow biegliRow, DataTable Biegli)
-        {
-            DataRow bieglyZatwierdzony = Biegli.NewRow();
-            try
-            {
-                bieglyZatwierdzony[0] = biegliRow[0];
-                bieglyZatwierdzony[1] = biegliRow[1];
-                bieglyZatwierdzony[2] = biegliRow[2];
-                bieglyZatwierdzony[3] = biegliRow[3];
-                bieglyZatwierdzony[4] = biegliRow[4];
-                bieglyZatwierdzony[5] = biegliRow[5];
-                bieglyZatwierdzony[6] = biegliRow[6];
-                bieglyZatwierdzony[7] = biegliRow[7];
-                bieglyZatwierdzony[8] = biegliRow[8];
-            }
-            catch (Exception)
-            { }
-
-            return bieglyZatwierdzony;
-        }
-        
-        protected PdfPTable generujCzescRaportu(DataTable biegli, string specjalizacje)
-        {
-            if (biegli.Rows.Count == 0)
-            {
-                return null;
-            }
-            int[] tblWidth = { 8, 30, 30, 32 };
-
-            PdfPTable tabelaGlowna = new PdfPTable(4);
-            tabelaGlowna.SetWidths(tblWidth);
-            int iterator = 0;
-            tabelaGlowna.AddCell(new Paragraph("Lp.", cl.plFont2));
-            tabelaGlowna.AddCell(new Paragraph("Nazwisko i imię", cl.plFont2));
-            tabelaGlowna.AddCell(new Paragraph("Adres- telefon", cl.plFont2));
-            tabelaGlowna.AddCell(new Paragraph("Zakres", cl.plFont2));
-            int iloscBieglych = biegli.Rows.Count;
-
-            foreach (DataRow biegly in biegli.Rows)
-            {
-                iterator++;
-                string Idbieglego = biegly[0].ToString();
-                DataTable daneBieglego = cl.wyciagnijBieglegoZSpecjalizacja(int.Parse(Idbieglego));
-                if (daneBieglego.Rows.Count == 0)
-                {
-                    continue;
-                }
-                DataRow daneJednegoBieglego = daneBieglego.Rows[0];
-                DataTable listaSpecjalizacjiBieglego = new DataTable();
-                listaSpecjalizacjiBieglego = cl.odczytaj_specjalizacje_osoby2(Idbieglego);
-                //tbl_osoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc,   tbl_osoby.data_koncowa,  tbl_osoby.tytul,
-                string imie = daneJednegoBieglego[1].ToString();
-                string nazwisko = daneJednegoBieglego[2].ToString();
-                string tytul = daneJednegoBieglego[7].ToString();
-                string telefon = daneJednegoBieglego[8].ToString();
-                string email = daneJednegoBieglego[9].ToString();
-                string dataKonca = string.Empty;
-                try
-                {
-                    dataKonca = DateTime.Parse(daneJednegoBieglego[6].ToString()).ToShortDateString();
-                }
-                catch
-                { }
-
-                string innerTable = imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca;
-                string ulica = daneJednegoBieglego[3].ToString();
-                string kod = daneJednegoBieglego[4].ToString();
-                string miejscowosc = daneJednegoBieglego[5].ToString();
-                string tel = daneJednegoBieglego[8].ToString();
-                string instytucja = daneJednegoBieglego[12].ToString();
-                string adresTable = instytucja + Environment.NewLine + ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
-                string specki = string.Empty;
-                string specjalizacjaOpis = cl.odczytaj_specjalizacje_osobyOpis(Idbieglego);
-                // tabelaGlowna.AddCell(new Paragraph(specjalizacjaOpis, cl.plFont2));
-                foreach (DataRow specRow in listaSpecjalizacjiBieglego.Rows)
-                {
-                    specki = specki + specRow[0].ToString().ToLower() + "; ";
-                }
-                specki = specki + specjalizacjaOpis;
-                tabelaGlowna.AddCell(new Paragraph(iterator.ToString(), cl.plFont1));
-                tabelaGlowna.AddCell(new Paragraph(innerTable, cl.plFont1));
-                tabelaGlowna.AddCell(new Paragraph(adresTable, cl.plFont1));
-                tabelaGlowna.AddCell(new Paragraph(specki, cl.plFont1));
-            }
-
-            return tabelaGlowna;
-        }
-        */
+     
         protected PdfPTable generujCzescRaportuNew(DataTable biegli, string idSpecjalizacji)
         {
 
@@ -1332,7 +1350,7 @@ namespace wab2018
         
                 DataTable listaSpecjalizacjiBieglego = new DataTable();
                 listaSpecjalizacjiBieglego = cl.odczytaj_specjalizacje_osoby2(Idbieglego);
-                //"SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa,                   tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, typ , tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1, tbl_osoby.tel2,                   tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis,                   tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_ as identyfikatorSpecjalizacji,                   View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM     tbl_osoby RIGHT OUTER JOIN                   View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ < 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)";
+                //"SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa,                   tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, typ , tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1, tbl_osoby.tel2,                   tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, uwagiBIP,  tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis,                   tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_ as identyfikatorSpecjalizacji,                   View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM     tbl_osoby RIGHT OUTER JOIN                   View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ < 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)";
                 string imie = biegly["imie"].ToString();
                 string nazwisko = biegly["nazwisko"].ToString();
                 string tytul = biegly["tytul"].ToString();
@@ -1554,631 +1572,7 @@ namespace wab2018
                 HeaderGridRow.VerticalAlign = VerticalAlign.Top;
                 return HeaderGridRow;
             }
-            /*
-            public DataTable makeSumRow(DataTable table, int ilKolumn)
-            {
-                DataTable wyjsciowa = new DataTable();
-                for (int i = 0; i < ilKolumn; i++)
-                {
-                    wyjsciowa.Columns.Add("d_" + i.ToString("D2"), typeof(double));
-                }
-                DataTable tabelka = tabellaLiczbowa(table);
-                DataColumnCollection col = tabelka.Columns;
-
-                object sumObject;
-                DataRow wiersz = wyjsciowa.NewRow();
-                for (int i = 1; i < ilKolumn; i++)
-                {
-                    try
-                    {
-                        string idkolumny = "d_" + (i).ToString("D2");
-
-                        if (col.Contains(idkolumny))
-                        {
-                            sumObject = tabelka.Compute("Sum(" + idkolumny + ")", "");
-                            wiersz[idkolumny] = double.Parse(sumObject.ToString());
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        
-                    }
-                }
-                wyjsciowa.Rows.Add(wiersz);
-                return wyjsciowa;
-            }
-
-            public DataTable makeSumRow(DataTable table, int ilKolumn, int dlugoscLinii)
-            {
-                //stworzenie tabeli przejściowej
-                DataTable tabelaRobocza = new DataTable();
-                for (int i = 1; i <= dlugoscLinii; i++)
-                {
-                    string nazwaKolumny = "d_" + i.ToString("D2");
-                    tabelaRobocza.Columns.Add(nazwaKolumny, typeof(double));
-                }
-
-                foreach (DataRow jedenWiersz in table.Rows)
-                {
-                    int index = 1;
-                    DataRow nowyWiersz = tabelaRobocza.NewRow();
-                    for (int i = 1; i <= ilKolumn; i++)
-                    {
-                        string nazwaKolumny = "d_" + i.ToString("D2");
-                        string nazwaKolumnySumy = "d_" + index.ToString("D2");
-                        double wartosc = double.Parse(jedenWiersz[nazwaKolumny].ToString());
-                        double wartoscSumowana = 0;
-                        try
-                        {
-                            wartoscSumowana = double.Parse(nowyWiersz[nazwaKolumnySumy].ToString());
-                        }
-                        catch
-                        { }
-                        wartoscSumowana = wartoscSumowana + wartosc;
-                        nowyWiersz[nazwaKolumnySumy] = wartoscSumowana;
-                        if (index == dlugoscLinii)
-                        {
-                            index = 0;
-                        }
-                        index++;
-                    }
-                    tabelaRobocza.Rows.Add(nowyWiersz);
-                }
-
-                object sumObject;
-                DataRow wiersz = tabelaRobocza.NewRow();
-                for (int i = 1; i <= tabelaRobocza.Columns.Count; i++)
-                {
-                    try
-                    {
-                        string idkolumny = "d_" + (i).ToString("D2");
-
-                        sumObject = tabelaRobocza.Compute("Sum(" + idkolumny + ")", "");
-                        wiersz[idkolumny] = double.Parse(sumObject.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                       
-                    }
-                }
-                tabelaRobocza.Rows.Clear();
-                tabelaRobocza.Rows.Add(wiersz);
-                return tabelaRobocza;
-            }
-
-            public void makeHeader(System.Web.UI.WebControls.GridView GridViewName, DataTable dT, System.Web.UI.WebControls.GridView GridViewX)
-            {
-                try
-                {
-                    int row = 0;
-                    TableCell HeaderCell = new TableCell();
-                    GridViewRow HeaderGridRow = null;
-                    string hv = "h";
-                    Style stl = new Style();
-                    foreach (DataRow dR in dT.Rows)
-                    {
-                        if (int.Parse(dR[0].ToString().Trim()) > row)
-                        {
-                            GridView HeaderGrid = (GridView)GridViewName;
-                            HeaderGridRow = Grw(GridViewName);
-                            row = int.Parse(dR[0].ToString().Trim());
-                            try
-                            {
-                                hv = dR[4].ToString().Trim();
-                            }
-                            catch
-                            { }
-                        }
-                        if (hv == "v")
-                        {
-                            stl.CssClass = "verticaltext";
-                        }
-                        else
-                        {
-                            stl.CssClass = "horizontaltext";
-                        }
-
-                        HeaderCell = new TableCell();
-                        HeaderCell.Text = dR[1].ToString().Trim();
-                        HeaderCell.Style.Clear();
-                        HeaderCell.ApplyStyle(stl);
-                        HeaderCell.ColumnSpan = int.Parse(dR[2].ToString().Trim());
-                        HeaderCell.RowSpan = int.Parse(dR[3].ToString().Trim());
-                        HeaderGridRow.Cells.Add(HeaderCell);
-                        GridViewX.Controls[0].Controls.AddAt(0, HeaderGridRow);
-                    }
-                }
-                catch (Exception ex)
-                {
-                } // end of try
-            }
-
-            public void makeHeader(DataTable dT, System.Web.UI.WebControls.GridView GridViewX)
-            {
-                System.Web.UI.WebControls.GridView sn = new System.Web.UI.WebControls.GridView();
-                try
-                {
-                    int row = 0;
-                    TableCell HeaderCell = new TableCell();
-                    GridViewRow HeaderGridRow = null;
-                    string hv = "h";
-                    Style stl = new Style();
-                    foreach (DataRow dR in dT.Rows)
-                    {
-                        if (int.Parse(dR[0].ToString().Trim()) > row)
-                        {
-                            GridView HeaderGrid = (GridView)sn;
-                            HeaderGridRow = Grw(sn);
-                            row = int.Parse(dR[0].ToString().Trim());
-                            try
-                            {
-                                hv = dR[4].ToString().Trim();
-                            }
-                            catch
-                            { }
-                        }
-                        if (hv == "v")
-                        {
-                            stl.CssClass = "verticaltext";
-                        }
-                        else
-                        {
-                            stl.CssClass = "horizontaltext";
-                        }
-
-                        HeaderCell = new TableCell();
-                        HeaderCell.Text = dR[1].ToString().Trim();
-                        HeaderCell.Style.Clear();
-                        HeaderCell.ApplyStyle(stl);
-                        HeaderCell.ColumnSpan = int.Parse(dR[2].ToString().Trim());
-                        HeaderCell.RowSpan = int.Parse(dR[3].ToString().Trim());
-                        HeaderGridRow.Cells.Add(HeaderCell);
-                        GridViewX.Controls[0].Controls.AddAt(0, HeaderGridRow);
-                    }
-                }
-                catch (Exception ex)
-                {
-                
-                } // end of try
-            }
-
-            public void makeHeaderT3(DataTable dT, System.Web.UI.WebControls.GridView GridViewX)
-            {
-                System.Web.UI.WebControls.GridView sn = new System.Web.UI.WebControls.GridView();
-                try
-                {
-                    int row = 0;
-                    TableCell HeaderCell = new TableCell();
-                    GridViewRow HeaderGridRow = null;
-                    string hv = "h";
-                    Style stl = new Style();
-                    foreach (DataRow dR in dT.Rows)
-                    {
-                        if (int.Parse(dR[0].ToString().Trim()) > row)
-                        {
-                            GridView HeaderGrid = (GridView)sn;
-                            HeaderGridRow = Grw(sn);
-                            row = int.Parse(dR[0].ToString().Trim());
-                            try
-                            {
-                                hv = dR[4].ToString().Trim();
-                            }
-                            catch
-                            { }
-                        }
-                        if (hv == "v")
-                        {
-                            stl.CssClass = "spetialVertical";
-                        }
-                        else
-                        {
-                            stl.CssClass = "horizontaltext ";
-                        }
-
-                        HeaderCell = new TableCell();
-                        HeaderCell.Text = dR[1].ToString().Trim();
-                        HeaderCell.Style.Clear();
-                        HeaderCell.ApplyStyle(stl);
-                        HeaderCell.ColumnSpan = int.Parse(dR[2].ToString().Trim());
-                        HeaderCell.RowSpan = int.Parse(dR[3].ToString().Trim());
-                        HeaderGridRow.Cells.Add(HeaderCell);
-                        GridViewX.Controls[0].Controls.AddAt(0, HeaderGridRow);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    
-                } // end of try
-            }
-            */
-            /*
-            public DataTable tabellaLiczbowa(DataTable tabelaWejsciowa)
-            {
-                if (tabelaWejsciowa == null)
-                {
-                    return null;
-                }
-                DataTable tabelaRobocza = new DataTable();
-                int iloscKolumn = tabelaWejsciowa.Columns.Cast<DataColumn>().Count(c => c.ColumnName.StartsWith("d_"));
-
-                for (int i = 1; i <= iloscKolumn; i++)
-                {
-                    string nazwaKolumny = "d_" + i.ToString("D2");
-                    tabelaRobocza.Columns.Add(nazwaKolumny, typeof(double));
-                }
-                foreach (DataRow Drow in tabelaWejsciowa.Rows)
-                {
-                    try
-                    {
-                        try
-                        {
-                            if (Drow["nazwisko"].ToString().Trim() == "")
-                            {
-                                continue;
-                            }
-                        }
-                        catch
-                        {
-                        }
-
-                        DataRow wierszTymczasowy = tabelaRobocza.NewRow();
-                        for (int i = 1; i <= iloscKolumn; i++)
-                        {
-                            string dana = string.Empty;
-                            string nazwaKolumny = "d_" + i.ToString("D2");
-                            double liczba = 0;
-                            dana = Drow[nazwaKolumny].ToString();
-                            if (string.IsNullOrEmpty(dana.Trim()))
-                            {
-                                dana = "0";
-                            }
-                            else
-                            {
-                                try
-                                {
-                                    dana = dana.Replace(".", ",");
-                                    liczba = double.Parse(dana);
-                                }
-                                catch 
-                                {
-                                    
-                                }
-                            }
-
-                            wierszTymczasowy[nazwaKolumny] = liczba;
-                        }
-                        tabelaRobocza.Rows.Add(wierszTymczasowy);
-                    }
-                    catch (Exception ex)
-                    {
-                        
-                    }
-                }
-
-                return tabelaRobocza;
-            }
-            
-            public void makeSumRow(DataTable table, GridViewRowEventArgs e, string tenplik)
-            {
-                makeSumRow(table, e);
-            }
-            
-            public void makeSumRow(DataTable table, GridViewRowEventArgs e)
-            {
-                makeSumRow(table, e, 1, "Ogółem");
-            }
-
-            public void makeSumRow(DataTable table, GridViewRowEventArgs e, int przesuniecie)
-            {
-                makeSumRow(table, e, przesuniecie, "Ogółem");
-            }
-
-            public void makeSumRow(DataTable table, GridViewRowEventArgs e, int przesuniecie, string razem)
-            {
-                DataTable tabelka = tabellaLiczbowa(table);
-                if (tabelka == null)
-                {
-                    
-                    return;
-                }
-                object sumObject;
-                int ilKolumn = e.Row.Cells.Count;
-                e.Row.Cells[0 + przesuniecie].Text = razem;
-                for (int i = 1; i < e.Row.Cells.Count; i++)
-                {
-                    try
-                    {
-                        string idkolumny = "d_" + (i).ToString("D2");
-                        sumObject = tabelka.Compute("Sum(" + idkolumny + ")", "");
-                        e.Row.Cells[i + przesuniecie].Text = sumObject.ToString();
-                        e.Row.Cells[i + przesuniecie].CssClass = "center normal";
-                    }
-                    catch (Exception ex)
-                    {
-                       
-                    }
-                }
-            }
-            public void makeSumRow(DataTable table, GridViewRowEventArgs e, int przesuniecie, string razem, bool isGray)
-            {
-                DataTable tabelka = tabellaLiczbowa(table);
-                if (tabelka == null)
-                {
-                 
-                    return;
-                }
-                object sumObject;
-                int ilKolumn = e.Row.Cells.Count;
-                e.Row.Cells[0 + przesuniecie].Text = razem;
-                for (int i = 1; i < e.Row.Cells.Count; i++)
-                {
-                    try
-                    {
-                        string idkolumny = "d_" + (i).ToString("D2");
-                        sumObject = tabelka.Compute("Sum(" + idkolumny + ")", "");
-                        e.Row.Cells[i + przesuniecie].Text = sumObject.ToString();
-                        e.Row.Cells[i + przesuniecie].CssClass = "center normal gray";
-                    }
-                    catch (Exception ex)
-                    {
-                       
-                    }
-                }
-            }
-
-            public void makeSumRow(DataTable table, GridViewRowEventArgs e, int przesuniecie, int polaczenie)
-            {
-                DataTable tabelka = tabellaLiczbowa(table);
-                if (tabelka == null)
-                {
-                    
-                    return;
-                }
-                object sumObject;
-                int ilKolumn = e.Row.Cells.Count;
-                e.Row.Cells[0].ColumnSpan = polaczenie;
-                e.Row.Cells[0].Text = "Ogółem";
-                try
-                {
-                    for (int i = 1; i < polaczenie; i++)
-                    {
-                        e.Row.Cells.RemoveAt(1);
-                    }
-                }
-                catch
-                { }
-                for (int i = 1; i < e.Row.Cells.Count; i++)
-                {
-                    try
-                    {
-                        string idkolumny = "d_" + (i).ToString("D2");
-                        sumObject = tabelka.Compute("Sum(" + idkolumny + ")", "");
-                        e.Row.Cells[i].Text = sumObject.ToString();
-                        e.Row.Cells[i].CssClass = "center normal";
-                    }
-                    catch (Exception ex)
-                    {
-                       
-                    }
-                }
-            }
-
-            public GridViewRow PodsumowanieTabeli(DataTable dane, int iloscKolumn, string cssStyleDlaTabeli)
-            {
-                DataTable tabelka = tabellaLiczbowa(dane);
-                if (tabelka == null)
-                {
-                    
-                    return null;
-                }
-                object sumObject;
-                GridViewRow NewTotalRow = new GridViewRow(0, 0, DataControlRowType.DataRow, DataControlRowState.Insert);
-                NewTotalRow.Cells.Add(cela("Razem", 1, 2, cssStyleDlaTabeli));
-                for (int i = 1; i < iloscKolumn; i++)
-                {
-                    try
-                    {
-                        string idkolumny = "d_" + (i).ToString("D2");
-                        
-                        sumObject = tabelka.Compute("Sum(" + idkolumny + ")", "");
-
-                        NewTotalRow.Cells.Add(cela(sumObject.ToString(), 1, 1, cssStyleDlaTabeli));
-                    }
-                    catch (Exception ex)
-                    {
-                       
-                    }
-                }
-                return NewTotalRow;
-            }
-
-
-            //tabele pod dynamicznymi
-            public GridViewRow wierszTabeli(DataTable dane, int iloscKolumn, int idWiersza, string idtabeli, string tekst, int colSpan, int rowSpan, string CssStyleDlaTekstu, string cssStyleDlaTabeli, string drugiText, int colSpanDrugi, int rowSpanDrugi, string cssStyleDrugi)
-            {
-                // nowy wiersz
-
-                GridViewRow NewTotalRow = new GridViewRow(0, 0, DataControlRowType.DataRow, DataControlRowState.Insert);
-                NewTotalRow.Cells.Add(cela(drugiText, colSpanDrugi, rowSpanDrugi, cssStyleDrugi));
-
-                NewTotalRow.Cells.Add(cela(tekst, rowSpan, colSpan, CssStyleDlaTekstu));
-                DataRow jedenWiersz = dane.Rows[idWiersza - 1];
-                for (int i = 1; i < iloscKolumn; i++)
-                {
-                    try
-                    {
-                        string nazwaKolumny = "d_" + i.ToString("D2");
-                        NewTotalRow.Cells.Add(cela("<a class='" + CssStyleDlaTekstu + "' href=\"javascript: openPopup('popup.aspx?sesja=" + idWiersza.ToString().Trim() + "!" + idtabeli.ToString().Trim() + "!" + i.ToString().Trim() + "!3')\">" + jedenWiersz[nazwaKolumny].ToString().Trim() + "</a>", 1, 1, cssStyleDlaTabeli));
-                    }
-                    catch (Exception ex)
-                    {
-                       
-                    }
-                }
-                return NewTotalRow;
-            }
-
-
-
-
-            public GridViewRow wierszTabeli(DataTable dane, int iloscKolumn, int idWiersza, string idtabeli, string tekst, int colSpan, int rowSpan, string CssStyleDlaTekstu, string cssStyleDlaTabeli)
-            {
-                if (dane == null)
-                {
-                    return null;
-                }
-                GridViewRow NewTotalRow = new GridViewRow(0, 0, DataControlRowType.DataRow, DataControlRowState.Insert);
-                NewTotalRow.Cells.Add(cela(tekst, rowSpan, colSpan, CssStyleDlaTekstu));
-                DataRow jedenWiersz = dane.Rows[idWiersza - 1];
-                for (int i = 1; i < iloscKolumn; i++)
-                {
-                    try
-                    {
-                        string nazwaKolumny = "d_" + i.ToString("D2");
-                        NewTotalRow.Cells.Add(cela("<a class='" + CssStyleDlaTekstu + "' href=\"javascript: openPopup('popup.aspx?sesja=" + idWiersza.ToString().Trim() + "!" + idtabeli.ToString().Trim() + "!" + i.ToString().Trim() + "!3')\">" + jedenWiersz[nazwaKolumny].ToString().Trim() + "</a>", 1, 1, cssStyleDlaTabeli));
-                    }
-                    catch
-                    {
-                        try
-                        {
-                            NewTotalRow.Cells.Add(cela("<a class='" + CssStyleDlaTekstu + "' href=\"javascript: openPopup('popup.aspx?sesja=" + idWiersza.ToString().Trim() + "!" + idtabeli.ToString().Trim() + "!" + i.ToString().Trim() + "!3')\">0</a>", 1, 1, cssStyleDlaTabeli));
-                        }
-                        catch (Exception ex)
-                        {
-                           
-                        }
-                    }
-                }
-                return NewTotalRow;
-            }// end of
-            public GridViewRow wierszTabeli(DataTable dane, int iloscKolumn, int idWiersza, string idtabeli, string tekst, int colSpan, int rowSpan, string CssStyleDlaTekstu, string cssStyleDlaTabeli, bool isGray)
-            {
-                if (dane == null)
-                {
-                    return null;
-                }
-                if (isGray)
-                {
-                    CssStyleDlaTekstu = CssStyleDlaTekstu + " gray";
-                    cssStyleDlaTabeli = cssStyleDlaTabeli + " gray";
-                }
-                GridViewRow NewTotalRow = new GridViewRow(0, 0, DataControlRowType.DataRow, DataControlRowState.Insert);
-                NewTotalRow.Cells.Add(cela(tekst, rowSpan, colSpan, CssStyleDlaTekstu));
-                DataRow jedenWiersz = dane.Rows[idWiersza - 1];
-                for (int i = 1; i < iloscKolumn; i++)
-                {
-                    try
-                    {
-                        string nazwaKolumny = "d_" + i.ToString("D2");
-                        NewTotalRow.Cells.Add(cela("<a class='" + CssStyleDlaTekstu + "' href=\"javascript: openPopup('popup.aspx?sesja=" + idWiersza.ToString().Trim() + "!" + idtabeli.ToString().Trim() + "!" + i.ToString().Trim() + "!3')\">" + jedenWiersz[nazwaKolumny].ToString().Trim() + "</a>", 1, 1, cssStyleDlaTabeli));
-                    }
-                    catch
-                    {
-                        try
-                        {
-                            NewTotalRow.Cells.Add(cela("<a class='" + CssStyleDlaTekstu + "' href=\"javascript: openPopup('popup.aspx?sesja=" + idWiersza.ToString().Trim() + "!" + idtabeli.ToString().Trim() + "!" + i.ToString().Trim() + "!3')\">0</a>", 1, 1, cssStyleDlaTabeli));
-                        }
-                        catch (Exception ex)
-                        {
-                           
-                        }
-                    }
-                }
-                return NewTotalRow;
-            }// end of
-            public GridViewRow wierszTabeli(DataTable dane, int iloscKolumn, int idWiersza, string idtabeli, string tekst, int colSpan, int rowSpan, string CssStyleDlaTekstu, string cssStyleDlaTabeli, bool isGray, bool lastIsGray)
-            {
-                if (dane == null)
-                {
-                    return null;
-                }
-                if (isGray)
-                {
-                    CssStyleDlaTekstu = CssStyleDlaTekstu + " gray";
-                    cssStyleDlaTabeli = cssStyleDlaTabeli + " gray";
-                }
-                GridViewRow NewTotalRow = new GridViewRow(0, 0, DataControlRowType.DataRow, DataControlRowState.Insert);
-                NewTotalRow.Cells.Add(cela(tekst, rowSpan, colSpan, CssStyleDlaTekstu));
-                DataRow jedenWiersz = dane.Rows[idWiersza - 1];
-                for (int i = 1; i < iloscKolumn; i++)
-                {
-                    try
-                    {
-                        string nazwaKolumny = "d_" + i.ToString("D2");
-
-                        if (lastIsGray && (i >= iloscKolumn - 2))
-                        {
-
-                            NewTotalRow.Cells.Add(cela("<a class='" + CssStyleDlaTekstu + "' href=\"javascript: openPopup('popup.aspx?sesja=" + idWiersza.ToString().Trim() + "!" + idtabeli.ToString().Trim() + "!" + i.ToString().Trim() + "!3')\">" + jedenWiersz[nazwaKolumny].ToString().Trim() + "</a>", 1, 1, cssStyleDlaTabeli + " gray"));
-                        }
-                        else
-                            NewTotalRow.Cells.Add(cela("<a class='" + CssStyleDlaTekstu + "' href=\"javascript: openPopup('popup.aspx?sesja=" + idWiersza.ToString().Trim() + "!" + idtabeli.ToString().Trim() + "!" + i.ToString().Trim() + "!3')\">" + jedenWiersz[nazwaKolumny].ToString().Trim() + "</a>", 1, 1, cssStyleDlaTabeli));
-                    }
-                    catch
-                    {
-                        try
-                        {
-                            NewTotalRow.Cells.Add(cela("<a class='" + CssStyleDlaTekstu + "' href=\"javascript: openPopup('popup.aspx?sesja=" + idWiersza.ToString().Trim() + "!" + idtabeli.ToString().Trim() + "!" + i.ToString().Trim() + "!3')\">0</a>", 1, 1, cssStyleDlaTabeli));
-                        }
-                        catch (Exception ex)
-                        {
-                           
-                        }
-                    }
-                }
-                return NewTotalRow;
-            }// end of
-
-            public GridViewRow wierszTabeli(string[] lista, int iloscKolumn, int idWiersza, string tekst, int colSpan, int rowSpan, string CssStyleDlaTekstu, string cssStyleDlaTabeli, bool ostatniaEdytowalna)
-            {
-                GridViewRow NewTotalRow = new GridViewRow(0, 0, DataControlRowType.DataRow, DataControlRowState.Insert);
-                NewTotalRow.Cells.Add(cela(tekst, rowSpan, colSpan, CssStyleDlaTekstu));
-
-                for (int i = 1; i < iloscKolumn; i++)
-                {
-                    try
-                    {
-                        string nazwaKolumny = "d_" + i.ToString("D2");
-                        string textC = lista[i];
-                        NewTotalRow.Cells.Add(cela(
-                            textC, 1, 1, cssStyleDlaTabeli));
-                    }
-                    catch (Exception ex)
-                    {
-                       
-                    }
-                }
-                if (ostatniaEdytowalna)
-                {
-                    NewTotalRow.Cells.Add(cela("<input id = \"Text1\" type = \"text\" />", 1, 1, "borderTopLeft"));
-                }
-                return NewTotalRow;
-            }// end of
-
-
-            public TableCell cela(string text, int rowSpan, int colSpan, string cssClass)
-            {
-                TableCell HeaderCell = new TableCell();
-                HeaderCell.Height = 10;
-                HeaderCell.HorizontalAlign = HorizontalAlign.Center;
-                HeaderCell.ColumnSpan = colSpan;
-                HeaderCell.RowSpan = rowSpan;
-                HeaderCell.CssClass = cssClass;
-                HeaderCell.Text = text;
-                return HeaderCell;
-            }
-            public TableCell cela(string text, int rowSpan, int colSpan, string cssClass, bool isGray)
-            {
-                TableCell HeaderCell = new TableCell();
-                HeaderCell.Height = 10;
-                HeaderCell.HorizontalAlign = HorizontalAlign.Center;
-                HeaderCell.ColumnSpan = colSpan;
-                HeaderCell.RowSpan = rowSpan;
-                HeaderCell.CssClass = cssClass + " gray";
-                HeaderCell.Text = text;
-                return HeaderCell;
-            }
-*/
+        
             public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno)
             {
                 return tworzArkuszwExcle(Arkusz, daneDoArkusza, iloscKolumn, przesunięcieX, przesuniecieY, lp, suma, stanowisko, funkcja, nazwiskoiImeieOsobno, false);
@@ -2235,533 +1629,7 @@ namespace wab2018
 
                 return Arkusz;
             }
-/*
-            public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno, bool obramowanieOststniej, bool pustaKolumnaZaNazwiskiem)
-            {
-                if (daneDoArkusza == null)
-                {
-                    
-                    return Arkusz;
-                }
-                try
-                {
-                    int wiersz = przesuniecieY;
-                    int dod = 0;
-                    foreach (DataRow dR in daneDoArkusza.Rows)
-                    {
-                        int dodatek = 0;
-                        if (lp)
-                        {
-                            try
-                            {
-                                dodatek++;
 
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = wiersz - przesuniecieY + 1;
-                            }
-                            catch (Exception ex)
-                            {
-                               
-                            }
-                        }
-                        if (stanowisko)
-                        {
-                            try
-                            {
-                                dodatek++;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-
-                                string value = (dR["stanowisko"].ToString().Trim());
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = value;
-                            }
-                            catch (Exception ex)
-                            {
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = "";
-                                
-                            }
-                        }
-                        if (funkcja)
-                        {
-                            try
-                            {
-                                dodatek++;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Green);
-
-                                string value = (dR["funkcja"].ToString().Trim());
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = value;
-                            }
-                            catch (Exception ex)
-                            {
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = "";
-                               
-                            }
-                        }
-                        if (nazwiskoiImeieOsobno)
-                        {
-                            dodatek++;
-                            try
-                            {
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Green);
-                                string value = (dR["nazwisko"].ToString().Trim());
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = value;
-                                dodatek++;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Green);
-                                value = (dR["imie"].ToString().Trim());
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = value;
-                            }
-                            catch (Exception ex)
-                            {
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = "";
-                               
-                            }
-                        }
-                        else
-                        {
-                            try
-                            {
-                                dodatek++;
-                                string value = dR["imie"].ToString().Trim() + " " + dR["nazwisko"].ToString().Trim();
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = value;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                            }
-                            catch (Exception ex)
-                            {
-                               
-                            }
-                        }
-
-                        if (pustaKolumnaZaNazwiskiem)
-                        {
-                            przesunięcieX = przesunięcieX + 1;
-                        }
-
-                        for (int i = 1; i < iloscKolumn; i++)
-                        {
-                            try
-                            {
-                                string colunmName = "d_" + (i).ToString("D2");
-                                try
-                                {
-                                    double value = double.Parse(dR[colunmName].ToString().Trim());
-                                    Arkusz.Cells[wiersz, i + przesunięcieX + dodatek].Value = value;
-                                }
-                                catch
-                                {
-                                    Arkusz.Cells[wiersz, i + przesunięcieX + dodatek].Value = (dR[colunmName].ToString().Trim());
-                                }
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek + i].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                                Arkusz.Cells[wiersz, i + przesunięcieX + dodatek].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                            }
-                            catch (Exception ex)
-                            {
-                                
-                            }
-                        }
-                        if (obramowanieOststniej)
-                        {
-                            Arkusz.Cells[wiersz, przesunięcieX + dodatek + iloscKolumn].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                            Arkusz.Cells[wiersz, iloscKolumn + przesunięcieX + dodatek].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                        }
-                        wiersz++;
-                        dod = dodatek;
-                    }
-
-                    if (suma)
-                    {
-                        DataTable tabelka = tabellaLiczbowa(daneDoArkusza);
-                        object sumObject;
-
-                        Arkusz.Cells[wiersz, przesunięcieX + dod].Value = "Razem";
-                        Arkusz.Cells[wiersz, przesunięcieX + dod].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                        Arkusz.Cells[wiersz, przesunięcieX + dod].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                        for (int i = 1; i < iloscKolumn; i++)
-                        {
-                            try
-                            {
-                                string idkolumny = "d_" + (i).ToString("D2");
-                                sumObject = tabelka.Compute("Sum(" + idkolumny + ")", "");
-                                Arkusz.Cells[wiersz, i + przesunięcieX + dod].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                                Arkusz.Cells[wiersz, i + przesunięcieX + dod].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                                Arkusz.Cells[wiersz, i + przesunięcieX + dod].Value = (sumObject.ToString());
-                            }
-                            catch (Exception ecx)
-                            {
-                                string mes = ecx.Message;
-                                Arkusz.Cells[wiersz, i + przesunięcieX + dod].Value = mes;
-                            }
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    
-                }
-
-                return Arkusz;
-            }
-
-            public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno, bool obramowanieOststniej, bool przesuniecieiteracji, bool mp)
-            {
-                if (daneDoArkusza == null)
-                {
-                    
-                    return Arkusz;
-                }
-                try
-                {
-                    int wiersz = przesuniecieY;
-                    int dod = 0;
-                    foreach (DataRow dR in daneDoArkusza.Rows)
-                    {
-                        if (dR["nazwisko"].ToString().Trim() == "")
-                        {
-                            continue;
-                        }
-                        int dodatek = 0;
-                        if (lp)
-                        {
-                            try
-                            {
-                                dodatek++;
-
-                                if (!przesuniecieiteracji)
-                                {
-                                    komorkaExcela(Arkusz, wiersz + 1, przesunięcieX + dodatek, (wiersz - przesuniecieY + 1).ToString(), false, 0, 0, true, false);
-                                }
-                                else
-                                {
-                                    komorkaExcela(Arkusz, wiersz + 1, przesunięcieX + dodatek, (wiersz - przesuniecieY + 1).ToString(), false, 0, 0, true, false);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                               
-                            }
-                        }
-                        if (stanowisko)
-                        {
-                            try
-                            {
-                                dodatek++;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-
-                                string value = (dR["stanowisko"].ToString().Trim());
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = value;
-                            }
-                            catch (Exception ex)
-                            {
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = "";
-                                
-                            }
-                        }
-                        if (funkcja)
-                        {
-                            try
-                            {
-                                dodatek++;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Green);
-
-                                string value = (dR["funkcja"].ToString().Trim());
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = value;
-                            }
-                            catch (Exception ex)
-                            {
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = "";
-                               
-                            }
-                        }
-                        if (nazwiskoiImeieOsobno)
-                        {
-                            dodatek++;
-                            try
-                            {
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Green);
-                                string value = (dR["nazwisko"].ToString().Trim());
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Value = value;
-                                dodatek++;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.ShrinkToFit = true;
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Green);
-                                value = (dR["imie"].ToString().Trim());
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek + 1].Value = value;
-                            }
-                            catch (Exception ex)
-                            {
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek + 1].Value = "";
-                               
-                            }
-                        }
-                        else
-                        {
-                            try
-                            {
-                                dodatek++;
-                                string value = dR["imie"].ToString().Trim() + " " + dR["nazwisko"].ToString().Trim();
-                                if (!przesuniecieiteracji)
-                                {
-                                    komorkaExcela(Arkusz, wiersz, przesunięcieX + dodatek, value, false, 0, 0, false, false);
-                                }
-                                else
-                                {
-                                    komorkaExcela(Arkusz, wiersz + 1, przesunięcieX + dodatek, value, false, 0, 0, false, false);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                
-                            }
-                        }
-
-                        for (int i = 1; i < iloscKolumn; i++)
-                        {
-                            try
-                            {
-                                string colunmName = "d_" + (i).ToString("D2");
-                                try
-                                {
-                                    komorkaExcela(Arkusz, wiersz + 1, i + przesunięcieX + dodatek, (dR[colunmName].ToString().Trim()), false, 0, 0, true, false);
-                                }
-                                catch
-                                {
-                                    Arkusz.Cells[wiersz + 1, i + przesunięcieX + dodatek].Value = "0";
-                                }
-                            }
-                            catch
-                            {
-                                Arkusz.Cells[wiersz + 1, i + przesunięcieX + dodatek].Value = "0";
-                            }
-                        }
-                        if (obramowanieOststniej)
-                        {
-                            Arkusz.Cells[wiersz, przesunięcieX + dodatek + iloscKolumn].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                            Arkusz.Cells[wiersz, iloscKolumn + przesunięcieX + dodatek].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                        }
-                        wiersz++;
-                        dod = dodatek;
-                    }
-
-                    if (suma)
-                    {
-                        DataTable tabelka = tabellaLiczbowa(daneDoArkusza);
-                        object sumObject;
-                        if (mp)
-                        {
-                            wiersz = wiersz + 1;
-                        }
-                        komorkaExcela(Arkusz, wiersz, przesunięcieX + dod, "Razem", false, 0, 0);
-                        for (int i = 1; i <= iloscKolumn + 1; i++)
-                        {
-                            try
-                            {
-                                string idkolumny = "d_" + (i).ToString("D2");
-                                sumObject = tabelka.Compute("Sum(" + idkolumny + ")", "");
-                                komorkaExcela(Arkusz, wiersz, i + przesunięcieX + dod, sumObject.ToString(), false, 0, 0, true, false);
-                            }
-                            catch (Exception ecx)
-                            {
-                               
-                            }
-                        }
-                    }
-                    if (mp)
-                    {
-                        for (int i = 1; i < iloscKolumn; i++)
-                        {
-                            komorkaExcela(Arkusz, przesuniecieY, przesunięcieX + 2 + i, i.ToString(), false, 0, 0, true, false);
-                        }
-                    }
-                }
-                catch (Exception ex)
-                {
-                    
-                }
-
-                return Arkusz;
-            }
-
-            public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno, bool obramowanieOststniej, string Linia01, string Linia02, string Linia03)
-            {
-                Arkusz = tworzArkuszwExcle(Arkusz, daneDoArkusza, iloscKolumn, przesunięcieX, przesuniecieY, lp, suma, stanowisko, funkcja, nazwiskoiImeieOsobno, obramowanieOststniej);
-
-                Arkusz.Cells[1, 1].Value = Linia01; ;
-                Arkusz.Cells[2, 1].Value = Linia02; ;
-                Arkusz.Cells[3, 1].Value = Linia03; ;
-
-                return Arkusz;
-            }
-            
-             public ExcelWorksheet tworznaglowki(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscwierszy, int przesunięcieX, int przesuniecieY, string tekstNadTabela)
-            {
-                komorkaExcela(Arkusz, 1, 2, tekstNadTabela, false, 0, 0);
-                int wiersz = przesuniecieY;
-                for (int i = 1; i < iloscwierszy + 1; i++)
-                {
-                    try
-                    {
-                        komorkaExcela(Arkusz, przesuniecieY, i + przesunięcieX, daneDoArkusza.Rows[i - 1][1].ToString().Trim(), false, 0, 0, true, false);
-                    }
-                    catch (Exception ex)
-                    {
-                        //cm.log.Error("KP tworznaglowki " + ex.Message);
-                    }
-                }
-                return Arkusz;
-            }
-
-            public void komorkaExcela(ExcelWorksheet Arkusz, int wiersz, int kolumna, string tekst, bool zlaczenie, int rowSpan, int colSpan)
-            {
-                komorkaExcela(Arkusz, wiersz, kolumna, tekst, zlaczenie, rowSpan, colSpan, false, false);
-            }
-*/
-/*
-            public void komorkaExcela(ExcelWorksheet Arkusz, int wiersz, int kolumna, string tekst, bool zlaczenie, int rowSpan, int colSpan, bool wycentrowanie, bool wyszarzenie)
-            {
-                if (zlaczenie)
-                {
-                    try
-                    {
-                        Arkusz.Cells[wiersz, kolumna, wiersz + rowSpan, kolumna + colSpan].Merge = true;
-                        Arkusz.Cells[wiersz, kolumna, wiersz + rowSpan, kolumna + colSpan].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                        Arkusz.Cells[wiersz, kolumna, wiersz + rowSpan, kolumna + colSpan].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    }
-                    catch (Exception ex)
-                    {
-                        //cm.log.Error("komorkaExcela merge " + ex.Message);
-                    }
-                }
-                try
-                {
-                    Arkusz.Cells[wiersz, kolumna].Style.ShrinkToFit = true;
-                    Arkusz.Cells[wiersz, kolumna].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                    if (wycentrowanie)
-                    {
-                        Arkusz.Cells[wiersz, kolumna].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    }
-                    Arkusz.Cells[wiersz, kolumna].Value = tekst;
-                    if (wyszarzenie)
-                    {
-                        Arkusz.Cells[wiersz, kolumna].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                        Arkusz.Cells[wiersz, kolumna].Style.Fill.BackgroundColor.SetColor(System.Drawing.Color.Gray);
-                    }
-                }
-                catch (Exception ex)
-                {
-                    //cm.log.Error("komorkaExcela merge " + ex.Message);
-                }
-
-            }*/
-            /*
-            public DataTable naglowek(string plik, int numerArkusza)
-            {
-                if (string.IsNullOrEmpty(plik.Trim()))
-                {
-                    return null;
-                }
-                IList<string> komorki = new List<string>();
-
-                DataTable schematNaglowka = new DataTable();
-                schematNaglowka.Columns.Add("wiersz", typeof(int));
-                schematNaglowka.Columns.Add("kolumna", typeof(int));
-                schematNaglowka.Columns.Add("text", typeof(string));
-                schematNaglowka.Columns.Add("rowSpan", typeof(int));
-                schematNaglowka.Columns.Add("colSpan", typeof(int));
-
-                var package = new ExcelPackage(new FileInfo(plik));
-                using (package)
-                {
-                    int iloscZakladek = package.Workbook.Worksheets.Count;
-                    if (iloscZakladek >= numerArkusza)
-                    {
-                        ExcelWorksheet worksheet = package.Workbook.Worksheets[numerArkusza];
-
-                        int rows = worksheet.Dimension.End.Row;
-                        int columns = worksheet.Dimension.End.Column;
-
-                        for (int i = 1; i <= rows; i++)
-                        {
-                            for (int j = 1; j <= columns; j++)
-                            {
-                                object baseE = worksheet.Cells[i, j];
-                                ExcelCellBase celka = (ExcelCellBase)baseE;
-
-                                bool polaczony = (bool)celka.GetType().GetProperty("Merge").GetValue(celka, null);
-                                var kolumny = celka.GetType().GetProperty("Columns").GetValue(celka, null);
-                                var wiersze = celka.GetType().GetProperty("Rows").GetValue(celka, null);
-                                var text = celka.GetType().GetProperty("Value").GetValue(celka, null);
-
-                                DataRow komorka = schematNaglowka.NewRow();
-                                if (polaczony && text != null)
-                                {
-                                    IList<int> lista = okreslKomorke(i, j, rows, columns, worksheet);
-
-                                    komorka["wiersz"] = i;
-                                    komorka["kolumna"] = j;
-                                    komorka["text"] = text;
-                                    komorka["colSpan"] = lista[0].ToString();
-                                    komorka["rowSpan"] = lista[1].ToString();
-
-                                    schematNaglowka.Rows.Add(komorka);
-                                    int k = lista[1];
-                                    if (k > 1)
-                                    {
-                                        j = (j + k) - 1;
-                                    }
-                                }
-                                else
-                                {
-                                    komorka["wiersz"] = i;
-                                    komorka["kolumna"] = j;
-                                    komorka["text"] = text;
-                                    komorka["colSpan"] = 1;
-                                    komorka["rowSpan"] = 1;
-                                    if (text != null)
-                                    {
-                                        schematNaglowka.Rows.Add(komorka);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                DataTable dT_01 = new DataTable();
-                dT_01.Columns.Clear();
-                dT_01.Columns.Add("Column1", typeof(string));
-                dT_01.Columns.Add("Column2", typeof(string));
-                dT_01.Columns.Add("Column3", typeof(string));
-                dT_01.Columns.Add("Column4", typeof(string));
-                dT_01.Columns.Add("Column5", typeof(string));
-
-                // max ilosc wierszy
-                var max = schematNaglowka.Rows.OfType<DataRow>().Select(row => row["wiersz"]).Max();
-
-                if (max != null)
-                {
-                    int wiersz = 0;
-                    for (int i = (int)max; i >= 0; i--)
-                    {
-                        wiersz++;
-                        //wyciągnij dane tylko z wierszem
-                        string selectString = "wiersz=" + i.ToString();
-                        DataRow[] jedenWiersz = schematNaglowka.Select(selectString);
-                        foreach (var komorka in jedenWiersz)
-                        {
-                            dT_01.Rows.Add(new Object[] { wiersz.ToString(), komorka["text"], komorka["rowSpan"], komorka["colSpan"], "h" });
-                        }
-                    }
-                }
-
-                return dT_01;
-            }
-            */
             protected IList<int> okreslKomorke(int wierszPoczatkowy, int kolumnaPoczatkowa, int iloscWierszy, int iloscKolumn, ExcelWorksheet worksheet)
             {
                 IList<int> wyniki = new List<int>();
@@ -2823,66 +1691,7 @@ namespace wab2018
                 wyniki.Add(colSpan);
                 return wyniki;
             }
-            /*
-            public DataTable SchematTabelinaglowkowej()
-            {
-                DataTable tabelaNaglowkowa = new DataTable();
-                tabelaNaglowkowa.Columns.Clear();
-                tabelaNaglowkowa.Columns.Add("wiersz", typeof(string));
-                tabelaNaglowkowa.Columns.Add("text", typeof(string));
-                tabelaNaglowkowa.Columns.Add("Column3", typeof(string));
-                tabelaNaglowkowa.Columns.Add("Column4", typeof(string));
-                tabelaNaglowkowa.Columns.Add("Column5", typeof(string));
-                tabelaNaglowkowa.Columns.Add("Column6", typeof(string));
-                return tabelaNaglowkowa;
-            }
 
-            public string komorkaHTML(string text, int colspan, int rowspan, string style)
-            {
-                StringBuilder builder = new StringBuilder();
-                builder.Append("<td ");
-                if (!string.IsNullOrEmpty(style.Trim()))
-                {
-                    builder.Append(" class='" + style + "' ");
-                }
-                if (rowspan > 0)
-                {
-                    builder.Append(" rowspan='" + rowspan + "' ");
-                }
-                if (colspan > 0)
-                {
-                    builder.Append(" colspan='" + colspan + "' ");
-                }
-                builder.AppendLine(">");
-                builder.AppendLine("<p>" + text + "</p>");
-                builder.AppendLine("</td>");
-                return builder.ToString();
-            }
-
-            public string komorkaHTMLbezP(string text, int colspan, int rowspan, string style)
-            {
-                StringBuilder builder = new StringBuilder();
-                builder.Append("<td ");
-                if (!string.IsNullOrEmpty(style.Trim()))
-                {
-                    builder.Append(" class='" + style + "' ");
-                }
-                if (rowspan > 0)
-                {
-                    builder.Append(" rowspan='" + rowspan + "' ");
-                }
-                if (colspan > 0)
-                {
-                    builder.Append(" colspan='" + colspan + "' ");
-                }
-                builder.AppendLine(">");
-
-                builder.AppendLine(text);
-
-                builder.AppendLine("</td>");
-                return builder.ToString();
-            }
-            */
         }
 
         protected void twórzZestawienieBIP(object sender, EventArgs e)
@@ -2905,7 +1714,7 @@ namespace wab2018
 
             PdfPTable table = new PdfPTable(1);
             
-            PdfPCell headerCell = new PdfPCell(new Phrase("Lista biegłych na dzień " + DateTime.Now.ToShortDateString(), cl.plFont3));
+            PdfPCell headerCell = new PdfPCell(new Phrase("LISTA BIEGŁYCH SĄDOWYCH PRZY SĄDZIE OKRĘGOWYM na dzień " + DateTime.Now.ToShortDateString(), cl.plFont3));
 
             headerCell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
             headerCell.Border = Rectangle.NO_BORDER;
@@ -2943,8 +1752,22 @@ namespace wab2018
                 }
 
                 table.AddCell(new PdfPCell(new Phrase(data, cl.plFont2)));
-                table.AddCell(new PdfPCell(new Phrase(item.uwagi.ToString(), cl.plFont2)));
-             
+
+                // sprawdzenie zawieszenia 
+                var zawieszenie = item.zawieszono.ToString();
+                if (zawieszenie == "zawieszono")
+                {
+                    string poleUwagi= string.Empty;
+                    poleUwagi = item.uwagiBIP.ToString()+Environment.NewLine;
+                    poleUwagi += "przerwa w opiniowaniu od " + item.PoczatekZawieszeni.Substring(0, 10) + " do " + item.KoniecZawieszenia.Substring(0, 10);
+                    table.AddCell(new PdfPCell(new Phrase(poleUwagi, cl.plFont2)));
+
+                }
+                else
+                {
+                    table.AddCell(new PdfPCell(new Phrase(item.uwagiBIP.ToString(), cl.plFont2)));
+                }
+             //aaaa
 
 
                 pdfDoc.Add(table);
@@ -2973,6 +1796,24 @@ namespace wab2018
         {
 
             IList<DoWydruku> TaListaDoDalszejObrobki = ListaDoDalszejObrobki();
+            IList<ListaIlosciSpecjalizacji> ListaIlosciSpecjalizacji = new List<ListaIlosciSpecjalizacji>();
+            foreach (var item in TaListaDoDalszejObrobki)
+            {
+                int iloscSpecjalizacji = PodajIloscSpecjalizacji(item.ident);
+                if (iloscSpecjalizacji > 0)
+                {
+                    ListaIlosciSpecjalizacji elementListyIlosciSpecjalizacji = new ListaIlosciSpecjalizacji
+                    {
+                        UserId = item.ident,
+                        IloscSpecjalizacji = iloscSpecjalizacji
+                    };
+
+                    ListaIlosciSpecjalizacji.Add(elementListyIlosciSpecjalizacji);
+                }
+            }
+
+
+
 
             DataTable excelTableBIP = new DataTable();
             excelTableBIP.Columns.Add("specjalność", typeof(string));
@@ -2983,74 +1824,153 @@ namespace wab2018
             excelTableBIP.Columns.Add("kadencka", typeof(string));
             excelTableBIP.Columns.Add("uwagi", typeof(string));
 
-            foreach (var item in TaListaDoDalszejObrobki)
-            {
-                DataRow dr = excelTableBIP.NewRow();
-                
-               // string Ident = getId(item.imie, item.nazwisko.ToString());
-                dr[0] = item.spejalnosc.ToString();//spejalnosc
-                dr[1] = item.spejalizacje.ToString();//spejalizacje
-                dr[2] = item.nazwisko.ToString();//nazwisko
-                dr[3] = item.imie.ToString();//imie
-                dr[4] = item.tytul.ToString();//tytul
+            int i = 0;
 
-                try
+            
+                foreach (var item in TaListaDoDalszejObrobki)
                 {
-                    dr[5] = item.powolanieDo.ToString().Substring(0, 11);//powolanie
+                    try
+                    {
+                        var ilosc = ListaIlosciSpecjalizacji.First(x => x.UserId == item.ident).IloscSpecjalizacji;
+                        if (ilosc > 1)
+                        {
+                            DataTable listaSpecjalizacjiBieglego = ListaIlosciSpecjalizacjiBieglego(item.ident);
+                            foreach (DataRow dRow in listaSpecjalizacjiBieglego.Rows)
+                            {
+                                DataRow dr = excelTableBIP.NewRow();
+
+
+                                dr[0] = dRow[0].ToString();//spejalnosc
+                                dr[1] = dRow[1].ToString();//spejalizacje
+                                dr[2] = item.nazwisko.ToString();//nazwisko
+                                dr[3] = item.imie.ToString();//imie
+                                dr[4] = item.tytul.ToString();//tytul
+
+                                try
+                                {
+                                    dr[5] = item.powolanieDo.ToString().Substring(0, 11);//powolanie
+                                }
+                                catch
+                                {
+                                    dr[53] = "";
+
+                                }
+
+
+                                dr[6] = item.uwagi.ToString();//uwagi
+
+                                excelTableBIP.Rows.Add(dr);
+
+
+
+
+
+
+                            }
+
+
+
+
+                        }
+                        else
+                        {
+                            DataRow dr = excelTableBIP.NewRow();
+
+
+                            dr[0] = item.spejalnosc.ToString();//spejalnosc
+                            dr[1] = item.spejalizacje.ToString();//spejalizacje
+                            dr[2] = item.nazwisko.ToString();//nazwisko
+                            dr[3] = item.imie.ToString();//imie
+                            dr[4] = item.tytul.ToString();//tytul
+
+                            try
+                            {
+                                dr[5] = item.powolanieDo.ToString().Substring(0, 11);//powolanie
+                            }
+                            catch
+                            {
+                                dr[53] = "";
+
+                            }
+
+
+                            dr[6] = item.uwagi.ToString();//uwagi
+
+                            excelTableBIP.Rows.Add(dr);
+                        }
+                    }
+                    catch 
+                    {
+
+                       
+                    }
+                   
                 }
-                catch
+            
+
+                string tenPlikNazwa = "ZestawienieBIP";
+                string path = Server.MapPath("Templates") + "\\" + tenPlikNazwa + ".xlsx";
+                FileInfo existingFile = new FileInfo(path);
+                if (!existingFile.Exists)
                 {
-                    dr[53] = "";
-
+                    return;
                 }
+                string download = Server.MapPath("Templates") + @"\" + tenPlikNazwa + "";
 
-              
-                dr[6] = item.uwagi.ToString();//uwagi
-             
-                excelTableBIP.Rows.Add(dr);
-            }
+                FileInfo fNewFile = new FileInfo(download + "_.xlsx");
 
-
-            string tenPlikNazwa = "ZestawienieBIP";
-            string path = Server.MapPath("Templates") + "\\" + tenPlikNazwa + ".xlsx";
-            FileInfo existingFile = new FileInfo(path);
-            if (!existingFile.Exists)
-            {
-                return;
-            }
-            string download = Server.MapPath("Templates") + @"\" + tenPlikNazwa + "";
-
-            FileInfo fNewFile = new FileInfo(download + "_.xlsx");
-
-            using (ExcelPackage MyExcel = new ExcelPackage(existingFile))
-            {
-                ExcelWorksheet MyWorksheet1 = MyExcel.Workbook.Worksheets[1];
-
-
-
-                MyWorksheet1 = tb.tworzArkuszwExcle(MyExcel.Workbook.Worksheets[1], excelTableBIP, 8, 0, 2, true, true, false, false, false);
-
-                try
+                using (ExcelPackage MyExcel = new ExcelPackage(existingFile))
                 {
-                    MyExcel.SaveAs(fNewFile);
+                    ExcelWorksheet MyWorksheet1 = MyExcel.Workbook.Worksheets[1];
 
-                    this.Response.Clear();
-                    this.Response.ContentType = "application/vnd.ms-excel";
-                    this.Response.AddHeader("Content-Disposition", "attachment;filename=" + fNewFile.Name);
-                    this.Response.WriteFile(fNewFile.FullName);
-                    this.Response.End();
-                }
-                catch
-                {
 
-                }
-            }//end of using
 
+                    MyWorksheet1 = tb.tworzArkuszwExcle(MyExcel.Workbook.Worksheets[1], excelTableBIP, 8, 0, 2, true, true, false, false, false);
+
+                    try
+                    {
+                        MyExcel.SaveAs(fNewFile);
+
+                        this.Response.Clear();
+                        this.Response.ContentType = "application/vnd.ms-excel";
+                        this.Response.AddHeader("Content-Disposition", "attachment;filename=" + fNewFile.Name);
+                        this.Response.WriteFile(fNewFile.FullName);
+                        this.Response.End();
+                    }
+                    catch
+                    {
+
+                    }
+                }//end of using
+           
+
+           
+
+        }
+
+        private DataTable ListaIlosciSpecjalizacjiBieglego(int ident)
+        {
+
+            return cl.ListaIlosciSpecjalizacjiBieglego(ident);
+           
+        }
+
+        private int PodajIloscSpecjalizacji(int ident)
+        {
+            return  cl.PobierzIloscSpecjalizacji(ident);
+
+        }
+
+        protected void _print(object sender, EventArgs e)
+        {
+            IList<DoWydruku> TaListaDoDalszejObrobki = ListaDoDalszejObrobki();
+            robRaportDoWydruku(TaListaDoDalszejObrobki);
         }
     }
 
     public class DoWydruku
-    { 
+    {
+        public int ident { get; set; }
         public string tytul { get; set; }
 
         public string nazwisko { get; set; }
@@ -3062,9 +1982,19 @@ namespace wab2018
         public string telefon { get; set; }
 
         public string uwagi { get; set; }
+
+        public string uwagiBIP { get; set; }
         public string spejalizacje { get; set; }
 
         public string spejalnosc { get; set; }
         public string Kadencja { get; set; }
+        public string PoczatekZawieszeni { get; set; }
+        public string KoniecZawieszenia { get; set; }
+    }
+
+    public class ListaIlosciSpecjalizacji
+    {
+        public int UserId { get; set; }
+        public int IloscSpecjalizacji { get; set; }
     }
 }

@@ -1,9 +1,11 @@
 ﻿using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;
+using System.Collections;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Web.UI.WebControls;
 
 namespace wab2018
 {
@@ -335,6 +337,51 @@ namespace wab2018
             return result;
         }// end of dodaj_specjalizacje
 
+        public int PobierzIloscSpecjalizacji(int UserId)
+        {
+            int result = 0;
+            SqlCommand sqlCmd;
+            SqlConnection conn = new SqlConnection(con_str);
+            using (sqlCmd = new SqlCommand())
+            {
+                sqlCmd = new SqlCommand("SELECT count(*)   FROM [tbl_specjalizacje_osob] where id_osoby=@idOsoby ", conn);
+                try
+                {
+                    conn.Open();
+                    sqlCmd.Parameters.AddWithValue("@idOsoby", UserId);
+
+
+                    result = int.Parse(sqlCmd.ExecuteScalar().ToString());
+                    conn.Close();
+                }
+                catch
+                { }
+            }
+            return result;
+        }// end of dodaj_specjalizacje
+
+
+
+        public DataTable ListaIlosciSpecjalizacjiBieglego(int UserId)
+        {
+
+            SqlConnection conn = new SqlConnection(con_str);
+            DataSet lista = new DataSet();
+            try
+            {
+                conn.Open();
+                SqlDataAdapter sqlDataAdapter = new SqlDataAdapter();
+                sqlDataAdapter.SelectCommand = new SqlCommand("SELECT glo_specjalizacje.nazwa, tbl_specjalizacje_osob.opis, tbl_specjalizacje_osob.id_osoby, tbl_specjalizacje_osob.id_specjalizacji FROM tbl_specjalizacje_osob LEFT OUTER JOIN  glo_specjalizacje ON tbl_specjalizacje_osob.id_specjalizacji = glo_specjalizacje.id_ WHERE        (tbl_specjalizacje_osob.id_osoby = @ident) ", conn);
+                sqlDataAdapter.SelectCommand.Parameters.AddWithValue("@ident", UserId);
+                sqlDataAdapter.Fill(lista);
+                conn.Close();
+            }
+            catch
+            { }
+            return lista.Tables[0];
+
+
+        }// end of ListaIlosciSpecjalizacjiBieglego
         public string odczytaj_specjalizacje_osobyOpis(string id,string nazwa)
         {
             string result = string.Empty;

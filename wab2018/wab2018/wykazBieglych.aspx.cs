@@ -382,6 +382,7 @@ namespace wab2018
             log = log + "Powolanie od: " + powolanieOd + "<br/>";
             log = log + "Powołanie do" + powolanieDo + "<br/>";
             string uwagi = TxUwagi.Text.Trim();
+           
             DateTime dataPoczatkuZawieszenia = DateTime.Parse("1900-01-01");
             DateTime dataKoncaZawieszenia = DateTime.Parse("1900-01-01");
 

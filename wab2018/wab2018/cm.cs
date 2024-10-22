@@ -164,19 +164,20 @@ namespace wab2018
             } // end of using
         }
 
-       
+       /*
 
         public DataTable getDataTable(string Kwerenda, string connectionString)
         {
+            
             SqlConnection conn = new SqlConnection(connectionString);
             DataSet lista = new DataSet();
             DataTable returntable = new DataTable();
             try
             {
                 conn.Open();
-                SqlDataAdapter daMenu = new SqlDataAdapter();
-                daMenu.SelectCommand = new SqlCommand(Kwerenda, conn);
-                daMenu.Fill(lista);
+                SqlDataAdapter daData = new SqlDataAdapter();
+                daData.SelectCommand = new SqlCommand(Kwerenda, conn);
+                daData.Fill(lista);
                 conn.Close();
                 returntable = lista.Tables[0];
             }
@@ -186,7 +187,7 @@ namespace wab2018
             }
             return returntable;
         }
-
+        */
        
          public DataTable getDataTable(string kwerenda, string connStr, DataTable parameters)
          {
@@ -201,14 +202,14 @@ namespace wab2018
                  log.Info("Open DB connection");
                  conn.Open();
                  log.Info("DB connection is open");
-                 SqlDataAdapter daMenu = new SqlDataAdapter();
-                 daMenu.SelectCommand = new SqlCommand(kwerenda, conn);
+                 SqlDataAdapter daData = new SqlDataAdapter();
+                 daData.SelectCommand = new SqlCommand(kwerenda, conn);
                  foreach (DataRow row in parameters.Rows)
                  {
-                     daMenu.SelectCommand.Parameters.AddWithValue(row[0].ToString().Trim(), row[1].ToString().Trim());
+                     daData.SelectCommand.Parameters.AddWithValue(row[0].ToString().Trim(), row[1].ToString().Trim());
                  }
                  log.Info("Executing querry");
-                 daMenu.Fill(dsKwerendy);
+                 daData.Fill(dsKwerendy);
                  log.Info("Querry is executed");
 
                  conn.Close();
