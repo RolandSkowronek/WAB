@@ -32,6 +32,8 @@ using NPOI.SS.Formula;
 using DevExpress.Utils.OAuth;
 using OfficeOpenXml.Table;
 using DevExpress.XtraReports.Parameters;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.DateTime;
+using static NPOI.HSSF.Util.HSSFColor;
 
 
 
@@ -309,7 +311,7 @@ namespace wab2018
             }
         } // end of grid_CancelRowEditing
 
-        protected void grid_RowValidating(object sender, ASPxDataValidationEventArgs e)
+       protected void grid_RowValidating(object sender, ASPxDataValidationEventArgs e)
         {
           
         }
@@ -406,6 +408,108 @@ namespace wab2018
             mediatorzy.SelectCommand = kwerendabazowa;
             mediatorzy.DataBind();
         }
+
+
+        protected void _excell(object sender, EventArgs e)
+
+        {
+
+
+            DataTable dt = new DataTable();
+            foreach (GridViewColumn column in grid.VisibleColumns)
+            {
+                var col = column as GridViewDataColumn;
+                if (col != null)
+                    dt.Columns.Add(col.FieldName);
+            }
+            for (int i = 0; i < grid.VisibleRowCount; i++)
+            {
+                DataRow row = dt.NewRow();
+                foreach (GridViewColumn column in grid.VisibleColumns)
+                {
+                    var col = column as GridViewDataColumn;
+                    if (col != null)
+                    {
+                        var cellValue = grid.GetRowValues(i, col.FieldName);
+                        row[col.FieldName] = cellValue;
+                    }
+                }
+                dt.Rows.Add(row);
+            }
+            DataTable excelTable = new DataTable();
+            excelTable.Columns.Add("tytul", typeof(string));
+            excelTable.Columns.Add("imie", typeof(string));
+            excelTable.Columns.Add("nazwisko", typeof(string));
+            excelTable.Columns.Add("powolanie", typeof(string));
+            excelTable.Columns.Add("zawieszono", typeof(string));
+            excelTable.Columns.Add("telefon", typeof(string));
+            excelTable.Columns.Add("uwagi", typeof(string));
+            excelTable.Columns.Add("specjalizacje", typeof(string));
+            foreach (DataRow item in dt.Rows)
+            {
+                DataRow dr = excelTable.NewRow();
+                var zaw = item[5].ToString();
+                if (zaw == "0") { zaw = ""; } else { zaw = "zawieszono"; };
+                int Ident = getId(item[2].ToString(), item[1].ToString());
+                dr[0] = item[0].ToString();//tytul
+                dr[1] = item[1].ToString();//imie
+                dr[2] = item[2].ToString();//nazwisko
+                try
+                {
+                    dr[3] = item[3].ToString().Substring(0, 11);//powolanie
+                }
+                catch
+                {
+                    dr[3] = "";
+
+                }
+
+                dr[4] = zaw;// item[5].ToString();
+                dr[5] = item[6].ToString();//uwagi
+                dr[6] = item[7].ToString();//uwagi
+                dr[7] = GetSpec(Ident);
+                excelTable.Rows.Add(dr);
+            }
+
+
+            string tenPlikNazwa = "Zestawienie";
+            string path = Server.MapPath("Templates") + "\\" + tenPlikNazwa + ".xlsx";
+            FileInfo existingFile = new FileInfo(path);
+            if (!existingFile.Exists)
+            {
+                return;
+            }
+            string download = Server.MapPath("Templates") + @"\" + tenPlikNazwa + "";
+
+            FileInfo fNewFile = new FileInfo(download + "_.xlsx");
+
+            using (ExcelPackage MyExcel = new ExcelPackage(existingFile))
+            {
+                ExcelWorksheet MyWorksheet1 = MyExcel.Workbook.Worksheets[1];
+
+
+
+                MyWorksheet1 = tb.tworzArkuszwExcle(MyExcel.Workbook.Worksheets[1], excelTable, 8, 0, 2, true, true, false, false, false);
+
+                try
+                {
+                    MyExcel.SaveAs(fNewFile);
+
+                    this.Response.Clear();
+                    this.Response.ContentType = "application/vnd.ms-excel";
+                    this.Response.AddHeader("Content-Disposition", "attachment;filename=" + fNewFile.Name);
+                    this.Response.WriteFile(fNewFile.FullName);
+                    this.Response.End();
+                }
+                catch
+                {
+
+                }
+            }//end of using
+
+        }
+
+
 
         private string NazwaSpecjalizacji(string specjalizacja)
         {
@@ -554,11 +658,8 @@ namespace wab2018
                     
                     }
                 }
-                catch (Exception)
-                {
-
-                  //  throw;
-                }
+                catch 
+                { }
                 doWydruku.zawieszono = zaw;
                 doWydruku.PoczatekZawieszeni = PoczatekZawieszeni;// GetPoczatekZawieszenia(Ident);
                 doWydruku.KoniecZawieszenia = KoniecZawieszenia;//GetKoniecZawieszenia(Ident);
@@ -602,142 +703,14 @@ namespace wab2018
 
 
         }
-        private string GetPoczatekZawieszenia(int ident)
-        {
-            DataTable parametry = Cm.makeParameterTable();
-
-            parametry = Cm.makeParameterTable();
-            parametry.Rows.Add("@ident", ident);
-
-            string uwagiBip = Cm.runQuerryWithResult("SELECT d_zawieszenia FROM tbl_osoby WHERE ident = @ident", Cm.con_str, parametry);
-
-
-            return uwagiBip;
-        }
-        private string GetKoniecZawieszenia(int ident)
-        {
-            DataTable parametry = Cm.makeParameterTable();
-
-            parametry = Cm.makeParameterTable();
-            parametry.Rows.Add("@ident", ident);
-
-            string uwagiBip = Cm.runQuerryWithResult("SELECT dataKoncaZawieszenia FROM tbl_osoby WHERE ident = @ident", Cm.con_str, parametry);
-
-
-            return uwagiBip;
-        }
-
-        protected void _excell(object sender, EventArgs e)
-
-        {
-
-
-            DataTable dt = new DataTable();
-            foreach (GridViewColumn column in grid.VisibleColumns)
-            {
-                var col = column as GridViewDataColumn;
-                if (col != null)
-                    dt.Columns.Add(col.FieldName);
-            }
-            for (int i = 0; i < grid.VisibleRowCount; i++)
-            {
-                DataRow row = dt.NewRow();
-                foreach (GridViewColumn column in grid.VisibleColumns)
-                {
-                    var col = column as GridViewDataColumn;
-                    if (col != null)
-                    {
-                        var cellValue = grid.GetRowValues(i, col.FieldName);
-                        row[col.FieldName] = cellValue;
-                    }
-                }
-                dt.Rows.Add(row);
-            }
-            DataTable excelTable = new DataTable();
-            excelTable.Columns.Add("tytul",typeof(string));
-            excelTable.Columns.Add("imie", typeof(string));
-            excelTable.Columns.Add("nazwisko", typeof(string));
-            excelTable.Columns.Add("powolanie", typeof(string));
-            excelTable.Columns.Add("zawieszono", typeof(string));
-            excelTable.Columns.Add("telefon", typeof(string));
-            excelTable.Columns.Add("uwagi", typeof(string));
-            excelTable.Columns.Add("specjalizacje", typeof(string));
-            foreach (DataRow item in dt.Rows)
-            {
-                DataRow dr = excelTable.NewRow();
-                var zaw = item[5].ToString();
-                if (zaw == "0") { zaw = ""; } else { zaw = "zawieszono"; };
-                int Ident = getId(item[2].ToString(), item[1].ToString());
-                dr[0] = item[0].ToString();//tytul
-                dr[1] = item[1].ToString();//imie
-                dr[2] = item[2].ToString();//nazwisko
-                try
-                {
-                    dr[3] = item[3].ToString().Substring(0,11);//powolanie
-                }
-                catch 
-                {
-                    dr[3] ="";
-
-                }
-
-                dr[4] = zaw;// item[5].ToString();
-                dr[5] = item[6].ToString();//uwagi
-                dr[6] = item[7].ToString();//uwagi
-                dr[7] = GetSpec(Ident);
-                excelTable.Rows.Add(dr);
-            }
-
-
-
-
-
-            string tenPlikNazwa = "Zestawienie";
-            string path = Server.MapPath("Templates") + "\\" + tenPlikNazwa + ".xlsx";
-            FileInfo existingFile = new FileInfo(path);
-            if (!existingFile.Exists)
-            {
-                return;
-            }
-            string download = Server.MapPath("Templates") + @"\" + tenPlikNazwa + "";
-
-            FileInfo fNewFile = new FileInfo(download + "_.xlsx");
-
-            using (ExcelPackage MyExcel = new ExcelPackage(existingFile))
-            {
-                ExcelWorksheet MyWorksheet1 = MyExcel.Workbook.Worksheets[1];
-
-              
-
-                MyWorksheet1 = tb.tworzArkuszwExcle(MyExcel.Workbook.Worksheets[1], excelTable, 8, 0, 2, true, true, false, false, false);
-                
-                try
-                {
-                    MyExcel.SaveAs(fNewFile);
-
-                    this.Response.Clear();
-                    this.Response.ContentType = "application/vnd.ms-excel";
-                    this.Response.AddHeader("Content-Disposition", "attachment;filename=" + fNewFile.Name);
-                    this.Response.WriteFile(fNewFile.FullName);
-                    this.Response.End();
-                }
-                catch 
-                {
-
-                }
-            }//end of using
-
-
-        }
-
+      
         private void robRaportDoWydruku(IList<DoWydruku> ListaDoWydruku)
         {
 
             //nagłówek
             iTextSharp.text.Document pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 0f);
-           
             
-            string path = Server.MapPath(@"~//pdf"); //Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments );
+            string path = Server.MapPath(@"~//pdf");
             string fileName = path + "//Zestawienie_Specjalizacji_" + DateTime.Now.ToString().Replace(":", "-") + ".pdf";
             PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fileName, FileMode.Create));
 
@@ -787,8 +760,6 @@ namespace wab2018
 
             pdfDoc.Close();
 
-         
-
             WebClient client = new WebClient();
             Byte[] buffer = client.DownloadData(fileName);
             if (buffer != null)
@@ -805,700 +776,23 @@ namespace wab2018
        
         protected void twórzZestawienie(object sender, EventArgs e)
         {
-
-
             if (SpecjalizacjeCheckBox.Checked)
             {
-                //jedna
                 robRaportjednejSpecjalizacji(DropDownList1.SelectedItem, getDataFromGridview());
             }
             else
             {
-                // robRaportWszystkichSpecjalizacji(getDataFromGridview());
                 robRaportWszystkichSpecjalizacjiNowy(getDataFromGridview());
             }
         }
-        private PdfPTable NaglowekZestawienia()
-        {
-
-            PdfPTable fitst = new PdfPTable(1);
-            fitst.DefaultCell.Border = Rectangle.NO_BORDER;
-            PdfPCell cell = new PdfPCell(new Paragraph(" ", cl.plFontBIG));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.Border = Rectangle.NO_BORDER;
-            cell.FixedHeight = 100;
-            fitst.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("LISTA", cl.plFontBIG));
-
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-
-            cell.Border = Rectangle.NO_BORDER;
-            fitst.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("BIEGŁYCH SĄDOWYCH", cl.plFontBIG));
-
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.Border = Rectangle.NO_BORDER;
-            cell.FixedHeight = 100;
-            fitst.AddCell(cell);
-
-            cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.Border = Rectangle.NO_BORDER;
-            cell.FixedHeight = 100;
-            fitst.AddCell(cell);
-
-            cell = new PdfPCell(new Paragraph("SĄDU OKRĘGOWEGO", cl.plFontBIG));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.FixedHeight = 100;
-            cell.Border = Rectangle.NO_BORDER;
-            fitst.AddCell(cell);
-            string napisDodatkowy = "";
-            switch (DropDownList2.SelectedIndex)
-            {
-
-                case 0: { napisDodatkowy = "Wszystcy biegli"; } break;
-                case 1: { napisDodatkowy = "Biegli czynni"; } break;
-                case 2: { napisDodatkowy = "Biegli nie czynni"; } break;
-
-            }
-
-            cell = new PdfPCell(new Paragraph(napisDodatkowy, cl.plFont1));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.FixedHeight = 100;
-            cell.Border = Rectangle.NO_BORDER;
-            fitst.AddCell(cell);
-
-            return fitst;
-
-
-
-        }
-
-
-        private PdfPTable tabelaWyliczenia(DataTable IlosciBieglychPoSpecjalizacji)
-        {
-
-            int strona = 1;
-            PdfPTable tabelaWyliczenia = new PdfPTable(3);
-            int[] tblWidthX = { 10, 70, 20 };
-
-            PdfPCell cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
-            cell.FixedHeight = 100;
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            tabelaWyliczenia.AddCell(cell);
-            tabelaWyliczenia.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("L.p.", cl.plFontBIG));
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("Nazwa specjalizacji", cl.plFontBIG));
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("Strona", cl.plFontBIG));
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            int iterator = 1;
-            foreach (DataRow dRwyliczenie in IlosciBieglychPoSpecjalizacji.Rows)
-            {
-                cell = new PdfPCell(new Paragraph(iterator.ToString(), cl.plFont2));
-                cell.Border = Rectangle.NO_BORDER;
-                tabelaWyliczenia.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(dRwyliczenie["NazwaSpecjalizacji"].ToString().Trim(), cl.plFont2));
-                cell.Border = Rectangle.NO_BORDER;
-                tabelaWyliczenia.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(strona.ToString(), cl.plFont2));
-                cell.Border = Rectangle.NO_BORDER;
-                tabelaWyliczenia.AddCell(cell);
-                strona = strona + int.Parse(dRwyliczenie["iloscStron"].ToString().Trim());
-                iterator++;
-            }
-
-            return tabelaWyliczenia;
-
-        }
-
-        private void robRaportWszystkichSpecjalizacjiNowy(DataTable dataTable)
-        {
-            
-            string kwerenda = "SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa, tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, typ , tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1 , tbl_osoby.tel2, tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, uwagiBIP,  tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis,                   tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_ as identyfikatorSpecjalizacji,                   View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM     tbl_osoby RIGHT OUTER JOIN                   View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ < 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)";
-            DataTable daneBieglych = Cm.getDataTable(kwerenda, Cm.con_str,Cm.makeParameterTable());
-            foreach (DataRow wiersz in daneBieglych.Rows)
-            {
-                string ident = wiersz["ident"].ToString().Trim();
-                int numberOfRecords = dataTable.AsEnumerable().Where(x => x["id"].ToString() == ident).ToList().Count;
-                if (numberOfRecords == 0)
-                {
-                    wiersz.Delete();
-                }
-            }
-            daneBieglych.AcceptChanges();
-
-            var IlosciBieglychPoSpecjalizacji = new DataTable();
-            IlosciBieglychPoSpecjalizacji.Columns.Add("idSpecjalizacji", typeof(int));
-            IlosciBieglychPoSpecjalizacji.Columns.Add("NazwaSpecjalizacji", typeof(string));
-            IlosciBieglychPoSpecjalizacji.Columns.Add("ilosc", typeof(int));
-            IlosciBieglychPoSpecjalizacji.Columns.Add("iloscStron", typeof(int));
-
-            foreach (DataRow dRow in cl.odczytaj_specjalizacjeLista().Rows)
-            {
-                int idSpecjalizacji = int.Parse(dRow[0].ToString().Trim());
-                string nazwaSpecjalizacji = dRow[1].ToString().Trim();
-
-                int numberOfRecords = daneBieglych.AsEnumerable().Where(x => x["identyfikatorSpecjalizacji"].ToString() == idSpecjalizacji.ToString()).ToList().Count;
-                DataRow wierszWyliczen = IlosciBieglychPoSpecjalizacji.NewRow();
-                wierszWyliczen["idSpecjalizacji"] = idSpecjalizacji;
-                wierszWyliczen["NazwaSpecjalizacji"] = nazwaSpecjalizacji;
-                wierszWyliczen["ilosc"] = numberOfRecords;
-                int iloscStron = 0;
-                if (numberOfRecords > 0)
-                {
-                    IlosciBieglychPoSpecjalizacji.Rows.Add(wierszWyliczen);
-
-                    float ilStr = (float)numberOfRecords / 15;
-                    iloscStron = (int)Math.Ceiling(ilStr);
-                    wierszWyliczen["iloscStron"] = iloscStron;
-                }
-            }
-
-            //nagłówek
-            iTextSharp.text.Document pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 0f);
-            
-            string path = Server.MapPath(@"~//pdf"); //Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments );
-            string fileName = path + "//zestawienie_Specjalizacji_" + DateTime.Now.ToString().Replace(":", "-") + ".pdf";
-            PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fileName, FileMode.Create));
-            pdfDoc.Open();
-
-            pdfDoc.AddTitle("zestawienie_Specjalizacji");
-            pdfDoc.AddCreationDate();
-
-            // koniec naglowka
-
-            pdfDoc.Add(NaglowekZestawienia());
-            pdfDoc.NewPage();
-
-            //podliczenie
-           
-            pdfDoc.Add(tabelaWyliczenia(IlosciBieglychPoSpecjalizacji));
-            pdfDoc.NewPage();
-            //end of  po specjalizacjach
-            // koniec podliczenia
-
-            
-            // po specjalizacjach
-            foreach (DataRow dRwyliczenie in IlosciBieglychPoSpecjalizacji.Rows)
-            {
-                string nazwaSpecjalizacji = dRwyliczenie["NazwaSpecjalizacji"].ToString().Trim();
-                string IdSpecjalizacji = dRwyliczenie["idSpecjalizacji"].ToString().Trim();
-
-
-                PdfPTable tabelaGlowna = new PdfPTable(4);
-                int[] tblWidth = { 8, 30, 30, 32 };
-                int iloscStron = 0;
-                if (daneBieglych.Rows.Count > 0)
-                {
-            
-                    tabelaGlowna = new PdfPTable(4);
-                    tabelaGlowna = generujCzescRaportuNew(daneBieglych, IdSpecjalizacji);
-                    pdfDoc.Add(new Paragraph(" "));
-                    pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji, cl.plFont3)));
-                    pdfDoc.Add(new Paragraph(" "));
-
-                    if (tabelaGlowna.Rows.Count > 15)
-                    {
-                        //   int counter = 0;
-                        int licznik = 0;
-                        PdfPTable newTable = new PdfPTable(4);
-                        newTable.SetWidths(tblWidth);
-                        // podziel tabele
-                        int iter = 0;
-                            
-                        foreach (var TableRow in tabelaGlowna.Rows)
-                        {
-                           
-
-                            var cos = TableRow.GetCells();
-                            //   newTable.Rows.Add(TableRow);
-                            PdfPCell celka01 = (PdfPCell)cos.GetValue(0);
-                            PdfPCell celka02 = (PdfPCell)cos.GetValue(1);
-                            PdfPCell celka03 = (PdfPCell)cos.GetValue(2);
-                            PdfPCell celka04 = (PdfPCell)cos.GetValue(3);
-                            string data1 = celka01.Phrase.Chunks.ToString();
-                            if (iter > 0)
-                            {
-                                newTable.AddCell(new PdfPCell(new Phrase(iter.ToString())));
-                            }
-                            else
-                            {
-                                newTable.AddCell(celka01);
-                            }
-                            newTable.AddCell(celka02);
-                            newTable.AddCell(celka03);
-                            newTable.AddCell(celka04);
-                            licznik++;
-                            iter++;
-
-                            if (licznik == 13)
-                            {
-                                iloscStron++;
-                                licznik = 0;
-                             
-                                
-                                pdfDoc.Add(newTable);
-                                pdfDoc.NewPage();
-                                pdfDoc.Add(new Paragraph(" "));
-                                pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji , cl.plFont3)));
-                                pdfDoc.Add(new Paragraph(" "));
-                               
-                                newTable = new PdfPTable(4);//aaaa
-                                newTable.SetWidths(tblWidth);
- 
-                                newTable.Rows.Clear();
-                                newTable.AddCell(new Paragraph("Lp.", cl.plFont2));
-                                newTable.AddCell(new Paragraph("Nazwisko i imię", cl.plFont2));
-                                newTable.AddCell(new Paragraph("Adres- telefon", cl.plFont2));
-                                newTable.AddCell(new Paragraph("Zakres", cl.plFont2));
-                                pdfDoc.Add(newTable);
-                                newTable.Rows.Clear();
-                            }
-                        }
-
-                        pdfDoc.Add(newTable);
-                        pdfDoc.NewPage();
-                    }
-                    else
-                    {
-                        pdfDoc.Add(tabelaGlowna);
-                        pdfDoc.NewPage();
-                    }
-                    // uttwórz listę osób z taka specjalizacją
-                }
-
-
-
-
-
-            }
-
-
-
-            pdfDoc.Close();
-            string newFilename = fileName + ".pdf";
-            AddPageNumber(fileName, newFilename);
-        }
-
-        private void robRaportjednejSpecjalizacji(System.Web.UI.WebControls.ListItem selectedItem, DataTable listaBieglych)
-        {
-
-            int idSpecjalizacji = 0;
-            string nazwaSpecjalizacji = string.Empty;
-            try
-            {
-                idSpecjalizacji = int.Parse(selectedItem.Value);
-                nazwaSpecjalizacji = selectedItem.Text;
-            }
-            catch
-            {
-                return;
-            }
-            iTextSharp.text.Document pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 0f);
-
-            string path = Server.MapPath(@"~//pdf"); //Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments );
-            string fileName = path + "//zestawienie_Specjalizacji_" + DateTime.Now.ToString().Replace(":", "-") + ".pdf";
-            PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fileName, FileMode.Create));
-            pdfDoc.Open();
-
-            pdfDoc.AddTitle("zestawienie_Specjalizacji");
-            pdfDoc.AddCreationDate();
-            /*
-            PdfPTable fitst = new PdfPTable(1);
-            fitst.DefaultCell.Border = Rectangle.NO_BORDER;
-            PdfPCell cell = new PdfPCell(new Paragraph(" ", cl.plFontBIG));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.Border = Rectangle.NO_BORDER;
-            cell.FixedHeight = 100;
-            fitst.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("LISTA", cl.plFontBIG));
-
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-
-            cell.Border = Rectangle.NO_BORDER;
-            fitst.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("BIEGŁYCH SĄDOWYCH", cl.plFontBIG));
-
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.Border = Rectangle.NO_BORDER;
-            cell.FixedHeight = 100;
-            fitst.AddCell(cell);
-
-            cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.Border = Rectangle.NO_BORDER;
-            cell.FixedHeight = 100;
-            fitst.AddCell(cell);
-
-            cell = new PdfPCell(new Paragraph("SĄDU OKRĘGOWEGO", cl.plFontBIG));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.FixedHeight = 100;
-            cell.Border = Rectangle.NO_BORDER;
-            fitst.AddCell(cell);
-            string napisDodatkowy = "";
-            switch (DropDownList2.SelectedIndex)
-            {
-
-                case 0: { napisDodatkowy = "Wszystcy biegli"; } break;
-                case 1: { napisDodatkowy = "Biegli czynni"; } break;
-                case 2: { napisDodatkowy = "Biegli nie czynni"; } break;
-                
-            }
-
-            cell = new PdfPCell(new Paragraph(napisDodatkowy, cl.plFont1));
-            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
-            cell.FixedHeight = 100;
-            cell.Border = Rectangle.NO_BORDER;
-            fitst.AddCell(cell);
-
-
-
-            pdfDoc.Add(fitst);
-            pdfDoc.NewPage();
-            */
-            //podliczenie
-            /*
-            DataTable specjalizacjeWyliczenie = new DataTable();
-            specjalizacjeWyliczenie.Columns.Add("nr", typeof(string));
-            specjalizacjeWyliczenie.Columns.Add("str", typeof(string));
-
-            int iloscStron = 0;
-
-        
-            PdfPTable tabelaGlowna = new PdfPTable(4);
-            int[] tblWidth = { 8, 30, 30, 32 };
-
-            if (listaBieglych.Rows.Count > 0)
-            {
-                float ilStr = (float)listaBieglych.Rows.Count / 15;
-                iloscStron = (int)Math.Ceiling(ilStr);
-                DataRow wyliczenie = specjalizacjeWyliczenie.NewRow();
-                wyliczenie[0] = nazwaSpecjalizacji;
-                wyliczenie[1] = iloscStron.ToString();
-
-                specjalizacjeWyliczenie.Rows.Add(wyliczenie);
-            }
-            int strona = 1;
-            PdfPTable tabelaWyliczenia = new PdfPTable(3);
-            int[] tblWidthX = { 10, 70, 20 };
-            cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
-            cell.FixedHeight = 100;
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            tabelaWyliczenia.AddCell(cell);
-            tabelaWyliczenia.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("L.p.", cl.plFontBIG));
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("Nazwa specjalizacji", cl.plFontBIG));
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            cell = new PdfPCell(new Paragraph("Strona", cl.plFontBIG));
-            cell.Border = Rectangle.NO_BORDER;
-            tabelaWyliczenia.AddCell(cell);
-            int iterator = 1;
-            foreach (DataRow dRwyliczenie in specjalizacjeWyliczenie.Rows)
-            {
-                cell = new PdfPCell(new Paragraph(iterator.ToString(), cl.plFont2));
-                cell.Border = Rectangle.NO_BORDER;
-                tabelaWyliczenia.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(dRwyliczenie[0].ToString().Trim(), cl.plFont2));
-                cell.Border = Rectangle.NO_BORDER;
-                tabelaWyliczenia.AddCell(cell);
-                cell = new PdfPCell(new Paragraph(strona.ToString(), cl.plFont2));
-                cell.Border = Rectangle.NO_BORDER;
-                tabelaWyliczenia.AddCell(cell);
-                strona = strona + int.Parse(dRwyliczenie[1].ToString().Trim());
-                iterator++;
-            }
-            pdfDoc.Add(tabelaWyliczenia);
-            */
-            pdfDoc.NewPage();
-
-            //==============================================================
-            int iloscStron = 0;
-            if (listaBieglych.Rows.Count > 0)
-            {/*
-                DataRow wyliczenie = specjalizacjeWyliczenie.NewRow();
-                wyliczenie[0] = nazwaSpecjalizacji;
-                wyliczenie[1] = iloscStron.ToString();
-
-                specjalizacjeWyliczenie.Rows.Add(wyliczenie);*/
-                PdfPTable tabelaGlowna = new PdfPTable(4);
-                tabelaGlowna = generujCzescRaportuOne(listaBieglych, nazwaSpecjalizacji);
-                pdfDoc.Add(new Paragraph(" "));
-                pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji, cl.plFont3)));
-                pdfDoc.Add(new Paragraph(" "));
-                int[] tblWidth = { 8, 30, 30, 32 };
-                if (tabelaGlowna.Rows.Count > 15)
-                {
-                    //   int counter = 0;
-                    int licznik = 0;
-                    PdfPTable newTable = new PdfPTable(4);
-                    newTable.SetWidths(tblWidth);
-                    // podziel tabele
-                    int iter = 0;
-
-                    foreach (var TableRow in tabelaGlowna.Rows)
-                    {
-                        var cos = TableRow.GetCells();
-                        //   newTable.Rows.Add(TableRow);
-                        PdfPCell celka01 = (PdfPCell)cos.GetValue(0);
-                        PdfPCell celka02 = (PdfPCell)cos.GetValue(1);
-                        PdfPCell celka03 = (PdfPCell)cos.GetValue(2);
-                        PdfPCell celka04 = (PdfPCell)cos.GetValue(3);
-                        string data1 = celka01.Phrase.Chunks.ToString();
-                        if (iter > 0)
-                        {
-                            newTable.AddCell(new PdfPCell(new Phrase(iter.ToString())));
-                        }
-                        else
-                        {
-                            newTable.AddCell(celka01);
-                        }
-                        newTable.AddCell(celka02);
-                        newTable.AddCell(celka03);
-                        newTable.AddCell(celka04);
-                        licznik++;
-                        iter++;
-
-                        if (licznik == 15)
-                        {
-                            iloscStron++;
-                            licznik = 0;
-                            pdfDoc.Add(newTable);
-                            pdfDoc.NewPage();
-                            pdfDoc.Add(new Paragraph(" "));
-                            pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji, cl.plFont3)));
-                            pdfDoc.Add(new Paragraph(" "));
-
-                            newTable = new PdfPTable(4);
-                            newTable.SetWidths(tblWidth);
-                            newTable.Rows.Clear();
-                        }
-                    }
-
-                    pdfDoc.Add(newTable);
-                    pdfDoc.NewPage();
-                }
-                else
-                {
-                    pdfDoc.Add(tabelaGlowna);
-                    pdfDoc.NewPage();
-                }
-                // uttwórz listę osób z taka specjalizacją
-            }
-            pdfDoc.Close();
-            string newFilename = fileName + ".pdf";
-            AddPageNumber(fileName, newFilename);
-        }
-      
-        
-        protected DataTable getDataFromGridview()
-        {
-            DataTable identy = new DataTable();
-            identy.Columns.Add(new DataColumn("id", typeof(int)));
-
-            int vrc = grid.VisibleRowCount;
-            int vrsi = grid.VisibleStartIndex;
-
-            for (int i = 0; i < vrc; i++)
-            {
-                int id_ = Convert.ToInt32(grid.GetRowValues(i, grid.KeyFieldName));
-                DataRow dR = identy.NewRow();
-                dR[0] = id_;
-                identy.Rows.Add(dR);
-            }
-            return identy;
-        }
-
-     
-        protected PdfPTable generujCzescRaportuNew(DataTable biegli, string idSpecjalizacji)
-        {
-
-
-            if (biegli.Rows.Count == 0)
-            {
-                return null;
-            }
-            int[] tblWidth = { 8, 30, 30, 32 };
-
-            PdfPTable tabelaGlowna = new PdfPTable(4);
-            tabelaGlowna.SetWidths(tblWidth);
-            int iterator = 0;
-            tabelaGlowna.AddCell(new Paragraph("Lp.", cl.plFont2));
-            tabelaGlowna.AddCell(new Paragraph("Nazwisko i imię", cl.plFont2));
-            tabelaGlowna.AddCell(new Paragraph("Adres- telefon", cl.plFont2));
-            tabelaGlowna.AddCell(new Paragraph("Zakres", cl.plFont2));
-            int iloscBieglych = biegli.Rows.Count;
-
-            var result = biegli
-    .AsEnumerable()
-    .Where(myRow => myRow.Field<int>("identyfikatorSpecjalizacji") == int.Parse (idSpecjalizacji )).ToArray();
-
-
-            foreach (DataRow biegly in result)
-            {
-                iterator++;
-                string Idbieglego = biegly["ident"].ToString();
-        
-                DataTable listaSpecjalizacjiBieglego = new DataTable();
-                listaSpecjalizacjiBieglego = cl.odczytaj_specjalizacje_osoby2(Idbieglego);
-                //"SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa,                   tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, typ , tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1, tbl_osoby.tel2,                   tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, uwagiBIP,  tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis,                   tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_ as identyfikatorSpecjalizacji,                   View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM     tbl_osoby RIGHT OUTER JOIN                   View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ < 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)";
-                string imie = biegly["imie"].ToString();
-                string nazwisko = biegly["nazwisko"].ToString();
-                string tytul = biegly["tytul"].ToString();
-                string telefon = biegly["tel1"].ToString();
-                string email = biegly["email"].ToString();
-                string dataKonca = string.Empty;
-                try
-                {
-                    dataKonca = DateTime.Parse(biegly["data_koncowa"].ToString()).ToShortDateString();
-                }
-                catch
-                { }
-                string InformacjeOwstrzymaniu = getInformacjeOwstrzymaniu(Idbieglego);
-                string innerTable = imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca + Environment.NewLine + InformacjeOwstrzymaniu;
-                string ulica = biegly["ulica"].ToString();
-                string kod = biegly["kod_poczt"].ToString();
-                string miejscowosc = biegly["miejscowosc"].ToString();
-                string tel = biegly["tel1"].ToString();
-                string Instytucja = biegly["instytucja"].ToString();
-
-                string adresTable = Instytucja + Environment.NewLine + ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
-                string specki = string.Empty;
-                string opsisSpecek= cl.PobierzOpisSpecjalizacji(Idbieglego, idSpecjalizacji);
-                string specjalizacjaOpis = cl.odczytaj_specjalizacje_osobyOpis(Idbieglego);
-                // tabelaGlowna.AddCell(new Paragraph(specjalizacjaOpis, cl.plFont2));
-                foreach (DataRow specRow in listaSpecjalizacjiBieglego.Rows)
-                {
-                    specki = specki + specRow[0].ToString().ToLower() + "; ";
-                }
-                specki = specki + specjalizacjaOpis;
-                tabelaGlowna.AddCell(new Paragraph(iterator.ToString(), cl.plFont1));
-                tabelaGlowna.AddCell(new Paragraph(innerTable, cl.plFont1));
-                tabelaGlowna.AddCell(new Paragraph(adresTable, cl.plFont1));
-                tabelaGlowna.AddCell(new Paragraph(opsisSpecek, cl.plFont1));
-            }
-
-            return tabelaGlowna;
-        }
-
-        private string getInformacjeOwstrzymaniu(string idbieglego)
-        {
-             return   cl.wyciagnijInformacjeOWsrzymaniuBieglego(idbieglego);
-        }
-
-        protected PdfPTable generujCzescRaportuOne(DataTable biegli, string specjalizacje)
-        {
-            if (biegli.Rows.Count == 0)
-            {
-                return null;
-            }
-            int[] tblWidth = { 8, 30, 30, 32 };
-
-            PdfPTable tabelaGlowna = new PdfPTable(4);
-            tabelaGlowna.SetWidths(tblWidth);
-            int iterator = 0;
-            tabelaGlowna.AddCell(new Paragraph("Lp.", cl.plFont2));
-            tabelaGlowna.AddCell(new Paragraph("Nazwisko i imię", cl.plFont2));
-            tabelaGlowna.AddCell(new Paragraph("Adres- telefon", cl.plFont2));
-            tabelaGlowna.AddCell(new Paragraph("Zakres", cl.plFont2));
-            int iloscBieglych = biegli.Rows.Count;
-
-            foreach (DataRow biegly in biegli.Rows)
-            {
-                if (biegly==null)
-                {
-                    continue;
-                }
-                DataTable daneBieglego = cl.wyciagnijBieglegoZSpecjalizacja(int.Parse(biegly[0].ToString()));
-                if (daneBieglego.Rows.Count == 0)
-                {
-                    continue;
-                }
-                if (daneBieglego == null)
-                {
-                    continue;
-                }
-                iterator++;
-                string Idbieglego = daneBieglego.Rows[0][0].ToString();
-                //tbl_osoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc,   tbl_osoby.data_koncowa,  tbl_osoby.tytul,
-                string imie = daneBieglego.Rows[0][1].ToString();
-                string nazwisko = daneBieglego.Rows[0][2].ToString();
-                string tytul = daneBieglego.Rows[0][7].ToString();
-                string telefon = daneBieglego.Rows[0][8].ToString();
-                string email = daneBieglego.Rows[0][9].ToString();
-                string Instytucja = daneBieglego.Rows[0][12].ToString();
-                string informacjaOwstrzymaniu = daneBieglego.Rows[0][13].ToString();
-                string dataKonca = string.Empty;
-                try
-                {
-                    dataKonca = DateTime.Parse(daneBieglego.Rows[0][6].ToString()).ToShortDateString();
-                }
-                catch
-                { }
-
-                string innerTable = imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca + Environment.NewLine;
-                string instytucja = daneBieglego.Rows[0][3].ToString();
-                string ulica = daneBieglego.Rows[0][3].ToString();
-                string kod = daneBieglego.Rows[0][4].ToString();
-                string miejscowosc = daneBieglego.Rows[0][5].ToString();
-                string tel = daneBieglego.Rows[0][8].ToString();
-                string specjalizacjaOPisSpecjalizacji = daneBieglego.Rows[0][10].ToString();
-
-                string adresTable = Instytucja + Environment.NewLine + ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
-                string opisSpecjalizacji = cl.odczytaj_specjalizacje_osobyOpis(Idbieglego, specjalizacje.Trim());
-                
-                tabelaGlowna.AddCell(new Paragraph(iterator.ToString(), cl.plFont1));
-                
-                tabelaGlowna.AddCell(new Paragraph(innerTable, cl.plFont1));
-                tabelaGlowna.AddCell(new Paragraph(adresTable, cl.plFont1));
-                tabelaGlowna.AddCell(new Paragraph(specjalizacje.ToUpper() +" "+ opisSpecjalizacji+" ; "+ specjalizacjaOPisSpecjalizacji, cl.plFont1));
-            }
-
-            return tabelaGlowna;
-        }
-
+       
+       
         protected void makeExcell(object sender, EventArgs e)
         {
             ASPxGridViewExporter1.FileName = "Wykaz Biegłych";
             ASPxGridViewExporter1.WriteXlsToResponse();
         }
 
-        private void AddPageNumber(string fileIn, string fileOut)
-        {
-            byte[] bytes = File.ReadAllBytes(fileIn);
-            Font blackFont = FontFactory.GetFont("Arial", 12, Font.NORMAL, BaseColor.BLACK);
-            using (MemoryStream stream = new MemoryStream())
-            {
-                PdfReader reader = new PdfReader(bytes);
-                using (PdfStamper stamper = new PdfStamper(reader, stream))
-                {
-                    int pages = reader.NumberOfPages;
-                    for (int i = 3; i <= pages; i++)
-                    {
-                        ColumnText.ShowTextAligned(stamper.GetUnderContent(i), Element.ALIGN_RIGHT, new Phrase((i - 2).ToString(), blackFont), 568f, 15f, 0);
-                    }
-                }
-                bytes = stream.ToArray();
-            }
-            File.WriteAllBytes(fileOut, bytes);
-            WebClient client = new WebClient();
-            Byte[] buffer = client.DownloadData(fileOut);
-            if (buffer != null)
-            {
-                Response.ContentType = "application/pdf";
-                Response.AddHeader("content-lenght", buffer.Length.ToString());
-                Response.BinaryWrite(buffer);
-            }
-        }
 
         protected void grid_CustomColumnDisplayText(object sender, ASPxGridViewColumnDisplayTextEventArgs e)
         {
@@ -1529,7 +823,11 @@ namespace wab2018
                 return;
 
         }
-
+        protected void _print(object sender, EventArgs e)
+        {
+            IList<DoWydruku> TaListaDoDalszejObrobki = ListaDoDalszejObrobki();
+            robRaportDoWydruku(TaListaDoDalszejObrobki);
+        }
         protected void grid_HtmlRowPrepared(object sender, ASPxGridViewTableRowEventArgs e)
         {
             if (e.RowType != GridViewRowType.Data) return;
@@ -1546,152 +844,6 @@ namespace wab2018
             }
             catch 
             { }
-            
-            
-        }
-
-        public class tabele
-        {
-
-            public TableCell HeaderCell_(string text, int columns, int rows)
-            {
-                TableCell HeaderCell = new TableCell();
-                HeaderCell.Text = text;
-                HeaderCell.ColumnSpan = columns;
-                HeaderCell.RowSpan = rows;
-                return HeaderCell;
-            }
-
-            public GridViewRow Grw(object sender)
-            {
-                GridViewRow HeaderGridRow = null;
-                GridView HeaderGrid = (GridView)sender;
-                HeaderGridRow = new GridViewRow(0, 0, DataControlRowType.Header, DataControlRowState.Insert);
-                HeaderGridRow.Font.Size = 7;
-                HeaderGridRow.HorizontalAlign = HorizontalAlign.Center;
-                HeaderGridRow.VerticalAlign = VerticalAlign.Top;
-                return HeaderGridRow;
-            }
-        
-            public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno)
-            {
-                return tworzArkuszwExcle(Arkusz, daneDoArkusza, iloscKolumn, przesunięcieX, przesuniecieY, lp, suma, stanowisko, funkcja, nazwiskoiImeieOsobno, false);
-            }
-
-            public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno, bool obramowanieOststniej)
-            {
-                if (daneDoArkusza == null)
-                {
-                    
-                    return Arkusz;
-                }
-                try
-                {
-                    int wiersz = przesuniecieY;
-                    int dod = 0;
-                    foreach (DataRow dR in daneDoArkusza.Rows)
-                    {
-                        int dodatek = 0;
-
-                        for (int i = 0; i < iloscKolumn; i++)
-                        {
-                            try
-                            {
-                            
-                                try
-                                {
-                                    var value = dR[i].ToString().Trim();
-                                    Arkusz.Cells[wiersz, i + przesunięcieX + dodatek+1].Value = value;
-                                }
-                                catch
-                                {
-                                    Arkusz.Cells[wiersz, i + przesunięcieX + dodatek].Value = (dR[i].ToString().Trim());
-                                }
-                                Arkusz.Cells[wiersz, przesunięcieX + dodatek + i+1].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
-                                Arkusz.Cells[wiersz, i + przesunięcieX + dodatek+1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
-                            }
-                            catch
-                            {
-                                
-                            }
-                        }
-                      
-                        wiersz++;
-                        dod = dodatek;
-                    }
-
-                  
-                }
-                catch 
-                {
-                    
-                }
-
-                return Arkusz;
-            }
-
-            protected IList<int> okreslKomorke(int wierszPoczatkowy, int kolumnaPoczatkowa, int iloscWierszy, int iloscKolumn, ExcelWorksheet worksheet)
-            {
-                IList<int> wyniki = new List<int>();
-                int rowSpan = 0;
-                int colSpan = 0;
-
-                bool mergedY = false;
-
-                for (int i = wierszPoczatkowy; i <= iloscWierszy + 1; i++)
-                {
-                    object baseE = worksheet.Cells[i, kolumnaPoczatkowa];
-
-                    ExcelCellBase celka = (ExcelCellBase)baseE;
-                    bool polaczony = (bool)celka.GetType().GetProperty("Merge").GetValue(celka, null);
-                    var text = celka.GetType().GetProperty("Value").GetValue(celka, null);
-                    if (!polaczony)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        if (mergedY)
-                        {
-                            if (text != null)
-                            {
-                                break;
-                            }
-                        }
-                        mergedY = true;
-                    }
-                    rowSpan++;
-                }
-                bool mergedX = false;
-                for (int j = kolumnaPoczatkowa; j <= iloscKolumn + 1; j++)
-                {
-                    object baseE = worksheet.Cells[wierszPoczatkowy, j];
-
-                    ExcelCellBase celka = (ExcelCellBase)baseE;
-                    bool polaczony = (bool)celka.GetType().GetProperty("Merge").GetValue(celka, null);
-                    var text = celka.GetType().GetProperty("Value").GetValue(celka, null);
-                    if (!polaczony)
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        if (mergedX)
-                        {
-                            if (text != null)
-                            {
-                                break;
-                            }
-                        }
-                        mergedX = true;
-                    }
-                    colSpan++;
-                }
-                wyniki.Add(rowSpan);
-                wyniki.Add(colSpan);
-                return wyniki;
-            }
-
         }
 
         protected void twórzZestawienieBIP(object sender, EventArgs e)
@@ -1723,6 +875,12 @@ namespace wab2018
             pdfDoc.Add(table);
             table = new PdfPTable(7);
 
+            int[] tblWidth = { 20, 30, 10, 10,10,10,10 };
+
+
+            table.SetWidths(tblWidth);
+
+
             table.AddCell(new PdfPCell(new Phrase("Specjalność", cl.plFont2)));
             table.AddCell(new PdfPCell(new Phrase("Specjalizacje", cl.plFont2)));
             table.AddCell(new PdfPCell(new Phrase("Nazwisko", cl.plFont2)));
@@ -1736,6 +894,7 @@ namespace wab2018
             foreach (var item in TaListaDoDalszejObrobki)
             {
                 table = new PdfPTable(7);
+                table.SetWidths(tblWidth);
                 table.AddCell(new PdfPCell(new Phrase(item.spejalnosc.ToString(), cl.plFont2)));
                 table.AddCell(new PdfPCell(new Phrase(item.spejalizacje.ToString(), cl.plFont2)));
                 table.AddCell(new PdfPCell(new Phrase(item.nazwisko.ToString(), cl.plFont2)));
@@ -1948,11 +1107,512 @@ namespace wab2018
 
         }
 
-        private DataTable ListaIlosciSpecjalizacjiBieglego(int ident)
+        private PdfPTable NaglowekZestawienia()
         {
 
+            PdfPTable fitst = new PdfPTable(1);
+            fitst.DefaultCell.Border = Rectangle.NO_BORDER;
+            PdfPCell cell = new PdfPCell(new Paragraph(" ", cl.plFontBIG));
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.Border = Rectangle.NO_BORDER;
+            cell.FixedHeight = 100;
+            fitst.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("LISTA", cl.plFontBIG));
+
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+
+            cell.Border = Rectangle.NO_BORDER;
+            fitst.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("BIEGŁYCH SĄDOWYCH", cl.plFontBIG));
+
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.Border = Rectangle.NO_BORDER;
+            cell.FixedHeight = 100;
+            fitst.AddCell(cell);
+
+            cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.Border = Rectangle.NO_BORDER;
+            cell.FixedHeight = 100;
+            fitst.AddCell(cell);
+
+            cell = new PdfPCell(new Paragraph("SĄDU OKRĘGOWEGO", cl.plFontBIG));
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.FixedHeight = 100;
+            cell.Border = Rectangle.NO_BORDER;
+            fitst.AddCell(cell);
+            string napisDodatkowy = "";
+            switch (DropDownList2.SelectedIndex)
+            {
+
+                case 0: { napisDodatkowy = "Wszystcy biegli"; } break;
+                case 1: { napisDodatkowy = "Biegli czynni"; } break;
+                case 2: { napisDodatkowy = "Biegli nie czynni"; } break;
+
+            }
+
+            cell = new PdfPCell(new Paragraph(napisDodatkowy, cl.plFont1));
+            cell.HorizontalAlignment = PdfPCell.ALIGN_CENTER;
+            cell.FixedHeight = 100;
+            cell.Border = Rectangle.NO_BORDER;
+            fitst.AddCell(cell);
+
+            return fitst;
+
+
+
+        }
+
+        private PdfPTable tabelaWyliczenia(DataTable IlosciBieglychPoSpecjalizacji)
+        {
+
+            int strona = 1;
+            PdfPTable tabelaWyliczenia = new PdfPTable(3);
+            int[] tblWidthX = { 10, 70, 20 };
+
+            PdfPCell cell = new PdfPCell(new Paragraph("", cl.plFontBIG));
+            cell.FixedHeight = 100;
+            cell.Border = Rectangle.NO_BORDER;
+            tabelaWyliczenia.AddCell(cell);
+            tabelaWyliczenia.AddCell(cell);
+            tabelaWyliczenia.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("L.p.", cl.plFontBIG));
+            cell.Border = Rectangle.NO_BORDER;
+            tabelaWyliczenia.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("Nazwa specjalizacji", cl.plFontBIG));
+            cell.Border = Rectangle.NO_BORDER;
+            tabelaWyliczenia.AddCell(cell);
+            cell = new PdfPCell(new Paragraph("Strona", cl.plFontBIG));
+            cell.Border = Rectangle.NO_BORDER;
+            tabelaWyliczenia.AddCell(cell);
+            int iterator = 1;
+            foreach (DataRow dRwyliczenie in IlosciBieglychPoSpecjalizacji.Rows)
+            {
+                cell = new PdfPCell(new Paragraph(iterator.ToString(), cl.plFont2));
+                cell.Border = Rectangle.NO_BORDER;
+                tabelaWyliczenia.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(dRwyliczenie["NazwaSpecjalizacji"].ToString().Trim(), cl.plFont2));
+                cell.Border = Rectangle.NO_BORDER;
+                tabelaWyliczenia.AddCell(cell);
+                cell = new PdfPCell(new Paragraph(strona.ToString(), cl.plFont2));
+                cell.Border = Rectangle.NO_BORDER;
+                tabelaWyliczenia.AddCell(cell);
+                strona = strona + int.Parse(dRwyliczenie["iloscStron"].ToString().Trim());
+                iterator++;
+            }
+
+            return tabelaWyliczenia;
+
+        }
+
+        private void robRaportWszystkichSpecjalizacjiNowy(DataTable dataTable)
+        {
+
+            string kwerenda = "SELECT View_SpecjalizacjeIOsoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc, tbl_osoby.data_poczatkowa, tbl_osoby.data_koncowa, tbl_osoby.id_kreatora, tbl_osoby.data_kreacji, tbl_osoby.pesel, tbl_osoby.czyus, typ , tbl_osoby.tytul, tbl_osoby.czy_zaw, tbl_osoby.tel1 , tbl_osoby.tel2, tbl_osoby.email, tbl_osoby.adr_kores, tbl_osoby.kod_poczt_kor, tbl_osoby.miejscowosc_kor, tbl_osoby.uwagi, uwagiBIP,  tbl_osoby.specjalizacjeWidok, tbl_osoby.specjalizacja_opis,                   tbl_osoby.d_zawieszenia, tbl_osoby.typ, tbl_osoby.dataKoncaZawieszenia, tbl_osoby.instytucja, View_SpecjalizacjeIOsoby.nazwa, View_SpecjalizacjeIOsoby.id_ as identyfikatorSpecjalizacji,                   View_SpecjalizacjeIOsoby.Expr1 AS aktwnaSpecjalizacja FROM     tbl_osoby RIGHT OUTER JOIN                   View_SpecjalizacjeIOsoby ON tbl_osoby.ident = View_SpecjalizacjeIOsoby.ident WHERE (tbl_osoby.nazwisko IS NOT NULL) AND (tbl_osoby.typ < 2) AND (View_SpecjalizacjeIOsoby.Expr1 = 1)";
+            DataTable daneBieglych = Cm.getDataTable(kwerenda, Cm.con_str, Cm.makeParameterTable());
+            foreach (DataRow wiersz in daneBieglych.Rows)
+            {
+                string ident = wiersz["ident"].ToString().Trim();
+                int numberOfRecords = dataTable.AsEnumerable().Where(x => x["id"].ToString() == ident).ToList().Count;
+                if (numberOfRecords == 0)
+                {
+                    wiersz.Delete();
+                }
+            }
+            daneBieglych.AcceptChanges();
+
+            var IlosciBieglychPoSpecjalizacji = new DataTable();
+            IlosciBieglychPoSpecjalizacji.Columns.Add("idSpecjalizacji", typeof(int));
+            IlosciBieglychPoSpecjalizacji.Columns.Add("NazwaSpecjalizacji", typeof(string));
+            IlosciBieglychPoSpecjalizacji.Columns.Add("ilosc", typeof(int));
+            IlosciBieglychPoSpecjalizacji.Columns.Add("iloscStron", typeof(int));
+
+            foreach (DataRow dRow in cl.odczytaj_specjalizacjeLista().Rows)
+            {
+                int idSpecjalizacji = int.Parse(dRow[0].ToString().Trim());
+                string nazwaSpecjalizacji = dRow[1].ToString().Trim();
+
+                int numberOfRecords = daneBieglych.AsEnumerable().Where(x => x["identyfikatorSpecjalizacji"].ToString() == idSpecjalizacji.ToString()).ToList().Count;
+                DataRow wierszWyliczen = IlosciBieglychPoSpecjalizacji.NewRow();
+                wierszWyliczen["idSpecjalizacji"] = idSpecjalizacji;
+                wierszWyliczen["NazwaSpecjalizacji"] = nazwaSpecjalizacji;
+                wierszWyliczen["ilosc"] = numberOfRecords;
+                int iloscStron = 0;
+                if (numberOfRecords > 0)
+                {
+                    IlosciBieglychPoSpecjalizacji.Rows.Add(wierszWyliczen);
+
+                    float ilStr = (float)numberOfRecords / 15;
+                    iloscStron = (int)Math.Ceiling(ilStr);
+                    wierszWyliczen["iloscStron"] = iloscStron;
+                }
+            }
+
+            //nagłówek
+            iTextSharp.text.Document pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 0f);
+
+            string path = Server.MapPath(@"~//pdf"); //Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments );
+            string fileName = path + "//zestawienie_Specjalizacji_" + DateTime.Now.ToString().Replace(":", "-") + ".pdf";
+            PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fileName, FileMode.Create));
+            pdfDoc.Open();
+
+            pdfDoc.AddTitle("zestawienie_Specjalizacji");
+            pdfDoc.AddCreationDate();
+
+            // koniec naglowka
+
+            pdfDoc.Add(NaglowekZestawienia());
+            pdfDoc.NewPage();
+
+            //podliczenie
+
+            pdfDoc.Add(tabelaWyliczenia(IlosciBieglychPoSpecjalizacji));
+            pdfDoc.NewPage();
+            //end of  po specjalizacjach
+            // koniec podliczenia
+
+
+            // po specjalizacjach
+            foreach (DataRow dRwyliczenie in IlosciBieglychPoSpecjalizacji.Rows)
+            {
+                string nazwaSpecjalizacji = dRwyliczenie["NazwaSpecjalizacji"].ToString().Trim();
+                string IdSpecjalizacji = dRwyliczenie["idSpecjalizacji"].ToString().Trim();
+
+
+                PdfPTable tabelaGlowna = new PdfPTable(4);
+                int[] tblWidth = { 8, 30, 30, 32 };
+                int iloscStron = 0;
+                if (daneBieglych.Rows.Count > 0)
+                {
+
+                    tabelaGlowna = new PdfPTable(4);
+                    tabelaGlowna = generujCzescRaportuNew(daneBieglych, IdSpecjalizacji);
+                    pdfDoc.Add(new Paragraph(" "));
+                    pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji, cl.plFont3)));
+                    pdfDoc.Add(new Paragraph(" "));
+
+                    if (tabelaGlowna.Rows.Count > 15)
+                    {
+                        //   int counter = 0;
+                        int licznik = 0;
+                        PdfPTable newTable = new PdfPTable(4);
+                        newTable.SetWidths(tblWidth);
+                        // podziel tabele
+                        int iter = 0;
+
+                        foreach (var TableRow in tabelaGlowna.Rows)
+                        {
+
+
+                            var cos = TableRow.GetCells();
+                            //   newTable.Rows.Add(TableRow);
+                            PdfPCell celka01 = (PdfPCell)cos.GetValue(0);
+                            PdfPCell celka02 = (PdfPCell)cos.GetValue(1);
+                            PdfPCell celka03 = (PdfPCell)cos.GetValue(2);
+                            PdfPCell celka04 = (PdfPCell)cos.GetValue(3);
+                            string data1 = celka01.Phrase.Chunks.ToString();
+                            if (iter > 0)
+                            {
+                                newTable.AddCell(new PdfPCell(new Phrase(iter.ToString())));
+                            }
+                            else
+                            {
+                                newTable.AddCell(celka01);
+                            }
+                            newTable.AddCell(celka02);
+                            newTable.AddCell(celka03);
+                            newTable.AddCell(celka04);
+                            licznik++;
+                            iter++;
+
+                            if (licznik == 13)
+                            {
+                                iloscStron++;
+                                licznik = 0;
+
+
+                                pdfDoc.Add(newTable);
+                                pdfDoc.NewPage();
+                                pdfDoc.Add(new Paragraph(" "));
+                                pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji, cl.plFont3)));
+                                pdfDoc.Add(new Paragraph(" "));
+
+                                newTable = new PdfPTable(4);
+                                newTable.SetWidths(tblWidth);
+
+                                newTable.Rows.Clear();
+                                newTable.AddCell(new Paragraph("Lp.", cl.plFont2));
+                                newTable.AddCell(new Paragraph("Nazwisko i imię", cl.plFont2));
+                                newTable.AddCell(new Paragraph("Adres- telefon", cl.plFont2));
+                                newTable.AddCell(new Paragraph("Zakres", cl.plFont2));
+                                pdfDoc.Add(newTable);
+                                newTable.Rows.Clear();
+                            }
+                        }
+
+                        pdfDoc.Add(newTable);
+                        pdfDoc.NewPage();
+                    }
+                    else
+                    {
+                        pdfDoc.Add(tabelaGlowna);
+                        pdfDoc.NewPage();
+                    }
+                    // uttwórz listę osób z taka specjalizacją
+                }
+
+            }
+            pdfDoc.Close();
+            string newFilename = fileName + ".pdf";
+            AddPageNumber(fileName, newFilename);
+        }
+
+        private void robRaportjednejSpecjalizacji(System.Web.UI.WebControls.ListItem selectedItem, DataTable listaBieglych)
+        {
+
+            int idSpecjalizacji = 0;
+            string nazwaSpecjalizacji = string.Empty;
+            try
+            {
+                idSpecjalizacji = int.Parse(selectedItem.Value);
+                nazwaSpecjalizacji = selectedItem.Text;
+            }
+            catch
+            {
+                return;
+            }
+            iTextSharp.text.Document pdfDoc = new iTextSharp.text.Document(PageSize.A4, 10f, 10f, 10f, 0f);
+
+            string path = Server.MapPath(@"~//pdf"); //Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments );
+            string fileName = path + "//zestawienie_Specjalizacji_" + DateTime.Now.ToString().Replace(":", "-") + ".pdf";
+            PdfWriter writer = PdfWriter.GetInstance(pdfDoc, new FileStream(fileName, FileMode.Create));
+            pdfDoc.Open();
+
+            pdfDoc.AddTitle("zestawienie_Specjalizacji");
+            pdfDoc.AddCreationDate();
+
+            //podliczenie
+
+            pdfDoc.NewPage();
+
+            //==============================================================
+            int iloscStron = 0;
+            if (listaBieglych.Rows.Count > 0)
+            {
+
+                PdfPTable tabelaGlowna = new PdfPTable(4);
+                tabelaGlowna = generujCzescRaportuOne(listaBieglych, nazwaSpecjalizacji, idSpecjalizacji);
+                // tabelaGlowna = generujCzescRaportuNew(listaBieglych, idSpecjalizacji.ToString());
+
+
+                pdfDoc.Add(new Paragraph(" "));
+                pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji, cl.plFont3)));
+                pdfDoc.Add(new Paragraph(" "));
+                int[] tblWidth = { 8, 30, 30, 32 };
+                if (tabelaGlowna.Rows.Count > 15)
+                {
+                    //   int counter = 0;
+                    int licznik = 0;
+                    PdfPTable newTable = new PdfPTable(4);
+                    newTable.SetWidths(tblWidth);
+                    // podziel tabele
+                    int iter = 0;
+
+                    foreach (var TableRow in tabelaGlowna.Rows)
+                    {
+                        var cos = TableRow.GetCells();
+                        //   newTable.Rows.Add(TableRow);
+                        PdfPCell celka01 = (PdfPCell)cos.GetValue(0);
+                        PdfPCell celka02 = (PdfPCell)cos.GetValue(1);
+                        PdfPCell celka03 = (PdfPCell)cos.GetValue(2);
+                        PdfPCell celka04 = (PdfPCell)cos.GetValue(3);
+                        string data1 = celka01.Phrase.Chunks.ToString();
+                        if (iter > 0)
+                        {
+                            newTable.AddCell(new PdfPCell(new Phrase(iter.ToString())));
+                        }
+                        else
+                        {
+                            newTable.AddCell(celka01);
+                        }
+                        newTable.AddCell(celka02);
+                        newTable.AddCell(celka03);
+                        newTable.AddCell(celka04);
+                        licznik++;
+                        iter++;
+
+                        if (licznik == 15)
+                        {
+                            iloscStron++;
+                            licznik = 0;
+                            pdfDoc.Add(newTable);
+                            pdfDoc.NewPage();
+                            pdfDoc.Add(new Paragraph(" "));
+                            pdfDoc.Add(new Paragraph(new Paragraph("        " + nazwaSpecjalizacji, cl.plFont3)));
+                            pdfDoc.Add(new Paragraph(" "));
+
+                            newTable = new PdfPTable(4);
+                            newTable.SetWidths(tblWidth);
+                            newTable.Rows.Clear();
+                        }
+                    }
+
+                    pdfDoc.Add(newTable);
+                    pdfDoc.NewPage();
+                }
+                else
+                {
+                    pdfDoc.Add(tabelaGlowna);
+                    pdfDoc.NewPage();
+                }
+                // uttwórz listę osób z taka specjalizacją
+            }
+            pdfDoc.Close();
+            string newFilename = fileName + ".pdf";
+            AddPageNumber(fileName, newFilename);
+        }
+
+        private DataTable getDataFromGridview()
+        {
+            DataTable identy = new DataTable();
+            identy.Columns.Add(new DataColumn("id", typeof(int)));
+
+            int vrc = grid.VisibleRowCount;
+            int vrsi = grid.VisibleStartIndex;
+
+            for (int i = 0; i < vrc; i++)
+            {
+                int id_ = Convert.ToInt32(grid.GetRowValues(i, grid.KeyFieldName));
+                DataRow dR = identy.NewRow();
+                dR[0] = id_;
+                identy.Rows.Add(dR);
+            }
+            return identy;
+        }
+
+        private string getInformacjeOwstrzymaniu(string idbieglego)
+        {
+            return cl.wyciagnijInformacjeOWsrzymaniuBieglego(idbieglego);
+        }
+        private PdfPTable generujCzescRaportuNew(DataTable biegli, string idSpecjalizacji)
+        {
+            
+            if (biegli.Rows.Count == 0)
+            {
+                return null;
+            }
+            int[] tblWidth = { 8, 30, 30, 32 };
+
+            PdfPTable tabelaGlowna = new PdfPTable(4);
+            tabelaGlowna.SetWidths(tblWidth);
+            int iterator = 0;
+            tabelaGlowna.AddCell(new Paragraph("Lp.", cl.plFont2));
+            tabelaGlowna.AddCell(new Paragraph("Nazwisko i imię", cl.plFont2));
+            tabelaGlowna.AddCell(new Paragraph("Adres- telefon", cl.plFont2));
+            tabelaGlowna.AddCell(new Paragraph("Zakres", cl.plFont2));
+            int iloscBieglych = biegli.Rows.Count;
+
+            var result = biegli
+    .AsEnumerable()
+    .Where(myRow => myRow.Field<int>("identyfikatorSpecjalizacji") == int.Parse(idSpecjalizacji)).ToArray();
+
+
+            foreach (DataRow biegly in result)
+            {
+                iterator++;
+                tabelaGlowna.AddCell(new Paragraph(iterator.ToString(), cl.plFont1));
+                tabelaGlowna.AddCell(getBieglyInfo(biegly));
+                tabelaGlowna.AddCell(getBieglyInfoAdres(biegly));
+                tabelaGlowna.AddCell(new Paragraph(cl.PobierzOpisSpecjalizacji(biegly["ident"].ToString(), idSpecjalizacji), cl.plFont1));
+            }
+
+            return tabelaGlowna;
+        }
+
+        private PdfPTable generujCzescRaportuOne(DataTable biegli, string specjalizacje, int idSpecjalizacji)
+        {
+            if (biegli.Rows.Count == 0)
+            {
+                return null;
+            }
+            int[] tblWidth = { 8, 30, 30, 32 };
+
+            PdfPTable tabelaGlowna = new PdfPTable(4);
+            tabelaGlowna.SetWidths(tblWidth);
+            int iterator = 0;
+            tabelaGlowna.AddCell(new Paragraph("Lp.", cl.plFont2));
+            tabelaGlowna.AddCell(new Paragraph("Nazwisko i imię", cl.plFont2));
+            tabelaGlowna.AddCell(new Paragraph("Adres- telefon", cl.plFont2));
+            tabelaGlowna.AddCell(new Paragraph("Zakres", cl.plFont2));
+            var result = biegli.AsEnumerable().ToArray();
+
+            foreach (DataRow biegly in result)
+            {
+                if (biegly == null)
+                {
+                    continue;
+                }
+                DataTable daneBieglego = cl.wyciagnijBieglegoZSpecjalizacja(int.Parse(biegly[0].ToString()));
+                if (daneBieglego.Rows.Count == 0)
+                {
+                    continue;
+                }
+                if (daneBieglego == null)
+                {
+                    continue;
+                }
+                iterator++;
+                DataRow tenBiegly = daneBieglego.Rows[0];
+                string Idbieglego = daneBieglego.Rows[0][0].ToString();
+                tabelaGlowna.AddCell(new Paragraph(iterator.ToString(), cl.plFont1));
+                tabelaGlowna.AddCell(getBieglyInfo(tenBiegly));
+                tabelaGlowna.AddCell(getBieglyInfoAdres(tenBiegly));
+                tabelaGlowna.AddCell(new Paragraph(cl.PobierzOpisSpecjalizacji(Idbieglego, idSpecjalizacji.ToString()), cl.plFont1));
+
+            }
+
+            return tabelaGlowna;
+        }
+
+        private Paragraph getBieglyInfo(DataRow biegly)
+        {
+
+            Paragraph result = new Paragraph();
+            string Idbieglego = biegly["ident"].ToString();
+            string imie = biegly["imie"].ToString();
+            string nazwisko = biegly["nazwisko"].ToString();
+            string tytul = biegly["tytul"].ToString();
+            string czyZaw = biegly["czy_zaw"].ToString();
+            string InformacjeOwstrzymaniu = getInformacjeOwstrzymaniu(Idbieglego);
+            string dataKonca = getDateFromString(biegly, "data_koncowa");
+            string poczatekWstrzymania = getDateFromString(biegly, "d_zawieszenia");
+            string koniecWstrzymania = getDateFromString(biegly, "dataKoncaZawieszenia");
+
+            string innerTable = string.Empty;
+            innerTable = czyZaw == "True"
+                ? imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca + Environment.NewLine + InformacjeOwstrzymaniu + Environment.NewLine + "Przerwa w opiniowaniu od " + poczatekWstrzymania + " do " + koniecWstrzymania
+                : imie + Environment.NewLine + nazwisko + Environment.NewLine + tytul + Environment.NewLine + "kadencja do dnia: " + dataKonca + Environment.NewLine + InformacjeOwstrzymaniu;
+            result = new Paragraph(innerTable, cl.plFont1);
+            return result;
+
+        }
+        private Paragraph getBieglyInfoAdres(DataRow tenBiegly)
+        {
+            Paragraph result = new Paragraph();
+            string Instytucja = tenBiegly["instytucja"].ToString();
+            string email = tenBiegly["email"].ToString();
+            string ulica = tenBiegly["ulica"].ToString();
+            string kod = tenBiegly["kod_poczt"].ToString();
+            string miejscowosc = tenBiegly["miejscowosc"].ToString();
+            string tel = tenBiegly["tel1"].ToString();
+            string adresTable = Instytucja + Environment.NewLine + ulica + Environment.NewLine + kod + " " + miejscowosc + Environment.NewLine + tel + Environment.NewLine + email;
+            result = new Paragraph(adresTable, cl.plFont1);
+            return result;
+        }
+
+        private DataTable ListaIlosciSpecjalizacjiBieglego(int ident)
+        {
             return cl.ListaIlosciSpecjalizacjiBieglego(ident);
-           
         }
 
         private int PodajIloscSpecjalizacji(int ident)
@@ -1961,11 +1621,116 @@ namespace wab2018
 
         }
 
-        protected void _print(object sender, EventArgs e)
+        private void AddPageNumber(string fileIn, string fileOut)
         {
-            IList<DoWydruku> TaListaDoDalszejObrobki = ListaDoDalszejObrobki();
-            robRaportDoWydruku(TaListaDoDalszejObrobki);
+            byte[] bytes = File.ReadAllBytes(fileIn);
+            Font blackFont = FontFactory.GetFont("Arial", 12, Font.NORMAL, BaseColor.BLACK);
+            using (MemoryStream stream = new MemoryStream())
+            {
+                PdfReader reader = new PdfReader(bytes);
+                using (PdfStamper stamper = new PdfStamper(reader, stream))
+                {
+                    int pages = reader.NumberOfPages;
+                    for (int i = 3; i <= pages; i++)
+                    {
+                        ColumnText.ShowTextAligned(stamper.GetUnderContent(i), Element.ALIGN_RIGHT, new Phrase((i - 2).ToString(), blackFont), 568f, 15f, 0);
+                    }
+                }
+                bytes = stream.ToArray();
+            }
+            File.WriteAllBytes(fileOut, bytes);
+            WebClient client = new WebClient();
+            Byte[] buffer = client.DownloadData(fileOut);
+            if (buffer != null)
+            {
+                Response.ContentType = "application/pdf";
+                Response.AddHeader("content-lenght", buffer.Length.ToString());
+                Response.BinaryWrite(buffer);
+            }
         }
+
+        private string getDateFromString(DataRow biegly, string NazwaPola)
+        {
+            string result = string.Empty;
+            try
+            {
+                DateTime dateTime = DateTime.Parse(biegly[NazwaPola].ToString());
+                if (dateTime.Year==1900) 
+                {
+                    return string.Empty;
+                }
+                result = DateTime.Parse(biegly[NazwaPola].ToString()).ToShortDateString();
+                
+            }
+            catch
+            { }
+            return result;
+        }
+
+    }
+
+    public class tabele
+    {
+
+      
+
+        public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno)
+        {
+            return tworzArkuszwExcle(Arkusz, daneDoArkusza, iloscKolumn, przesunięcieX, przesuniecieY, lp, suma, stanowisko, funkcja, nazwiskoiImeieOsobno, false);
+        }
+
+        public ExcelWorksheet tworzArkuszwExcle(ExcelWorksheet Arkusz, DataTable daneDoArkusza, int iloscKolumn, int przesunięcieX, int przesuniecieY, bool lp, bool suma, bool stanowisko, bool funkcja, bool nazwiskoiImeieOsobno, bool obramowanieOststniej)
+        {
+            if (daneDoArkusza == null)
+            {
+
+                return Arkusz;
+            }
+            try
+            {
+                int wiersz = przesuniecieY;
+                int dod = 0;
+                foreach (DataRow dR in daneDoArkusza.Rows)
+                {
+                    int dodatek = 0;
+
+                    for (int i = 0; i < iloscKolumn; i++)
+                    {
+                        try
+                        {
+
+                            try
+                            {
+                                var value = dR[i].ToString().Trim();
+                                Arkusz.Cells[wiersz, i + przesunięcieX + dodatek + 1].Value = value;
+                            }
+                            catch
+                            {
+                                Arkusz.Cells[wiersz, i + przesunięcieX + dodatek].Value = (dR[i].ToString().Trim());
+                            }
+                            Arkusz.Cells[wiersz, przesunięcieX + dodatek + i + 1].Style.Border.BorderAround(OfficeOpenXml.Style.ExcelBorderStyle.Thin, System.Drawing.Color.Black);
+                            Arkusz.Cells[wiersz, i + przesunięcieX + dodatek + 1].Style.HorizontalAlignment = OfficeOpenXml.Style.ExcelHorizontalAlignment.Center;
+                        }
+                        catch
+                        {
+
+                        }
+                    }
+
+                    wiersz++;
+                    dod = dodatek;
+                }
+
+
+            }
+            catch
+            {
+
+            }
+
+            return Arkusz;
+        }
+
     }
 
     public class DoWydruku

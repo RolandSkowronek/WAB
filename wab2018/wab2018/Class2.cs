@@ -513,10 +513,10 @@ namespace wab2018
         {
             DataTable dT = new DataTable();
             SqlConnection conn = new SqlConnection(con_str);
-            string querryExtention = " dbo.tbl_osoby.ident =" + idBieglego.ToString();
+            string querryExtention = " tbl_osoby.ident =" + idBieglego.ToString();
             string kwerenda = string.Empty;
 
-            kwerenda = "SELECT DISTINCT dbo.tbl_osoby.ident, dbo.tbl_osoby.imie, dbo.tbl_osoby.nazwisko, dbo.tbl_osoby.ulica, dbo.tbl_osoby.kod_poczt, dbo.tbl_osoby.miejscowosc,   dbo.tbl_osoby.data_koncowa,  dbo.tbl_osoby.tytul, dbo.tbl_osoby.tel1, dbo.tbl_osoby.email ,dbo.tbl_osoby.specjalizacja_opis  ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.instytucja ,dbo.tbl_osoby.Informacje_o_wstrzymaniu FROM  dbo.tbl_specjalizacje_osob LEFT OUTER JOIN dbo.tbl_osoby ON dbo.tbl_specjalizacje_osob.id_osoby = dbo.tbl_osoby.ident WHERE   " + querryExtention;
+            kwerenda = "SELECT DISTINCT tbl_osoby.ident, tbl_osoby.imie, tbl_osoby.nazwisko, tbl_osoby.ulica, tbl_osoby.kod_poczt, tbl_osoby.miejscowosc,  tbl_osoby.data_koncowa,  tbl_osoby.tytul, tbl_osoby.tel1, tbl_osoby.email ,tbl_osoby.specjalizacja_opis  ,tbl_osoby.instytucja ,tbl_osoby.instytucja ,tbl_osoby.instytucja ,tbl_osoby.Informacje_o_wstrzymaniu,  tbl_osoby.czy_zaw, tbl_osoby.d_zawieszenia, tbl_osoby.dataKoncaZawieszenia  FROM  tbl_specjalizacje_osob LEFT OUTER JOIN tbl_osoby ON tbl_specjalizacje_osob.id_osoby = tbl_osoby.ident WHERE   " + querryExtention;
             try
             {
                 DataSet lista = new DataSet();

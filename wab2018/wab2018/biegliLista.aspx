@@ -68,7 +68,31 @@
             TreeList.SetFocusedNodeKey(DropDownEdit.GetKeyValue());
             TreeList.MakeNodeVisible(TreeList.GetFocusedNodeKey());
         }
-    </script>
+  
+          var index = -1;
+
+          function grid_RowClick(s, e) {
+              if (tabelaSpecjalizacji.IsEditing() == true) {
+                  index = e.visibleIndex;
+
+                  s.UpdateEdit();
+              }
+              else {
+                  s.SetFocusedRowIndex(e.visibleIndex); // for better visual appearence
+                  s.StartEditRow(e.visibleIndex);
+              }
+          }
+
+          function grid_EndCallback(s, e) {
+              if (index != -1) {
+                  var _index = index;
+                  index = -1;
+
+                  s.SetFocusedRowIndex(_index); // for better visual appearence
+                  s.StartEditRow(_index);
+              }
+          }
+      </script>
     <style type="text/css">
         .auto-style3 {
             height: 21px;
@@ -132,35 +156,11 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
 
     <script src="Scripts/jquerry-1.9.1.js"></script>
-    <script type="text/javascript">
-        var index = -1;
-
-        function grid_RowClick(s, e) {
-            if (tabelaSpecjalizacji.IsEditing() == true) {
-                index = e.visibleIndex;
-
-                s.UpdateEdit();
-            }
-            else {
-                s.SetFocusedRowIndex(e.visibleIndex); // for better visual appearence
-                s.StartEditRow(e.visibleIndex);
-            }
-        }
-
-        function grid_EndCallback(s, e) {
-            if (index != -1) {
-                var _index = index;
-                index = -1;
-
-                s.SetFocusedRowIndex(_index); // for better visual appearence
-                s.StartEditRow(_index);
-            }
-        }
-    </script>
+  
 
     <div id="mainWindow" style="background-color: white;" onload="ShowHideDivX()">
 
-        <h2>&nbsp; Wykaz BIEGŁYCH sądowych</h2>
+        <h2>&nbsp; WYKAZ BIEGŁYCH SĄDOWCH</h2>
         <br />
         <asp:SqlDataSource ID="daneSpecjalizacji" runat="server" ConnectionString="<%$ ConnectionStrings:wap %>" SelectCommand="SELECT id_, nazwa FROM glo_specjalizacje WHERE (grupa < 1000) ORDER BY nazwa"></asp:SqlDataSource>
         <table style="width: 100%;">
